@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hs-client</title>
+</head>
+<body>
+
+    <!-- 加入游戏 -->
+    <div id="JoinRoomDiv">
+        <h>填房间号加入游戏</h>
+        <form onsubmit="return false;" id="JoinRoom">
+            房间号：<input type="text" id="JoinRoom_RoomId">
+            <br />
+            英雄：<input type="text" id="JoinRoom_HeroId" value="0">
+            <br />
+            牌组：<textarea id="JoinRoom_CardIds" cols="100" rows="1">1,1,2,2,3,3,4,4,6,6,7,7,8,8,9,9,10,10,11,11,12,12,1,1,1,1,1,1,1,1</textarea>
+            <!-- 1,1,2,2,3,3,4,4,6,6,7,7,8,8,9,9,10,10,11,11,12,12,1,1,1,1,1,1,1,1 -->
+            <!-- 1,10,1,10 -->
+            <!-- 6,6,7,7 -->
+            <br />
+            <input type="submit" onclick="addRooom()">
+        </form>
+        <div id="wsMsg"></div>
+        <hr />
+        <table border="1" cellpadding="0px" cellspacing="0px" id="cardsConfig">
+        </table>
+    </div>
+
+    <!-- 等待敌人 -->
+    <div id="waitEnemy" style="display: none;">
+        等待对手
+    </div>
+
+    <!--  -->
+    <div id="battleField" style="display: none;">
+        <h1>我的对手信息</h1>
+        <br />
+        <table border="1" cellpadding="0px" cellspacing="0px">
+            <tr>
+                <th>英雄</th>
+                <th>生命值</th>
+                <th>盾</th>
+                <th>费用</th>
+                <th>手牌卡数</th>
+                <th>牌库卡数</th>
+                <th>武器</th>
+            </tr>
+            <tr>
+                <td id="eId"></td>
+                <td id="eHp"></td>
+                <td id="eShield"></td>
+                <td id="eMona"></td>
+                <td id="eHandCardsNum"></td>
+                <td id="eLibCardsNum"></td>
+                <td id="eWeapon"></td>
+            </tr>
+        </table>
+        <br />
+
+        <h1>战场</h1>
+        
+        <table border="1" cellpadding="0px" cellspacing="0px">
+            <tr>
+                <td colspan="7">敌方战场</td>
+            </tr>
+            <tr id="eBattleField">
+            </tr>
+        </table>
+
+        <br />
+        <table border="1" cellpadding="0px" cellspacing="0px">
+            <tr>
+                <td colspan="7">我方战场</td>
+            </tr>
+            <tr id="mBattleField">
+            </tr>
+        </table>
+
+
+        <h1>我的信息</h1>
+        <table border="1" cellpadding="0px" cellspacing="0px">
+            <tr>
+                <th>英雄</th>
+                <th>生命值</th>
+                <th>盾</th>
+                <th>费用</th>
+                <th>牌库卡数</th>
+                <th>武器</th>
+            </tr>
+            <tr>
+                <td id="mId"></td>
+                <td id="mHp"></td>
+                <td id="mShield"></td>
+                <td id="mMona"></td>
+                <td id="mLibCardsNum"></td>
+                <td id="mWeapon"></td>
+            </tr>
+        </table>
+
+        <br />
+        <table border="1" cellpadding="0px" cellspacing="0px">
+            <tr>
+                <td colspan="10">我的手牌</td>
+            </tr>
+            <tr id="mHandField">
+            </tr>
+        </table>
+
+        <h1>我的弹出信息</h1>
+        <div>
+            <table border="1" cellpadding="0px" cellspacing="0px">
+                <tr id="tField">
+
+                </tr>
+            </table>
+        </div>
+
+
+        <h1>输入指令</h1>
+        <form onsubmit="return false;">
+            <pre>
+cpre // 修改预留卡牌 , 例如:`cpre 1,3` 指的是修改第一张和第三张 , `cpre`指的是放弃修改
+e // 回合结束
+r // 释放卡牌 , 例如：`r 10 1 2 3 0` 代表释放id为10的卡牌，选择1号抉择，选择战场上第二个站位，选择战吼目标为id为3的卡牌
+例如：`r 10 0 2 0 3` 代表释放id为10的卡牌，选择战场上第二个站位，选择战吼目标为id为3的英雄
+a // 卡牌攻击 , 例如 `a 10 31 0` 代表id为10的卡牌，进攻对方场上id为31的卡牌
+例如 `a 10 0 15` 代表id为10的卡牌，进攻id为15的敌方英雄
+ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌
+            </pre>
+            指令：<input type="text" id="cmd">
+            <br />
+            <input type="submit" onclick="sendCmd()">
+        </form>
+
+        <h1>日志</h1>
+
+        <div id="logField" style="height: 150px; overflow:scroll">
+        </div>
+    </div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    var ws = new WebSocket('ws://127.0.0.1:3653')
+    ws.onopen = function(){
+        console.log("open ws");
+
+        ws.send(encodeMsg("GetCardsConfig" , {}))
+
+        $("#wsMsg").html("连接服务器成功")
+    }
+
+    ws.onmessage = function(e){
+        msg = decodeMsg(e.data)
+        console.log(msg)
+
+        if(msg.CardsConfigMsg !== undefined){
+            buildCardsConfig(msg.CardsConfigMsg.Configs)
+        }else if(msg.LineMsg !== undefined){
+            lineChange(msg.LineMsg);
+        }else if(msg.InitMsg !== undefined){
+            initGame(msg.InitMsg)
+        }else if(msg.InfoMsg !== undefined){
+            infoGame(msg.InfoMsg)
+        }else if(msg.PreCardsMsg !== undefined){
+            fTField(msg.PreCardsMsg.Mpm)
+        }else if(msg.ErrorMsg !== undefined){
+            alert(msg.ErrorMsg.Error)
+        }else if(msg.LogMsg !== undefined){
+            insertLog(msg.LogMsg.Log)
+        }
+    }
+
+    ws.onclose = function(e){
+        console.log(e)
+
+        if ($("#wsMsg").html()){
+            alert("服务器已经切断你的链接")
+        }
+    }
+    
+    ws.onerror = function(e){
+
+        msg = "连接服务器失败，请开启服务器。<br/>go run main.go即可。<br/>开启后，请f5刷新页面。"
+        $("#wsMsg").html(msg)
+
+        msg = msg.replace("<br/>","\n")
+        msg = msg.replace("<br/>","\n")
+        alert(msg)
+
+        console.log(e);
+    }
+
+    // 指令
+    function sendCmd(){
+        cmdArr = $("#cmd").val().split(' ')
+        if (cmdArr[0] == "cpre"){
+            ws.send(encodeMsg("BChangePre" , {Indexs:cmdArr[1]}))
+        }else if (cmdArr[0] == "e"){
+            ws.send(encodeMsg("BEndRound" , {End:1}))
+        }else if (cmdArr[0] == "r"){
+            ws.send(encodeMsg("BRelease" , {CardId:parseInt(cmdArr[1]) , ChoiceId:parseInt(cmdArr[2]) , PutIdx:parseInt(cmdArr[3]) , RCardId:parseInt(cmdArr[4]) , RHeroId:parseInt(cmdArr[5])}))
+        }else if (cmdArr[0] == "a"){
+            ws.send(encodeMsg("BAttack" , {CardId:parseInt(cmdArr[1]) , ECardId:parseInt(cmdArr[2]) , EHeroId:parseInt(cmdArr[3])}))
+        }else if (cmdArr[0] == "ha"){
+            ws.send(encodeMsg("BHAttack" , {ECardId:parseInt(cmdArr[1]) , EHeroId:parseInt(cmdArr[2])}))
+        }
+        $("#cmd").val("")
+    }
+
+    // 解析二进制
+    function decodeMsg(blb){
+        var u, x;
+        u = URL.createObjectURL(blb);
+        x = new XMLHttpRequest();
+        x.open('GET', u, false); // although sync, you're not fetching over internet
+        x.send();
+        URL.revokeObjectURL(u);
+        return JSON.parse(x.responseText);
+    }
+
+    // 处理数据
+    function encodeMsg(msgId , data){
+        map = {}
+        map[msgId] = data
+        return JSON.stringify(map)
+    }
+
+    CTraits = ["战吼" , "亡语", "冲锋", "突袭", "风怒", "连击","无法攻击", "嘲讽"]
+    CRace = ["野兽" , "恶魔" , "鱼人" , "机械"]
+    CType = ["随从" , "武器" , "法术" , "奥秘"]
+    CSeries = ["基础" , "经典" , "暗月马戏团"]
+    HVocation = ["盗贼" , "术士" , "猎人"]
+    function buildCardsConfig(cardsConfig){
+        str = "<tr><td>卡牌id</td><td>名称</td><td>描述</td><td>费用</td><td>攻击</td><td>血量</td><td>特质</td><td>种族</td><td>类型</td><td>系列</td><td>职业</td><td>可收藏</td></tr>";
+        
+        cardsConfig.forEach((item) => {
+            str += "<tr><td>" +item.Id+"</td><td>" +item.Name+"</td><td>" +item.Desc+"</td><td>" +item.Mona+"</td><td>" +item.Damage+"</td><td>" +item.Hp+"</td>";
+            
+            str += "<td>"
+            if (item.Traits != null ){
+                item.Traits.forEach((item2) => {
+                    str += CTraits[item2]+","
+                })
+                str = rtrim(str , ",")
+            }
+            str += "</td>"
+
+            str += "<td>"
+            if (item.Race != null ){
+                item.Race.forEach((item2) => {
+                    str += CRace[item2]+","
+                })
+                str = rtrim(str , ",")
+            }
+            str += "</td><td>"+CType[item.Ctype]+"</td><td>"+CSeries[item.Series]+"</td>"
+
+            str += "<td>"
+            if (item.Vocation != null ){
+                item.Vocation.forEach((item2) => {
+                    str += HVocation[item2]+","
+                })
+                str = rtrim(str , ",")
+            }
+            str += "</td><td>"
+
+            if(item.CanCarry){
+                str += "√"
+            }else{
+                str += "X"
+            }
+
+            str += "</td></tr>"
+
+        })
+
+        $("#cardsConfig").html(str)
+    }
+
+    function rtrim(s , charlist) {
+        var lastIndex = s.lastIndexOf(charlist);
+        if (lastIndex > -1) {
+            s = s.substring(0, lastIndex);
+        }
+        return s;
+    }
+
+    // function Trim(x ,t) {
+    //     return x.replace(/^\s+|\s+$/gm,t);
+    // }
+
+    function addRooom(){
+        JoinRoom_RoomId = $("#JoinRoom_RoomId").val()
+        JoinRoom_HeroId = $("#JoinRoom_HeroId").val()
+        JoinRoom_CardIds =  $("#JoinRoom_CardIds").val()
+        ws.send(encodeMsg("JoinRoom" , {
+            RoomId:parseInt(JoinRoom_RoomId),
+            HeroId:parseInt(JoinRoom_HeroId),
+            CardIds:JoinRoom_CardIds
+        }))
+    
+        $("#JoinRoomDiv").hide()
+        $("#waitEnemy").show()
+    }
+
+    function lineChange(msg){
+        if(msg.Line == 0){
+            $("#waitEnemy").hide()
+            $("#battleField").show()
+        }
+
+        if(msg.Line == 1){
+            $("#tField").html("");
+        }
+    }
+
+    function initGame(msg){
+        fEnemyField(msg.Em)
+        fMyField(msg.Mm)
+        fTField(msg.Mpm)
+    }
+
+    function infoGame(msg){
+        fEnemyField(msg.Em)
+        fMyField(msg.Mm)
+        fEBattleField(msg.Ebm)
+        fMBattleField(msg.Mbm)
+        fMHandField(msg.Mhm)
+    }
+
+    function fEnemyField(msg){
+        $("#eId").html(msg.Name + "(" + msg.Id+ ")");
+        $("#eHp").html(msg.Hp + "/" + msg.HpMax);
+        $("#eShield").html(msg.Shield);
+        $("#eMona").html(msg.Mona + "/" +msg.MonaMax);
+        $("#eHandCardsNum").html(msg.HandCardsNum);
+        $("#eLibCardsNum").html(msg.LibCardsNum);
+        $("#eWeapon").html("");
+        if(msg.Weapon != null){
+            $("#eWeapon").html(msg.Weapon.Name+"("+msg.Weapon.Id+")" + msg.Weapon.Damage + "/"+ msg.Weapon.Hp);
+        }
+    }
+
+    function fMyField(msg){
+        $("#mId").html(msg.Name + "(" + msg.Id+ ")");
+        $("#mHp").html(msg.Hp + "/" + msg.HpMax);
+        $("#mShield").html(msg.Shield);
+        $("#mMona").html(msg.Mona + "/" +msg.MonaMax);
+        $("#mLibCardsNum").html(msg.LibCardsNum);
+        $("#mWeapon").html("");
+        if(msg.Weapon != null){
+            $("#mWeapon").html(msg.Weapon.Name+"("+msg.Weapon.Id+")" + msg.Weapon.Damage + "/"+ msg.Weapon.Hp);
+        }
+    }
+
+    function fTField(msg){
+        str = ''
+        if (msg != null) {
+            msg.forEach((item, index, msg) => {
+               str += "<td>" +item.Name + "(" + item.Id + ")" + item.Mona +"-" + item.Damage + "-" +  item.Hp + "</td>"
+            })
+        }
+        $("#tField").html(str);
+    }
+
+    function fEBattleField(msg){
+        str = ''
+        if (msg != null) {
+            msg.forEach((item) => {
+                str += "<td>" +item.Name + "(" + item.Id + ")" + item.Mona +"-" + item.Damage + "-" +  item.Hp + "</td>"
+            })
+        }
+        $("#eBattleField").html(str);
+    }
+
+    function fMBattleField(msg){
+        str = ''
+        if(msg != null){
+            msg.forEach((item) => {
+                str += "<td>" +item.Name + "(" + item.Id + ")" + item.Mona +"-" + item.Damage + "-" +  item.Hp + "</td>"
+            })
+        }
+        $("#mBattleField").html(str);
+    }
+
+    function fMHandField(msg){
+        str = ''
+        if (msg != null ){
+            msg.forEach((item) => {
+                str += "<td>" +item.Name + "(" + item.Id + ")" + item.Mona +"-" + item.Damage + "-" +  item.Hp + "</td>"
+            })
+        }
+        $("#mHandField").html(str);
+    }
+
+    function insertLog(msg){
+        html = $("#logField").html()
+        html += "[" + dateFormat() + "]" + msg + "<br/>"
+        $("#logField").html(html)
+        $('#logField').scrollTop(99999999999999);
+    }
+
+    var dateFormat = function() {
+        var date = new Date()
+        var year = date.getFullYear()
+        var month = date.getMonth() + 1
+        var day = date.getDate()
+
+        var hour = date.getHours()
+        var minu = date.getMinutes()
+        var sec = date.getSeconds()
+
+        month = month >= 10 ? month : '0' + month
+        day = day >= 10 ? day : '0' + day
+        hour = hour >= 10 ? hour : '0' + hour
+        minu = minu >= 10 ? minu : '0' + minu
+        sec = sec >= 10 ? sec : '0' + sec
+
+        return `${year}-${month}-${day} ${hour}:${minu}:${sec}`
+    }
+    
+</script>
+
+</html>
