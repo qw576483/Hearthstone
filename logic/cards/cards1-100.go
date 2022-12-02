@@ -142,7 +142,7 @@ func (c *Card6) OnNRRoundBegin() {
 	}
 }
 
-func (c *Card6) OnDie(bidx int) {
+func (c *Card6) OnOutBattle() {
 	c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundBegin")
 }
 
@@ -178,7 +178,7 @@ func (c *Card7) OnNRRoundEnd() {
 	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(tr)+"提升1点攻击力")
 }
 
-func (c *Card7) OnDie(bidx int) {
+func (c *Card7) OnOutBattle() {
 	c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundEnd")
 }
 
@@ -249,7 +249,7 @@ func (c *Card10) OnNROtherDie(tc iface.ICard) {
 	c.AddHpMaxAndHp(1)
 }
 
-func (c *Card10) OnDie(bidx int) {
+func (c *Card10) OnOutBattle() {
 	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
 }
 

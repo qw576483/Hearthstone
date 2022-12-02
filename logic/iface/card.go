@@ -53,6 +53,7 @@ type ICard interface {
 	OnGet()                           // 获得时
 	OnRelease(int, int, ICard, IHero) // 释放时
 	OnPutToBattle(int)                // 步入战场时
+	OnOutBattle()                     // 离开战场时
 	OnHonorAnnihilate(ICard)          // 荣誉消灭
 	OnOverflowAnnihilate(ICard)       // 超杀
 	OnDie(int)                        // 卡牌死亡时

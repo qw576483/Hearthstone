@@ -326,6 +326,7 @@ func (c *Card) OnInit()                                                      {} 
 func (c *Card) OnBattleBegin()                                               {} // 战斗开始
 func (c *Card) OnGet()                                                       {} // 获得时
 func (c *Card) OnPutToBattle(pix int)                                        {} // 放置到战场时
+func (c *Card) OnOutBattle()                                                 {} // 离开战场时
 func (c *Card) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {} // 释放时
 func (c *Card) OnHonorAnnihilate(ec iface.ICard)                             {} // 荣誉消灭
 func (c *Card) OnOverflowAnnihilate(ec iface.ICard)                          {} // 超杀

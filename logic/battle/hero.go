@@ -429,6 +429,8 @@ func (h *Hero) MoveOutBattleOnlyBattleCards(c iface.ICard) int {
 
 	if idx != -1 {
 		_, h.battleCards = help.DeleteCardFromCardsByIdx(h.GetBattleCards(), idx)
+
+		c.OnOutBattle()
 	}
 
 	return idx
