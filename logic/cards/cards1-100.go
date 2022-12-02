@@ -48,8 +48,11 @@ func (c *Card2) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 	td := rc.GetDamage()
 
 	rc.SetDamage(th)
-	rc.SetHp(td)
+	rc.SetHpMaxAndHp(td)
 	rc.CostHp(0)
+
+	// logs
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"血量和攻击互换")
 }
 
 // 寒光智者
@@ -243,7 +246,7 @@ func (c *Card10) OnNROtherDie(tc iface.ICard) {
 	push.PushAutoLog(c.GetOwner(), "由于"+push.GetCardLogString(tc)+"死亡,"+push.GetCardLogString(c)+"获得+2/+1")
 
 	c.AddDamage(2)
-	c.AddHp(1)
+	c.AddHpMaxAndHp(1)
 }
 
 func (c *Card10) OnDie(bidx int) {

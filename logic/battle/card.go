@@ -88,12 +88,29 @@ func (c *Card) IsHaveTraits(ct define.CardTraits) bool {
 	return help.InArray(ct, c.GetTraits())
 }
 
+// 治疗血量
+func (c *Card) TreatmentHp(num int) {
+	c.AddHp(num)
+}
+
 // 加血
 func (c *Card) AddHp(num int) {
 	c.hp += num
 	if c.hp > c.hpMax {
 		c.hp = c.hpMax
 	}
+}
+
+// 加血上限和血
+func (c *Card) AddHpMaxAndHp(num int) {
+	c.hpMax += num
+	c.AddHp(num)
+}
+
+// 设置血上限和血
+func (c *Card) SetHpMaxAndHp(set int) {
+	c.SetHpMax(set)
+	c.SetHp(set)
 }
 
 // 扣除血量
@@ -124,6 +141,11 @@ func (c *Card) SetHp(hp int) {
 // 获得卡牌血量
 func (c *Card) GetHp() int {
 	return c.hp
+}
+
+// 设置血上限
+func (c *Card) SetHpMax(hpMax int) {
+	c.hpMax = hpMax
 }
 
 // 获得卡牌最大血量
