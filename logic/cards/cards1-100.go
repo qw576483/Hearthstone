@@ -341,7 +341,7 @@ func (c *Card16) OnNRPutToBattle(oc iface.ICard) {
 		return
 	}
 
-	rc, rh := h.RandBothBattleCardOrHero()
+	rc, rh := h.GetEnemy().RandBothBattleCardOrHero()
 
 	if rc != nil {
 		push.PushAutoLog(h, push.GetCardLogString(c)+"的飞刀对"+push.GetCardLogString(rc)+"造成了1点伤害")
