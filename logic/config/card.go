@@ -210,4 +210,16 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	14: &CardConfig{
+		Id:       14,
+		Name:     "耐心的刺客",
+		Mona:     2,
+		Damage:   1,
+		Hp:       1,
+		Ctype:    define.CardTypeEntourage,
+		Traits:   MakeCardTraits(define.CardTraitsSneak, define.CardTraitsHighlyToxic),
+		Series:   define.CardSeriseClassic,
+		Vocation: MakeCardVocation(define.VocationRobbers),
+		CanCarry: true,
+	},
 }

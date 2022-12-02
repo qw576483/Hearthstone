@@ -115,7 +115,7 @@ func (c *Card6) NewPoint() iface.ICard {
 	return &Card6{}
 }
 
-func (c *Card6) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card6) OnPutToBattle(pidx int) {
 	c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")
 }
 
@@ -155,7 +155,7 @@ func (c *Card7) NewPoint() iface.ICard {
 	return &Card7{}
 }
 
-func (c *Card7) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card7) OnPutToBattle(pidx int) {
 	c.GetOwner().AddCardToEvent(c, "OnNRRoundEnd")
 }
 
@@ -231,7 +231,7 @@ func (c *Card10) NewPoint() iface.ICard {
 	return &Card10{}
 }
 
-func (c *Card10) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card10) OnPutToBattle(pidx int) {
 	c.GetOwner().AddCardToEvent(c, "OnNROtherDie")
 }
 
@@ -278,4 +278,13 @@ type Card13 struct {
 
 func (c *Card13) NewPoint() iface.ICard {
 	return &Card13{}
+}
+
+// 耐心的刺客
+type Card14 struct {
+	battle.Card
+}
+
+func (c *Card14) NewPoint() iface.ICard {
+	return &Card14{}
 }

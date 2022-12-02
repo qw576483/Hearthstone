@@ -29,6 +29,7 @@ type IHero interface {
 	GetBattleCards() []ICard                           // 获得战场上的卡牌
 	GetBattleCardById(int) ICard                       // 获得战场上的卡牌
 	GetBattleCardsByIds([]int) []ICard                 // 获得战场上的卡牌
+	GetBattleCardsTraitsTauntCardIds() []int           // 获得战场上有嘲讽的卡牌ids
 	AppendToAllCards(ICard)                            // 添加到全部卡牌
 	GetAllCards() []ICard                              // 获得全部卡牌
 	GetBothAllCards() []ICard                          // 获得全部卡牌
@@ -38,7 +39,7 @@ type IHero interface {
 	GetMaxAttackTimes() int                            // 获得最大攻击次数
 	GetHp() int                                        // 获得血量
 	GetHpMax() int                                     // 获得最大血量
-	CostHp(int)                                        // 扣血
+	CostHp(int) int                                    // 扣血
 	AddMona(int)                                       // 添加法力值
 	CostMona(int) bool                                 // 消耗法力值
 	SetMona(int)                                       // 设置法力值
@@ -78,11 +79,12 @@ type IHero interface {
 	RoundBegin() // 回合开始
 	RoundEnd()   // 回合结束
 
-	TrickBattleBegin()                          // 触发战斗开始事件
-	TrickRelease(ICard, int, int, ICard, IHero) // 触发战吼
-	TrickRoundBegin()                           // 触发回合开始事件
-	TrickRoundEnd()                             // 触发回合结束事件
-	TrickGetCardEvent(ICard)                    // 触发抽卡事件
-	TrickDevastateCardEvent(ICard)              // 触发销毁事件
-	TrickDieCardEvent(ICard, int)               // 触发死亡事件
+	TrickBattleBegin()                              // 触发战斗开始事件
+	TrickRelease(ICard, int, int, ICard, IHero)     // 触发战吼
+	TrickRoundBegin()                               // 触发回合开始事件
+	TrickRoundEnd()                                 // 触发回合结束事件
+	TrickGetCardEvent(ICard)                        // 触发抽卡事件
+	TrickDevastateCardEvent(ICard)                  // 触发销毁事件
+	TrickAfterAttackEvent(ICard, ICard, IHero, int) // 触发攻击后事件
+	TrickDieCardEvent(ICard, int)                   // 触发死亡事件
 }

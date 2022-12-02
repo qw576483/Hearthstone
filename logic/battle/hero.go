@@ -168,6 +168,19 @@ func (h *Hero) GetBattleCards() []iface.ICard {
 	return h.battleCards
 }
 
+// 获得战场上的嘲讽卡牌
+func (h *Hero) GetBattleCardsTraitsTauntCardIds() []int {
+	tsid := make([]int, 0)
+
+	// 有嘲讽特质，没有潜行特质
+	for _, v := range h.GetBattleCards() {
+		if v.IsHaveTraits(define.CardTraitsTaunt) && !v.IsHaveTraits(define.CardTraitsSneak) {
+			tsid = append(tsid, v.GetId())
+		}
+	}
+	return tsid
+}
+
 // 添加到全部卡牌
 func (h *Hero) AppendToAllCards(c iface.ICard) {
 	for _, v := range h.allCards {
@@ -258,7 +271,7 @@ func (h *Hero) GetHp() int {
 }
 
 // 消耗血量
-func (h *Hero) CostHp(num int) {
+func (h *Hero) CostHp(num int) int {
 
 	if h.shield >= num {
 		h.shield -= num
@@ -271,6 +284,8 @@ func (h *Hero) CostHp(num int) {
 	if h.hp <= 0 {
 		h.Die()
 	}
+
+	return num
 }
 
 // 获得最大血量
@@ -397,6 +412,9 @@ func (h *Hero) MoveToBattle(c iface.ICard, pidx int) {
 	// 添加到战场
 	h.battleCards = help.AddCardToCardsByIdx(h.GetBattleCards(), pidx, c)
 	c.SetCardInCardsPos(define.InCardsTypeBattle)
+
+	// 触发效果
+	c.OnPutToBattle(pidx)
 }
 
 // 移出战场
@@ -585,7 +603,8 @@ func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 
 	dmg := c.GetDamage()
 
-	if ec != nil { // 如果对手是卡牌
+	var trueCostHp int // 实际伤血
+	if ec != nil {     // 如果对手是卡牌
 
 		dmg2 := ec.GetDamage()
 
@@ -593,7 +612,7 @@ func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 		push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
 		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+" 对"+push.GetCardLogString(c)+"反击"+strconv.Itoa(dmg2)+"点伤害")
 
-		ec.CostHp(dmg)
+		trueCostHp = ec.CostHp(dmg)
 		c.CostHp(dmg2)
 
 	} else if eh != nil { // 如果对手是英雄
@@ -601,8 +620,10 @@ func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 		// logs
 		push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetHeroLogString(eh)+"造成了"+strconv.Itoa(dmg)+"伤害")
 
-		eh.CostHp(dmg)
+		trueCostHp = eh.CostHp(dmg)
 	}
+
+	h.TrickAfterAttackEvent(c, ec, eh, trueCostHp)
 
 	return nil
 }
@@ -611,7 +632,8 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 
 	dmg := h.GetDamage()
 
-	if ec != nil { // 如果对手是卡牌
+	var trueCostHp int // 实际伤血
+	if ec != nil {     // 如果对手是卡牌
 
 		dmg2 := ec.GetDamage()
 
@@ -619,7 +641,7 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
 		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+"对"+push.GetHeroLogString(h)+"反击"+strconv.Itoa(dmg2)+"点伤害")
 
-		ec.CostHp(dmg)
+		trueCostHp = ec.CostHp(dmg)
 		h.CostHp(dmg2)
 
 	} else if eh != nil { // 如果对手是英雄
@@ -627,7 +649,12 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 		// logs
 		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetHeroLogString(eh)+"造成了"+strconv.Itoa(dmg)+"伤害")
 
-		eh.CostHp(dmg)
+		trueCostHp = eh.CostHp(dmg)
+	}
+
+	if h.GetWeapon() != nil {
+		c := h.GetWeapon()
+		h.TrickAfterAttackEvent(c, ec, eh, trueCostHp)
 	}
 
 	if h.GetWeapon() != nil {
@@ -764,6 +791,31 @@ func (h *Hero) TrickGetCardEvent(c iface.ICard) {
 // 触发销毁事件
 func (h *Hero) TrickDevastateCardEvent(c iface.ICard) {
 	c.OnDevastate()
+}
+
+// 触发攻击后事件
+func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCostHp int) {
+
+	// 攻击者事件
+	if trueCostHp > 0 {
+		if ec != nil {
+			if ec.GetHp() == 0 && trueCostHp > 0 {
+				c.OnHonorAnnihilate(ec)
+			} else if ec.GetHp() < 0 {
+				c.OnOverflowAnnihilate(ec)
+			} else if ec.GetHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) {
+				push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
+				ec.GetOwner().DieCard(ec)
+			}
+		} else if eh != nil {
+			if ec.GetHp() == 0 {
+				c.OnHonorAnnihilate(ec)
+			} else if ec.GetHp() < 0 {
+				c.OnOverflowAnnihilate(ec)
+			}
+		}
+	}
+
 }
 
 // 触发死亡事件

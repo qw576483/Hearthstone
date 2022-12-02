@@ -103,14 +103,8 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 	}
 
 	// 检查是否有嘲讽
-	ebcs := h.GetEnemy().GetBattleCards()
-	var tt []int = make([]int, 0)
-	for _, v := range ebcs {
-		if v.IsHaveTraits(define.CardTraitsTaunt) {
-			tt = append(tt, v.GetId())
-		}
-	}
-	if len(tt) > 0 && (ecid == 0 || !help.InArray(ecid, tt)) {
+	tids := h.GetEnemy().GetBattleCardsTraitsTauntCardIds()
+	if len(tids) > 0 && (ecid == 0 || !help.InArray(ecid, tids)) {
 		return errors.New("必须先攻击拥有嘲讽的卡牌")
 	}
 
@@ -132,6 +126,10 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 		ec = h.GetEnemy().GetBattleCardById(ecid)
 		if ec == nil {
 			return errors.New("没有找到此卡")
+		}
+
+		if ec.IsHaveTraits(define.CardTraitsSneak) {
+			return errors.New("目标在潜行")
 		}
 	}
 
@@ -173,14 +171,8 @@ func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 	}
 
 	// 检查是否有嘲讽
-	ebcs := h.GetEnemy().GetBattleCards()
-	var tt []int = make([]int, 0)
-	for _, v := range ebcs {
-		if v.IsHaveTraits(define.CardTraitsTaunt) {
-			tt = append(tt, v.GetId())
-		}
-	}
-	if len(tt) > 0 && (ecid == 0 || !help.InArray(ecid, tt)) {
+	tids := h.GetEnemy().GetBattleCardsTraitsTauntCardIds()
+	if len(tids) > 0 && (ecid == 0 || !help.InArray(ecid, tids)) {
 		return errors.New("必须先攻击拥有嘲讽的卡牌")
 	}
 
@@ -189,6 +181,10 @@ func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 		ec = h.GetEnemy().GetBattleCardById(ecid)
 		if ec == nil {
 			return errors.New("没有找到此卡")
+		}
+
+		if ec.IsHaveTraits(define.CardTraitsSneak) {
+			return errors.New("目标在潜行")
 		}
 	}
 

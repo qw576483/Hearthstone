@@ -35,6 +35,8 @@ const (
 	CardTraitsUnableToAttack                   // 无法攻击
 	CardTraitsTaunt                            // 嘲讽
 	CardTraitsHolyShield                       // 圣盾
+	CardTraitsSneak                            // 潜行
+	CardTraitsHighlyToxic                      // 剧毒
 )
 
 // 卡牌种族
