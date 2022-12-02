@@ -60,8 +60,8 @@ type ICard interface {
 	OnDevastate()                     // 卡牌销毁时
 
 	// 注册事件 - 实现前需要注册
-	OnNRRoundBegin()    // 回合开始时
-	OnNRRoundEnd()      // 回合结束时
-	OnNROtherDie(ICard) // 其他卡牌死亡时
-
+	OnNRRoundBegin()       // 回合开始时
+	OnNRRoundEnd()         // 回合结束时
+	OnNRPutToBattle(ICard) // 其他卡牌步入战场时
+	OnNROtherDie(ICard)    // 其他卡牌死亡时
 }

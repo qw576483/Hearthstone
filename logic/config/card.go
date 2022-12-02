@@ -234,4 +234,15 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	16: &CardConfig{
+		Id:       16,
+		Name:     "飞刀杂耍者",
+		Desc:     "在你召唤一个随从后，随机对一个敌人造成1点伤害。",
+		Mona:     2,
+		Damage:   3,
+		Hp:       2,
+		Ctype:    define.CardTypeEntourage,
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }

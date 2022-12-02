@@ -62,6 +62,7 @@ type IHero interface {
 	SetFatigue(int)                                    // 设置疲劳伤害
 	GetFatigue() int                                   // 获得当前疲劳伤害
 	Release(ICard, int, int, ICard, IHero, bool) error // 出牌
+	OnlyReleaseWeapon(ICard)                           // 仅仅出张武器卡
 	Attack(ICard, ICard, IHero) error                  // 攻击
 	HAttack(ICard, IHero) error                        // 英雄攻击
 	Die()                                              // 死亡
@@ -81,10 +82,12 @@ type IHero interface {
 	RoundEnd()   // 回合结束
 
 	TrickBattleBegin()                              // 触发战斗开始事件
+	TrickGetCardEvent(ICard)                        // 触发抽卡事件
 	TrickRelease(ICard, int, int, ICard, IHero)     // 触发战吼
 	TrickRoundBegin()                               // 触发回合开始事件
 	TrickRoundEnd()                                 // 触发回合结束事件
-	TrickGetCardEvent(ICard)                        // 触发抽卡事件
+	TrickPutToBattleEvent(ICard, int)               // 触发步入战场事件
+	TrickOutBattleEvent(ICard)                      // 触发离开战场事件
 	TrickDevastateCardEvent(ICard)                  // 触发销毁事件
 	TrickAfterAttackEvent(ICard, ICard, IHero, int) // 触发攻击后事件
 	TrickDieCardEvent(ICard, int)                   // 触发死亡事件

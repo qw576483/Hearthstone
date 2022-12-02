@@ -333,6 +333,7 @@ func (c *Card) OnOverflowAnnihilate(ec iface.ICard)                          {} 
 func (c *Card) OnDie(bidx int)                                               {} // 卡牌死亡时（死亡后触发销毁）
 func (c *Card) OnDevastate()                                                 {} // 卡牌销毁时
 
-func (c *Card) OnNRRoundBegin()             {} // 回合开始时
-func (c *Card) OnNRRoundEnd()               {} // 回合结束时
-func (c *Card) OnNROtherDie(oc iface.ICard) {} // 其他卡牌死亡时
+func (c *Card) OnNRRoundBegin()                {} // 回合开始时
+func (c *Card) OnNRRoundEnd()                  {} // 回合结束时
+func (c *Card) OnNRPutToBattle(oc iface.ICard) {} // 其他卡牌步入战场时
+func (c *Card) OnNROtherDie(oc iface.ICard)    {} // 其他卡牌死亡时

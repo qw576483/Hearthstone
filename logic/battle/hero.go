@@ -25,6 +25,7 @@ type Hero struct {
 	graveCards       []iface.ICard            // 坟场
 	battleCards      []iface.ICard            // 战场
 	allCards         []iface.ICard            // 全部卡牌
+	secretCards      []iface.ICard            // 奥秘
 	events           map[string][]iface.ICard // 事件
 	damage           int                      // 攻击力
 	attackTimes      int                      // 攻击次数
@@ -64,6 +65,7 @@ func (h *Hero) Init(cards []iface.ICard, b iface.IBattle) {
 	h.libCards = cards
 	h.graveCards = make([]iface.ICard, 0)
 	h.allCards = make([]iface.ICard, 0)
+	h.secretCards = make([]iface.ICard, 0)
 	h.events = make(map[string][]iface.ICard, 0)
 	h.hp = h.config.Hp
 	h.hpMax = h.config.HpMax
@@ -414,7 +416,7 @@ func (h *Hero) MoveToBattle(c iface.ICard, pidx int) {
 	c.SetCardInCardsPos(define.InCardsTypeBattle)
 
 	// 触发效果
-	c.OnPutToBattle(pidx)
+	h.TrickPutToBattleEvent(c, pidx)
 }
 
 // 移出战场
@@ -430,7 +432,7 @@ func (h *Hero) MoveOutBattleOnlyBattleCards(c iface.ICard) int {
 	if idx != -1 {
 		_, h.battleCards = help.DeleteCardFromCardsByIdx(h.GetBattleCards(), idx)
 
-		c.OnOutBattle()
+		h.TrickOutBattleEvent(c)
 	}
 
 	return idx
@@ -579,13 +581,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 	if cType == define.CardTypeEntourage { // 随从
 		h.MoveToBattle(c, putidx)
 	} else if cType == define.CardTypeWeapon { // 武器
-		w := h.GetWeapon()
-		if w != nil {
-			h.DieCard(w)
-		}
-		h.SetWeapon(c)
-		h.MoveOutHandOnlyHandCards(c)
-		c.SetCardInCardsPos(define.InCardsTypeBody)
+		h.OnlyReleaseWeapon(c)
 	} else if cType == define.CardTypeSorcery {
 		h.MoveOutHandOnlyHandCards(c)
 	}
@@ -599,6 +595,17 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 	}
 
 	return nil
+}
+
+// 仅仅是装备武器
+func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
+	w := h.GetWeapon()
+	if w != nil {
+		h.DieCard(w)
+	}
+	h.SetWeapon(c)
+	h.MoveOutHandOnlyHandCards(c)
+	c.SetCardInCardsPos(define.InCardsTypeBody)
 }
 
 // 进攻 ， 这里不减次数， 放在battle那边
@@ -849,4 +856,17 @@ func (h *Hero) TrickDieCardEvent(c iface.ICard, bidx int) {
 	for _, v := range h.GetBothEventCards("OnNROtherDie") {
 		v.OnNROtherDie(c)
 	}
+}
+
+// 触发步入战场事件
+func (h *Hero) TrickPutToBattleEvent(c iface.ICard, bidx int) {
+	c.OnPutToBattle(bidx)
+	for _, v := range h.GetBothEventCards("OnNRPutToBattle") {
+		v.OnNRPutToBattle(c)
+	}
+}
+
+// 触发离开战场事件
+func (h *Hero) TrickOutBattleEvent(c iface.ICard) {
+	c.OnOutBattle()
 }

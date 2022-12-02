@@ -119,6 +119,10 @@ func (c *Card6) OnPutToBattle(pidx int) {
 	c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")
 }
 
+func (c *Card6) OnOutBattle() {
+	c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundBegin")
+}
+
 func (c *Card6) OnNRRoundBegin() {
 
 	// 在我的回合开始时
@@ -142,10 +146,6 @@ func (c *Card6) OnNRRoundBegin() {
 	}
 }
 
-func (c *Card6) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundBegin")
-}
-
 // 铸剑师
 type Card7 struct {
 	battle.Card
@@ -157,6 +157,10 @@ func (c *Card7) NewPoint() iface.ICard {
 
 func (c *Card7) OnPutToBattle(pidx int) {
 	c.GetOwner().AddCardToEvent(c, "OnNRRoundEnd")
+}
+
+func (c *Card7) OnOutBattle() {
+	c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundEnd")
 }
 
 // 在你的回合结束时，随机使另一个友方随从获得+1攻击力。
@@ -176,10 +180,6 @@ func (c *Card7) OnNRRoundEnd() {
 
 	tr.AddDamage(1)
 	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(tr)+"提升1点攻击力")
-}
-
-func (c *Card7) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundEnd")
 }
 
 // 螃蟹骑士
@@ -235,6 +235,10 @@ func (c *Card10) OnPutToBattle(pidx int) {
 	c.GetOwner().AddCardToEvent(c, "OnNROtherDie")
 }
 
+func (c *Card10) OnOutBattle() {
+	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
+}
+
 func (c *Card10) OnNROtherDie(tc iface.ICard) {
 
 	if c.GetCardInCardsPos() != define.InCardsTypeBattle ||
@@ -247,10 +251,6 @@ func (c *Card10) OnNROtherDie(tc iface.ICard) {
 
 	c.AddDamage(2)
 	c.AddHpMaxAndHp(1)
-}
-
-func (c *Card10) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
 }
 
 // 上古看守者
@@ -313,5 +313,43 @@ func (c *Card15) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 			push.PushAutoLog(h, push.GetCardLogString(c)+"的炸药桶对"+push.GetHeroLogString(rh)+"造成了1点伤害")
 			rh.CostHp(1)
 		}
+	}
+}
+
+// 疯狂投弹者
+type Card16 struct {
+	battle.Card
+}
+
+func (c *Card16) NewPoint() iface.ICard {
+	return &Card16{}
+}
+
+func (c *Card16) OnPutToBattle(pidx int) {
+	c.GetOwner().AddCardToEvent(c, "OnNRPutToBattle")
+}
+
+func (c *Card16) OnOutBattle() {
+	c.GetOwner().RemoveCardFromEvent(c, "OnNRPutToBattle")
+}
+
+func (c *Card16) OnNRPutToBattle(oc iface.ICard) {
+	h := c.GetOwner()
+	if c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return
+	}
+
+	rc, rh := h.RandBothBattleCardOrHero()
+
+	if rc != nil {
+		push.PushAutoLog(h, push.GetCardLogString(c)+"的飞刀对"+push.GetCardLogString(rc)+"造成了1点伤害")
+		rc.CostHp(1)
+	}
+
+	if rh != nil {
+		push.PushAutoLog(h, push.GetCardLogString(c)+"的飞刀对"+push.GetHeroLogString(rh)+"造成了1点伤害")
+		rh.CostHp(1)
 	}
 }
