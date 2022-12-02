@@ -17,11 +17,13 @@ type ICard interface {
 	GetRace() []define.CardRace            // 获得卡牌种族
 	GetTraits() []define.CardTraits        // 获得卡牌特质（冲锋，突袭，风怒...）
 	IsHaveTraits(define.CardTraits) bool   // 是否拥有卡牌特质
+	AddTraits(define.CardTraits)           // 添加特质
+	RemoveTraits(define.CardTraits)        // 删除特质
 	TreatmentHp(int)                       // 治疗血量
 	AddHp(int)                             // 加血
 	AddHpMaxAndHp(int)                     // 加血上限和血
 	SetHpMaxAndHp(int)                     // 设置血上限和血
-	CostHp(int)                            // 扣除血量
+	CostHp(int) int                        // 扣除血量(返回值为实际消耗)
 	SetHp(int)                             // 设置血量
 	GetHp() int                            // 获得卡牌血量
 	SetHpMax(int)                          // 设置血上限

@@ -270,3 +270,12 @@ type Card12 struct {
 func (c *Card12) NewPoint() iface.ICard {
 	return &Card12{}
 }
+
+// 银色侍从
+type Card13 struct {
+	battle.Card
+}
+
+func (c *Card13) NewPoint() iface.ICard {
+	return &Card13{}
+}

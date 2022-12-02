@@ -34,6 +34,7 @@ const (
 	CardTraitsCarom                            // 连击
 	CardTraitsUnableToAttack                   // 无法攻击
 	CardTraitsTaunt                            // 嘲讽
+	CardTraitsHolyShield                       // 圣盾
 )
 
 // 卡牌种族

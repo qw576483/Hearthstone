@@ -78,14 +78,36 @@ func (c *Card) GetRace() []define.CardRace {
 	return c.race
 }
 
-// 获得特性
+// 获得特质
 func (c *Card) GetTraits() []define.CardTraits {
 	return c.traits
 }
 
-// 是否拥有卡牌特性
+// 是否拥有卡牌特质
 func (c *Card) IsHaveTraits(ct define.CardTraits) bool {
 	return help.InArray(ct, c.GetTraits())
+}
+
+// 添加特质
+func (c *Card) AddTraits(ct define.CardTraits) {
+
+	for _, v := range c.traits {
+		if v == ct {
+			return
+		}
+	}
+
+	c.traits = append(c.traits, ct)
+}
+
+// 删除特质
+func (c *Card) RemoveTraits(ct define.CardTraits) {
+	for idx, v := range c.traits {
+		if v == ct {
+			c.traits = append(c.traits[:idx], c.traits[idx+1:]...)
+			return
+		}
+	}
 }
 
 // 治疗血量
@@ -114,7 +136,15 @@ func (c *Card) SetHpMaxAndHp(set int) {
 }
 
 // 扣除血量
-func (c *Card) CostHp(num int) {
+func (c *Card) CostHp(num int) int {
+
+	// 是否拥有圣盾
+	if c.IsHaveTraits(define.CardTraitsHolyShield) {
+		num = 0
+		c.RemoveTraits(define.CardTraitsHolyShield)
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"圣盾消失")
+	}
+
 	c.hp -= num
 	if c.hp <= 0 {
 
@@ -131,6 +161,8 @@ func (c *Card) CostHp(num int) {
 
 		h.DieCard(tc)
 	}
+
+	return num
 }
 
 // 设置血量

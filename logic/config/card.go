@@ -199,4 +199,15 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	13: &CardConfig{
+		Id:       13,
+		Name:     "银色侍从",
+		Mona:     1,
+		Damage:   1,
+		Hp:       1,
+		Ctype:    define.CardTypeEntourage,
+		Traits:   MakeCardTraits(define.CardTraitsHolyShield),
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }
