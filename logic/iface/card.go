@@ -29,6 +29,7 @@ type ICard interface {
 	SetHpMax(int)                          // 设置血上限
 	GetHpMax() int                         // 获得卡牌最大血量
 	GetDamage() int                        // 获得卡牌攻击力
+	GetHaveEffectDamage(ICard) int         // 计算有效果加成的卡牌攻击力
 	AddDamage(int)                         // 添加攻击力
 	SetDamage(int)                         // 设置攻击
 	GetMona() int                          // 获得法力值

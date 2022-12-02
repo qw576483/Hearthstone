@@ -190,6 +190,11 @@ func (c *Card) GetDamage() int {
 	return c.damage
 }
 
+// 获得有效果加成的卡牌攻击力
+func (c *Card) GetHaveEffectDamage(tc iface.ICard) int {
+	return tc.GetDamage()
+}
+
 // 添加攻击力
 func (c *Card) AddDamage(add int) {
 	c.damage += add
