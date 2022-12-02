@@ -569,6 +569,11 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 		putidx = len(h.GetBattleCards())
 	}
 
+	// 战吼优先触发
+	if trickRelease {
+		h.TrickRelease(c, choiceId, putidx, rc, rh)
+	}
+
 	if cType == define.CardTypeEntourage { // 随从
 		h.MoveToBattle(c, putidx)
 	} else if cType == define.CardTypeWeapon { // 武器
@@ -581,10 +586,6 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 		c.SetCardInCardsPos(define.InCardsTypeBody)
 	} else if cType == define.CardTypeSorcery {
 		h.MoveOutHandOnlyHandCards(c)
-	}
-
-	if trickRelease {
-		h.TrickRelease(c, choiceId, putidx, rc, rh)
 	}
 
 	c.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
@@ -682,6 +683,27 @@ func (h *Hero) RandBattleCardOrHero() (iface.ICard, iface.IHero) {
 	r := h.GetBattle().GetRand()
 	bs := h.GetBattleCards()
 	rn := r.Intn(len(bs) + 1)
+
+	if rn >= len(bs) {
+		return nil, h
+	}
+
+	return bs[rn], nil
+}
+
+// 随机战场上的卡牌或者英雄
+func (h *Hero) RandBothBattleCardOrHero() (iface.ICard, iface.IHero) {
+
+	r := h.GetBattle().GetRand()
+
+	bs := h.GetBattleCards()
+	bs = append(bs, h.GetEnemy().GetBattleCards()...)
+
+	rn := r.Intn(len(bs) + 2)
+
+	if rn > len(bs) {
+		return nil, h.GetEnemy()
+	}
 
 	if rn >= len(bs) {
 		return nil, h

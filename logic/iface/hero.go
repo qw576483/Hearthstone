@@ -67,6 +67,7 @@ type IHero interface {
 	Die()                                              // 死亡
 	Push(interface{})                                  // 推送数据
 	RandBattleCardOrHero() (ICard, IHero)              // 随机战场上的卡牌或者英雄
+	RandBothBattleCardOrHero() (ICard, IHero)          // 随机战场上的卡牌或者英雄
 	RandExcludeCard([]ICard, ICard) ICard              // 随机卡牌，排除一个卡牌
 	GetReleaseCardTimes() int                          // 获得出牌次数
 	SetReleaseCardTimes(int)                           // 设置出牌次数

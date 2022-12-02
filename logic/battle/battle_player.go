@@ -73,10 +73,12 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 		rc = h.GetEnemy().GetBattleCardById(rcid)
 	}
 
-	h.Release(card, choiceId, putidx, rc, rh, true)
-
 	// logs
 	push.PushAutoLog(h, "打出了"+push.GetCardLogString(card))
+
+	h.Release(card, choiceId, putidx, rc, rh, true)
+
+	// info
 	push.PushInfoMsg(b)
 
 	return nil

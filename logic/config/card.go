@@ -222,4 +222,16 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Vocation: MakeCardVocation(define.VocationRobbers),
 		CanCarry: true,
 	},
+	15: &CardConfig{
+		Id:       15,
+		Name:     "疯狂投弹者",
+		Desc:     "战吼：造成3点伤害，随机分配到所有其他角色身上。",
+		Mona:     2,
+		Damage:   3,
+		Hp:       2,
+		Ctype:    define.CardTypeEntourage,
+		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }

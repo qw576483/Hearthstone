@@ -288,3 +288,30 @@ type Card14 struct {
 func (c *Card14) NewPoint() iface.ICard {
 	return &Card14{}
 }
+
+// 疯狂投弹者
+type Card15 struct {
+	battle.Card
+}
+
+func (c *Card15) NewPoint() iface.ICard {
+	return &Card15{}
+}
+
+func (c *Card15) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	for i := 1; i <= 3; i++ {
+		rc, rh := h.RandBothBattleCardOrHero()
+
+		if rc != nil {
+			push.PushAutoLog(h, push.GetCardLogString(c)+"的炸药桶对"+push.GetCardLogString(rc)+"造成了1点伤害")
+			rc.CostHp(1)
+		}
+
+		if rh != nil {
+			push.PushAutoLog(h, push.GetCardLogString(c)+"的炸药桶对"+push.GetHeroLogString(rh)+"造成了1点伤害")
+			rh.CostHp(1)
+		}
+	}
+}
