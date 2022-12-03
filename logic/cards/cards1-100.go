@@ -5,6 +5,7 @@ import (
 	"hs/logic/define"
 	"hs/logic/iface"
 	"hs/logic/push"
+	"math"
 	"strconv"
 )
 
@@ -45,7 +46,7 @@ func (c *Card2) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 		return
 	}
 	th := rc.GetHp()
-	td := rc.GetDamage()
+	td := rc.GetHaveEffectDamage(rc)
 
 	rc.SetDamage(th)
 	rc.SetHpMaxAndHp(td)
@@ -352,4 +353,41 @@ func (c *Card16) OnNRPutToBattle(oc iface.ICard) {
 		push.PushAutoLog(h, push.GetCardLogString(c)+"的飞刀对"+push.GetHeroLogString(rh)+"造成了1点伤害")
 		rh.CostHp(1)
 	}
+}
+
+// 火舌图腾
+type Card17 struct {
+	battle.Card
+}
+
+func (c *Card17) NewPoint() iface.ICard {
+	return &Card17{}
+}
+
+func (c *Card17) OnPutToBattle(pidx int) {
+	c.GetOwner().AddCardToEvent(c, "OnNROtherGetDamage")
+}
+
+func (c *Card17) OnOutBattle() {
+	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherGetDamage")
+}
+
+func (c *Card17) OnNROtherGetDamage(oc iface.ICard) int {
+
+	h := c.GetOwner()
+	if oc.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return 0
+	}
+
+	cIdx := h.GetCardIdx(c, h.GetBattleCards())
+	ocIdx := h.GetCardIdx(oc, h.GetBattleCards())
+
+	if cIdx != -1 && ocIdx != -1 && (math.Abs(float64(cIdx)-float64(ocIdx)) == 1) {
+		return 2
+	}
+
+	return 0
 }

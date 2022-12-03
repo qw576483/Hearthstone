@@ -16,7 +16,7 @@
             <br />
             英雄：<input type="text" id="JoinRoom_HeroId" value="0">
             <br />
-            牌组：<textarea id="JoinRoom_CardIds" cols="100" rows="1">1,1,2,2,3,3,4,4,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16</textarea>
+            牌组：<textarea id="JoinRoom_CardIds" cols="100" rows="1">1,1,17,17</textarea>
             <!-- 1,1,2,2,3,3,4,4,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15 -->
             <!-- 1,10,1,10 -->
             <!-- 6,6,7,7 -->
@@ -230,10 +230,10 @@ ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌
     }
 
     CTraits = ["战吼" , "亡语", "冲锋", "突袭", "风怒", "连击","无法攻击", "嘲讽","圣盾" ,"潜行" ,"剧毒"]
-    CRace = ["野兽" , "恶魔" , "鱼人" , "机械"]
+    CRace = ["野兽" , "恶魔" , "鱼人" , "机械" , "图腾"]
     CType = ["随从" , "武器" , "法术" , "奥秘"]
     CSeries = ["基础" , "经典" , "暗月马戏团"]
-    HVocation = ["盗贼" , "术士" , "猎人"]
+    HVocation = ["盗贼" , "术士" , "猎人" , "萨满"]
     function buildCardsConfig(cardsConfig){
         str = "<tr><td>卡牌id</td><td>名称</td><td>描述</td><td>费用</td><td>攻击</td><td>血量</td><td>特质</td><td>种族</td><td>类型</td><td>系列</td><td>职业</td><td>可收藏</td></tr>";
         

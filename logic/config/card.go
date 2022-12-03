@@ -245,4 +245,17 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	17: &CardConfig{
+		Id:       17,
+		Name:     "火舌图腾",
+		Desc:     "相邻的随从获得+2攻击力。",
+		Mona:     2,
+		Damage:   0,
+		Hp:       3,
+		Ctype:    define.CardTypeEntourage,
+		Race:     MakeCardRace(define.CardRaceTotems),
+		Series:   define.CardSeriseClassic,
+		Vocation: MakeCardVocation(define.VocationShaman),
+		CanCarry: true,
+	},
 }

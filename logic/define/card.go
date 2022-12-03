@@ -47,6 +47,7 @@ const (
 	CardRaceDevil                     // 恶魔
 	CardRaceFish                      // 鱼人
 	CardRaceMechanics                 // 机械
+	CardRaceTotems                    // 图腾
 )
 
 // 卡牌系列

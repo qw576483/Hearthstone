@@ -53,4 +53,15 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		Shield:      0,
 		HeroSkillId: 1,
 	},
+	3: &HeroConfig{
+		Id:          2,
+		Vocation:    define.VocationShaman,
+		Name:        "萨尔",
+		Hp:          30,
+		HpMax:       30,
+		Mona:        0,
+		MonaMax:     10,
+		Shield:      0,
+		HeroSkillId: 1,
+	},
 }

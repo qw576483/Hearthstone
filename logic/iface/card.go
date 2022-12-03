@@ -59,10 +59,12 @@ type ICard interface {
 	OnOverflowAnnihilate(ICard)       // 超杀
 	OnDie(int)                        // 卡牌死亡时
 	OnDevastate()                     // 卡牌销毁时
+	OnGetDamage() int                 // 获得攻击时 , 返回攻击加成
 
 	// 注册事件 - 实现前需要注册
-	OnNRRoundBegin()       // 回合开始时
-	OnNRRoundEnd()         // 回合结束时
-	OnNRPutToBattle(ICard) // 其他卡牌步入战场时
-	OnNROtherDie(ICard)    // 其他卡牌死亡时
+	OnNRRoundBegin()              // 回合开始时
+	OnNRRoundEnd()                // 回合结束时
+	OnNRPutToBattle(ICard)        // 其他卡牌步入战场时
+	OnNROtherDie(ICard)           // 其他卡牌死亡时
+	OnNROtherGetDamage(ICard) int // 其他卡牌获得攻击时 ， 返回攻击加成
 }

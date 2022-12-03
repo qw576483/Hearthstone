@@ -192,7 +192,14 @@ func (c *Card) GetDamage() int {
 
 // 获得有效果加成的卡牌攻击力
 func (c *Card) GetHaveEffectDamage(tc iface.ICard) int {
-	return tc.GetDamage()
+	d := c.GetDamage()
+	d += tc.OnGetDamage()
+
+	for _, v := range c.owner.GetBothEventCards("OnNROtherGetDamage") {
+		d += v.OnNROtherGetDamage(tc)
+	}
+
+	return d
 }
 
 // 添加攻击力
@@ -327,18 +334,20 @@ func (c *Card) GetReleaseRound() int {
 }
 
 // 子类方法，如果在(c *Card)中调用，需要反射调用，可以查看OnInit()
-func (c *Card) OnInit()                                                      {} // 初始化时
-func (c *Card) OnBattleBegin()                                               {} // 战斗开始
-func (c *Card) OnGet()                                                       {} // 获得时
-func (c *Card) OnPutToBattle(pix int)                                        {} // 放置到战场时
-func (c *Card) OnOutBattle()                                                 {} // 离开战场时
-func (c *Card) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {} // 释放时
-func (c *Card) OnHonorAnnihilate(ec iface.ICard)                             {} // 荣誉消灭
-func (c *Card) OnOverflowAnnihilate(ec iface.ICard)                          {} // 超杀
-func (c *Card) OnDie(bidx int)                                               {} // 卡牌死亡时（死亡后触发销毁）
-func (c *Card) OnDevastate()                                                 {} // 卡牌销毁时
+func (c *Card) OnInit()                                                      {}           // 初始化时
+func (c *Card) OnBattleBegin()                                               {}           // 战斗开始
+func (c *Card) OnGet()                                                       {}           // 获得时
+func (c *Card) OnPutToBattle(pix int)                                        {}           // 放置到战场时
+func (c *Card) OnOutBattle()                                                 {}           // 离开战场时
+func (c *Card) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {}           // 释放时
+func (c *Card) OnHonorAnnihilate(ec iface.ICard)                             {}           // 荣誉消灭
+func (c *Card) OnOverflowAnnihilate(ec iface.ICard)                          {}           // 超杀
+func (c *Card) OnDie(bidx int)                                               {}           // 卡牌死亡时（死亡后触发销毁）
+func (c *Card) OnDevastate()                                                 {}           // 卡牌销毁时
+func (c *Card) OnGetDamage() int                                             { return 0 } // 获得攻击时
 
-func (c *Card) OnNRRoundBegin()                {} // 回合开始时
-func (c *Card) OnNRRoundEnd()                  {} // 回合结束时
-func (c *Card) OnNRPutToBattle(oc iface.ICard) {} // 其他卡牌步入战场时
-func (c *Card) OnNROtherDie(oc iface.ICard)    {} // 其他卡牌死亡时
+func (c *Card) OnNRRoundBegin()                       {}           // 回合开始时
+func (c *Card) OnNRRoundEnd()                         {}           // 回合结束时
+func (c *Card) OnNRPutToBattle(oc iface.ICard)        {}           // 其他卡牌步入战场时
+func (c *Card) OnNROtherDie(oc iface.ICard)           {}           // 其他卡牌死亡时
+func (c *Card) OnNROtherGetDamage(oc iface.ICard) int { return 0 } // 其他卡牌获得攻击时

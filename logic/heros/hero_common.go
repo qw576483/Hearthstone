@@ -31,3 +31,12 @@ type Hero2 struct {
 func (h *Hero2) NewPoint() iface.IHero {
 	return &Hero2{}
 }
+
+// 萨
+type Hero3 struct {
+	battle.Hero
+}
+
+func (h *Hero3) NewPoint() iface.IHero {
+	return &Hero3{}
+}

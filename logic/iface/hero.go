@@ -30,6 +30,7 @@ type IHero interface {
 	GetBattleCardById(int) ICard                       // 获得战场上的卡牌
 	GetBattleCardsByIds([]int) []ICard                 // 获得战场上的卡牌
 	GetBattleCardsTraitsTauntCardIds() []int           // 获得战场上有嘲讽的卡牌ids
+	GetCardIdx(ICard, []ICard) int                     // 获得卡牌的位置
 	AppendToAllCards(ICard)                            // 添加到全部卡牌
 	GetAllCards() []ICard                              // 获得全部卡牌
 	GetBothAllCards() []ICard                          // 获得全部卡牌

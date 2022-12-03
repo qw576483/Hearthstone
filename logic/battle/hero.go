@@ -183,6 +183,18 @@ func (h *Hero) GetBattleCardsTraitsTauntCardIds() []int {
 	return tsid
 }
 
+// 获得卡牌的位置
+func (h *Hero) GetCardIdx(c iface.ICard, cs []iface.ICard) int {
+
+	for k, v := range cs {
+		if v.GetId() == c.GetId() {
+			return k
+		}
+	}
+
+	return -1
+}
+
 // 添加到全部卡牌
 func (h *Hero) AppendToAllCards(c iface.ICard) {
 	for _, v := range h.allCards {
@@ -242,7 +254,7 @@ func (h *Hero) GetDamage() int {
 		return h.damage
 	}
 
-	return h.damage + w.GetDamage()
+	return h.damage + w.GetHaveEffectDamage(w)
 }
 
 // 设置攻击次数
@@ -611,12 +623,12 @@ func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
 // 进攻 ， 这里不减次数， 放在battle那边
 func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 
-	dmg := c.GetDamage()
+	dmg := c.GetHaveEffectDamage(c)
 
 	var trueCostHp int // 实际伤血
 	if ec != nil {     // 如果对手是卡牌
 
-		dmg2 := ec.GetDamage()
+		dmg2 := ec.GetHaveEffectDamage(ec)
 
 		// logs
 		push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
@@ -645,7 +657,7 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 	var trueCostHp int // 实际伤血
 	if ec != nil {     // 如果对手是卡牌
 
-		dmg2 := ec.GetDamage()
+		dmg2 := ec.GetHaveEffectDamage(ec)
 
 		// logs
 		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")

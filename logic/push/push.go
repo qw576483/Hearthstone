@@ -108,7 +108,7 @@ func BuildWeaponMsg(w iface.ICard) *CardMsg {
 	return &CardMsg{
 		Id:     w.GetId(),
 		Name:   w.GetConfig().Name,
-		Damage: w.GetDamage(),
+		Damage: w.GetHaveEffectDamage(w),
 		Hp:     w.GetHp(),
 	}
 }
@@ -120,7 +120,7 @@ func BuildCardsMsg(cs []iface.ICard) []*CardMsg {
 			Id:     v.GetId(),
 			Name:   v.GetConfig().Name,
 			Mona:   v.GetMona(),
-			Damage: v.GetDamage(),
+			Damage: v.GetHaveEffectDamage(v),
 			Hp:     v.GetHp(),
 		})
 	}
@@ -234,7 +234,7 @@ func PushAutoLog(h iface.IHero, l string) {
 }
 
 func GetCardLogString(c iface.ICard) string {
-	return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")" + strconv.Itoa(c.GetMona()) + "-" + strconv.Itoa(c.GetDamage()) + "-" + strconv.Itoa(c.GetHp())
+	return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")" + strconv.Itoa(c.GetMona()) + "-" + strconv.Itoa(c.GetHaveEffectDamage(c)) + "-" + strconv.Itoa(c.GetHp())
 }
 
 func GetHeroLogString(h iface.IHero) string {
