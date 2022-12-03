@@ -33,6 +33,7 @@ type ICard interface {
 	AddDamage(int)                         // 添加攻击力
 	SetDamage(int)                         // 设置攻击
 	GetMona() int                          // 获得法力值
+	GetHaveEffectMona(ICard) int           // 计算有效果加成的卡牌费用
 	SetCardInCardsPos(define.InCardsType)  // 设置此卡的位置
 	GetCardInCardsPos() define.InCardsType // 获得此卡的位置
 	GetHandPos() (int, error)              // 获得此卡在手牌中的位置
@@ -59,12 +60,15 @@ type ICard interface {
 	OnOverflowAnnihilate(ICard)       // 超杀
 	OnDie(int)                        // 卡牌死亡时
 	OnDevastate()                     // 卡牌销毁时
-	OnGetDamage() int                 // 获得攻击时 , 返回攻击加成
+	OnGetMona() int                   // 获取自己的费用时，返回费用加成
+	OnGetDamage() int                 // 获取自己的攻击力时 , 返回攻击加成
 
 	// 注册事件 - 实现前需要注册
 	OnNRRoundBegin()              // 回合开始时
 	OnNRRoundEnd()                // 回合结束时
 	OnNRPutToBattle(ICard)        // 其他卡牌步入战场时
 	OnNROtherDie(ICard)           // 其他卡牌死亡时
-	OnNROtherGetDamage(ICard) int // 其他卡牌获得攻击时 ， 返回攻击加成
+	OnNROtherGetMona(ICard) int   // 其他卡牌获取自己的费用时， 返回费用加成
+	OnNROtherGetDamage(ICard) int // 其他卡牌获取自己的攻击力时 ， 返回攻击加成
+
 }

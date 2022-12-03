@@ -2,7 +2,6 @@ package battle
 
 import (
 	"errors"
-	"fmt"
 	"hs/logic/define"
 	"hs/logic/help"
 	"hs/logic/iface"
@@ -57,10 +56,10 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 	}
 
 	// 费用
-	if card.GetMona() > h.GetMona() {
+	if card.GetHaveEffectMona(card) > h.GetMona() {
 		return errors.New("法力不足")
 	}
-	h.CostMona(card.GetMona())
+	h.CostMona(card.GetHaveEffectMona(card))
 
 	rh := b.GetHeroByIncrId(rhid)
 	if rhid != 0 && rh == nil {
@@ -166,7 +165,7 @@ func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 		return errors.New("最大攻击次数了")
 	}
 
-	fmt.Println(ats, mats)
+	// fmt.Println(ats, mats)
 
 	if h.GetDamage() <= 0 {
 		return errors.New("无伤害，无法攻击")

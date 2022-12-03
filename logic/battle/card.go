@@ -190,13 +190,17 @@ func (c *Card) GetDamage() int {
 	return c.damage
 }
 
-// 获得有效果加成的卡牌攻击力
+// 计算有效果加成的卡牌攻击力
 func (c *Card) GetHaveEffectDamage(tc iface.ICard) int {
 	d := c.GetDamage()
 	d += tc.OnGetDamage()
 
 	for _, v := range c.owner.GetBothEventCards("OnNROtherGetDamage") {
 		d += v.OnNROtherGetDamage(tc)
+	}
+
+	if d < 0 {
+		d = 0
 	}
 
 	return d
@@ -212,9 +216,25 @@ func (c *Card) SetDamage(d int) {
 	c.damage = d
 }
 
-// 获得法力值
+// 获得费用
 func (c *Card) GetMona() int {
 	return c.mona
+}
+
+// 计算有效果加成的卡牌费用
+func (c *Card) GetHaveEffectMona(tc iface.ICard) int {
+	d := c.GetMona()
+	d += tc.OnGetMona()
+
+	for _, v := range c.GetOwner().GetBothEventCards("OnNROtherGetMona") {
+		d += v.OnNROtherGetMona(tc)
+	}
+
+	if d < 0 {
+		d = 0
+	}
+
+	return d
 }
 
 // 设置此卡在卡牌组中的位置
@@ -344,10 +364,12 @@ func (c *Card) OnHonorAnnihilate(ec iface.ICard)                             {} 
 func (c *Card) OnOverflowAnnihilate(ec iface.ICard)                          {}           // 超杀
 func (c *Card) OnDie(bidx int)                                               {}           // 卡牌死亡时（死亡后触发销毁）
 func (c *Card) OnDevastate()                                                 {}           // 卡牌销毁时
-func (c *Card) OnGetDamage() int                                             { return 0 } // 获得攻击时
+func (c *Card) OnGetMona() int                                               { return 0 } // 获取自己的费用时，返回费用加成
+func (c *Card) OnGetDamage() int                                             { return 0 } // 获取自己的攻击力时 , 返回攻击加成
 
 func (c *Card) OnNRRoundBegin()                       {}           // 回合开始时
 func (c *Card) OnNRRoundEnd()                         {}           // 回合结束时
 func (c *Card) OnNRPutToBattle(oc iface.ICard)        {}           // 其他卡牌步入战场时
 func (c *Card) OnNROtherDie(oc iface.ICard)           {}           // 其他卡牌死亡时
-func (c *Card) OnNROtherGetDamage(oc iface.ICard) int { return 0 } // 其他卡牌获得攻击时
+func (c *Card) OnNROtherGetMona(oc iface.ICard) int   { return 0 } // 其他卡牌获取自己的费用时， 返回费用加成
+func (c *Card) OnNROtherGetDamage(oc iface.ICard) int { return 0 } // 其他卡牌获取自己的攻击力时 ， 返回攻击加成

@@ -258,4 +258,15 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Vocation: MakeCardVocation(define.VocationShaman),
 		CanCarry: true,
 	},
+	18: &CardConfig{
+		Id:       18,
+		Name:     "小个子召唤师",
+		Desc:     "你每个回合使用的第一张随从牌的法力值消耗减少（1）点。",
+		Mona:     2,
+		Damage:   2,
+		Hp:       2,
+		Ctype:    define.CardTypeEntourage,
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }

@@ -134,6 +134,9 @@ func (h *Hero) GetPreCards() []iface.ICard {
 
 // 设置手牌卡牌
 func (h *Hero) SetHandCards(cs []iface.ICard) {
+	for _, v := range cs {
+		v.SetCardInCardsPos(define.InCardsTypeHand)
+	}
 	h.handCards = cs
 }
 

@@ -391,3 +391,38 @@ func (c *Card17) OnNROtherGetDamage(oc iface.ICard) int {
 
 	return 0
 }
+
+// 小个子召唤师
+type Card18 struct {
+	battle.Card
+}
+
+func (c *Card18) NewPoint() iface.ICard {
+	return &Card18{}
+}
+
+func (c *Card18) OnPutToBattle(pidx int) {
+	c.GetOwner().AddCardToEvent(c, "OnNROtherGetMona")
+}
+
+func (c *Card18) OnOutBattle() {
+	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherGetMona")
+}
+
+func (c *Card18) OnNROtherGetMona(oc iface.ICard) int {
+
+	h := c.GetOwner()
+	if oc.GetCardInCardsPos() != define.InCardsTypeHand ||
+		c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		oc.GetType() != define.CardTypeEntourage ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return 0
+	}
+
+	if h.GetReleaseCardTimes() == 0 {
+		return -1
+	}
+
+	return 0
+}
