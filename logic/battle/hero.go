@@ -845,18 +845,18 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCost
 	// 攻击者事件
 	if trueCostHp > 0 {
 		if ec != nil {
-			if ec.GetHp() == 0 && trueCostHp > 0 {
+			if ec.GetHaveEffectHp() == 0 && trueCostHp > 0 {
 				c.OnHonorAnnihilate(ec)
-			} else if ec.GetHp() < 0 {
+			} else if ec.GetHaveEffectHp() < 0 {
 				c.OnOverflowAnnihilate(ec)
-			} else if ec.GetHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) {
+			} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) {
 				push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
 				ec.GetOwner().DieCard(ec)
 			}
 		} else if eh != nil {
-			if ec.GetHp() == 0 {
+			if ec.GetHaveEffectHp() == 0 {
 				c.OnHonorAnnihilate(ec)
-			} else if ec.GetHp() < 0 {
+			} else if ec.GetHaveEffectHp() < 0 {
 				c.OnOverflowAnnihilate(ec)
 			}
 		}

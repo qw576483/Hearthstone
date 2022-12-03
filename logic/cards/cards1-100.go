@@ -45,8 +45,10 @@ func (c *Card2) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 	if rc == nil {
 		return
 	}
-	th := rc.GetHp()
+	th := rc.GetHaveEffectHp()
 	td := rc.GetHaveEffectDamage(rc)
+
+	// 可能需要个镇定的效果 ， 去除当前的时效buff
 
 	rc.SetDamage(th)
 	rc.SetHpMaxAndHp(td)
@@ -317,7 +319,7 @@ func (c *Card15) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 	}
 }
 
-// 疯狂投弹者
+// 飞刀杂耍者
 type Card16 struct {
 	battle.Card
 }
@@ -377,6 +379,7 @@ func (c *Card17) OnNROtherGetDamage(oc iface.ICard) int {
 	h := c.GetOwner()
 	if oc.GetCardInCardsPos() != define.InCardsTypeBattle ||
 		c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		oc.GetType() != define.CardTypeEntourage ||
 		h.GetId() != oc.GetOwner().GetId() ||
 		c.GetId() == oc.GetId() {
 		return 0
@@ -425,4 +428,58 @@ func (c *Card18) OnNROtherGetMona(oc iface.ICard) int {
 	}
 
 	return 0
+}
+
+// 暴风城勇士
+type Card19 struct {
+	battle.Card
+}
+
+func (c *Card19) NewPoint() iface.ICard {
+	return &Card19{}
+}
+
+func (c *Card19) OnPutToBattle(pidx int) {
+	c.GetOwner().AddCardToEvent(c, "OnNROtherGetHp")
+	c.GetOwner().AddCardToEvent(c, "OnNROtherGetDamage")
+}
+
+func (c *Card19) OnOutBattle() {
+	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherGetHp")
+	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherGetDamage")
+}
+
+func (c *Card19) OnNROtherGetDamage(oc iface.ICard) int {
+
+	h := c.GetOwner()
+	if oc.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		oc.GetType() != define.CardTypeEntourage ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return 0
+	}
+
+	return 1
+}
+
+func (c *Card19) OnNROtherGetHp(oc iface.ICard) int {
+	h := c.GetOwner()
+	if oc.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		oc.GetType() != define.CardTypeEntourage ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return 0
+	}
+	return 1
+}
+
+// 小精灵
+type Card20 struct {
+	battle.Card
+}
+
+func (c *Card20) NewPoint() iface.ICard {
+	return &Card20{}
 }

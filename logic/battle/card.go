@@ -17,6 +17,7 @@ type Card struct {
 	race         []define.CardRace   // 卡牌种族
 	traits       []define.CardTraits // 卡牌特质
 	hp           int                 // 卡牌血量
+	hpEffect     map[int]int         // 卡牌影响的血量
 	hpMax        int                 // 卡牌血上限
 	damage       int                 // 攻击力
 	mona         int                 // 能量
@@ -145,6 +146,22 @@ func (c *Card) CostHp(num int) int {
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"圣盾消失")
 	}
 
+	// 扣一下光环加成的血
+	if num > 0 {
+		c.GetHaveEffectHp()
+		for k, v := range c.hpEffect {
+			if v > 0 {
+				if num > v {
+					num = num - v
+					c.hpEffect[k] = 0
+				} else {
+					c.hpEffect[k] = v - num
+					num = 0
+				}
+			}
+		}
+	}
+
 	c.hp -= num
 	if c.hp <= 0 {
 
@@ -175,6 +192,43 @@ func (c *Card) GetHp() int {
 	return c.hp
 }
 
+// 刷新影响数据
+func (c *Card) flushHpEffect() {
+	var cacheHpEffect = make(map[int]int, 0)
+	for _, v := range c.owner.GetBothEventCards("OnNROtherGetHp") {
+
+		eHp := v.OnNROtherGetHp(c)
+
+		if eHp <= 0 {
+			continue
+		}
+
+		cacheHpEffect[v.GetId()] = eHp
+
+		if _, ok := c.hpEffect[v.GetId()]; !ok {
+			c.hpEffect[v.GetId()] = cacheHpEffect[v.GetId()]
+		}
+	}
+
+	for k := range c.hpEffect {
+		if _, ok := cacheHpEffect[k]; !ok {
+			delete(c.hpEffect, k)
+		}
+	}
+
+}
+
+// 获得有血量影响的hp
+func (c *Card) GetHaveEffectHp() int {
+	c.flushHpEffect()
+	hp := c.GetHp()
+	for _, v := range c.hpEffect {
+		hp += v
+	}
+
+	return hp
+}
+
 // 设置血上限
 func (c *Card) SetHpMax(hpMax int) {
 	c.hpMax = hpMax
@@ -183,6 +237,18 @@ func (c *Card) SetHpMax(hpMax int) {
 // 获得卡牌最大血量
 func (c *Card) GetHpMax() int {
 	return c.hpMax
+}
+
+// 获得有血量影响的hpMax
+func (c *Card) GetHaveEffectHpMax() int {
+
+	hpMax := c.GetHpMax()
+	for _, v := range c.owner.GetBothEventCards("OnNROtherGetHp") {
+
+		hpMax += v.OnNROtherGetHp(c)
+	}
+
+	return hpMax
 }
 
 // 获得卡牌攻击力
@@ -307,21 +373,22 @@ func (c *Card) Copy() (iface.ICard, error) {
 
 // 重置此卡
 func (c *Card) Reset() {
-	c.ctype = c.config.Ctype         // 卡牌类型
-	c.race = c.config.Race           // 卡牌种族
-	c.traits = c.config.Traits       // 卡牌特质
-	c.hp = c.config.Hp               // 卡牌血量
-	c.hpMax = c.config.Hp            // 卡牌血上限
-	c.damage = c.config.Damage       // 攻击力
-	c.mona = c.config.Mona           // 能量
-	c.buffs = make([]iface.IBuff, 0) // buff
+	c.ctype = c.config.Ctype          // 卡牌类型
+	c.race = c.config.Race            // 卡牌种族
+	c.traits = c.config.Traits        // 卡牌特质
+	c.hp = c.config.Hp                // 卡牌血量
+	c.hpMax = c.config.Hp             // 卡牌血上限
+	c.damage = c.config.Damage        // 攻击力
+	c.mona = c.config.Mona            // 能量
+	c.buffs = make([]iface.IBuff, 0)  // buff
+	c.hpEffect = make(map[int]int, 0) // hpEffect
 }
 
 // 沉默此卡
-func (c *Card) Silent() error {
+func (c *Card) Silent(c2 iface.ICard) {
 
 	if c.GetCardInCardsPos() != define.InCardsTypeBattle {
-		return errors.New("卡牌不在战场上")
+		return
 	}
 
 	// 属性，种族，buffs修正
@@ -330,17 +397,13 @@ func (c *Card) Silent() error {
 	c.buffs = make([]iface.IBuff, 0)
 
 	// 血量修正
-	if c.hpMax > c.config.Hp {
-		c.hpMax = c.config.Hp
-	}
+	c.hpMax = c.config.Hp
 	if c.hp > c.hpMax {
 		c.hp = c.hpMax
 	}
 
 	// 攻击修正
 	c.damage = c.config.Damage
-
-	return nil
 }
 
 // 设置出牌回合
@@ -373,3 +436,4 @@ func (c *Card) OnNRPutToBattle(oc iface.ICard)        {}           // 其他卡�
 func (c *Card) OnNROtherDie(oc iface.ICard)           {}           // 其他卡牌死亡时
 func (c *Card) OnNROtherGetMona(oc iface.ICard) int   { return 0 } // 其他卡牌获取自己的费用时， 返回费用加成
 func (c *Card) OnNROtherGetDamage(oc iface.ICard) int { return 0 } // 其他卡牌获取自己的攻击力时 ， 返回攻击加成
+func (c *Card) OnNROtherGetHp(oc iface.ICard) int     { return 0 } // 其他卡牌获取自己的血量时 ， 返回血量加成

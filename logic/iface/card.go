@@ -26,8 +26,10 @@ type ICard interface {
 	CostHp(int) int                        // 扣除血量(返回值为实际消耗)
 	SetHp(int)                             // 设置血量
 	GetHp() int                            // 获得卡牌血量
+	GetHaveEffectHp() int                  // 获得有效果加成的卡牌血量
 	SetHpMax(int)                          // 设置血上限
 	GetHpMax() int                         // 获得卡牌最大血量
+	GetHaveEffectHpMax() int               // 获得有效果加成的最大血量
 	GetDamage() int                        // 获得卡牌攻击力
 	GetHaveEffectDamage(ICard) int         // 计算有效果加成的卡牌攻击力
 	AddDamage(int)                         // 添加攻击力
@@ -45,7 +47,7 @@ type ICard interface {
 	GetBuffs() []IBuff                     // 获得buffs
 	Copy() (ICard, error)                  // 复制此卡
 	Reset()                                // 重置此卡
-	Silent() error                         // 沉默此卡
+	Silent(ICard)                          // 沉默此卡
 	SetReleaseRound(int)                   // 设置出牌回合
 	GetReleaseRound() int                  // 获得出牌回合
 
@@ -70,5 +72,6 @@ type ICard interface {
 	OnNROtherDie(ICard)           // 其他卡牌死亡时
 	OnNROtherGetMona(ICard) int   // 其他卡牌获取自己的费用时， 返回费用加成
 	OnNROtherGetDamage(ICard) int // 其他卡牌获取自己的攻击力时 ， 返回攻击加成
+	OnNROtherGetHp(ICard) int     // 其他卡牌获取自己的血量时 ， 返回血量加成
 
 }
