@@ -51,9 +51,9 @@ func (c *Card) Init(ic iface.ICard, ict define.InCardsType, h iface.IHero, b ifa
 
 	// 实际上ic和c是同一个东西，句柄不一样
 	h.AppendToAllCards(ic)
-	ic.OnInit()
-
 	c.Reset()
+
+	ic.OnInit()
 }
 
 // 获得id
@@ -420,14 +420,20 @@ func (c *Card) GetFatherCard() iface.ICard {
 	return c.fatherCard
 }
 
+// 设置父卡牌
+func (c *Card) SetFatherCard(fc iface.ICard) {
+	c.fatherCard = fc
+}
+
 // 获得子卡牌
 func (c *Card) GetSubCards() []iface.ICard {
 	return c.subCards
 }
 
-// 添加子卡牌
-func (c *Card) AddSubCards(sc iface.ICard) {
+// 添加子卡牌 , c2和c实际上一个东西
+func (c *Card) AddSubCards(c2, sc iface.ICard) {
 	c.subCards = append(c.subCards, sc)
+	sc.SetFatherCard(c2)
 }
 
 // 删除子卡牌

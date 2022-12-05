@@ -326,4 +326,17 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Ctype:    define.CardTypeBuff,
 		CanCarry: false,
 	},
+	23: &CardConfig{
+		Id:       23,
+		Name:     "叫嚣的中士",
+		Desc:     "战吼：在本回合中，使一个随从获得+2攻击力。",
+		Mona:     1,
+		Damage:   1,
+		Hp:       1,
+		Quality:  define.CardQualityWhite,
+		Ctype:    define.CardTypeEntourage,
+		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }

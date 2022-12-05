@@ -45,8 +45,9 @@ type ICard interface {
 	SetOwner(IHero)                                // 设置拥有人
 	GetOwner() IHero                               // 获得此卡拥有人
 	GetFatherCard() ICard                          // 获得父卡牌
+	SetFatherCard(ICard)                           // 设置父卡牌
 	GetSubCards() []ICard                          // 获得子卡牌
-	AddSubCards(ICard)                             // 添加子卡牌
+	AddSubCards(ICard, ICard)                      // 添加子卡牌
 	RemoveSubCards(ICard)                          // 删除子卡牌
 	SetAttackTimes(int)                            // 设置攻击次数
 	GetAttackTimes() int                           // 获得攻击次数

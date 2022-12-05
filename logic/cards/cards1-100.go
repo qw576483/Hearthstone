@@ -494,7 +494,7 @@ func (c *Card21) OnInit() {
 
 func (c *Card21) OnNROtherDie(oc iface.ICard) {
 	if oc.GetId() == c.GetFatherCard().GetId() {
-		c.OnNRRoundEnd()
+		c.ClearBuff()
 	}
 }
 
@@ -502,10 +502,15 @@ func (c *Card21) OnNRRoundEnd() {
 
 	fc := c.GetFatherCard()
 
-	if fc.GetOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+	if fc == nil || fc.GetOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
 		return
 	}
 
+	c.ClearBuff()
+}
+
+func (c *Card21) ClearBuff() {
+	fc := c.GetFatherCard()
 	if fc != nil {
 		fc.RemoveSubCards(c)
 		c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundEnd")
@@ -529,19 +534,48 @@ func (c *Card22) OnInit() {
 
 func (c *Card22) OnNROtherDie(oc iface.ICard) {
 	if oc.GetId() == c.GetFatherCard().GetId() {
-		c.OnNRRoundBegin()
+		c.ClearBuff()
 	}
 }
 
 func (c *Card22) OnNRRoundBegin() {
 
 	fc := c.GetFatherCard()
-	if fc.GetOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+	if fc == nil || fc.GetOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
 		return
 	}
+	c.ClearBuff()
+}
+
+func (c *Card22) ClearBuff() {
+	fc := c.GetFatherCard()
 	if fc != nil {
 		fc.RemoveSubCards(c)
 		c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")
 		c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
 	}
+}
+
+// 叫嚣的中士
+type Card23 struct {
+	battle.Card
+}
+
+func (c *Card23) NewPoint() iface.ICard {
+	return &Card23{}
+}
+
+func (c *Card23) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	if rc != nil {
+
+		nc := iface.GetCardFact().GetCard(define.BuffCardId_MyRoundEndClear)
+		nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+		nc.AddDamage(2)
+
+		rc.AddSubCards(rc, nc)
+
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了两点攻击力")
+	}
+
 }

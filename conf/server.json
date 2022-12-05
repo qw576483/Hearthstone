@@ -3,6 +3,5 @@
 	"LogPath": "",
 	"TCPAddr": "127.0.0.1:3563",
 	"WSAddr": "127.0.0.1:3653",
-	"MaxConnNum": 20000,
-	"LenStackBuf":40960
+	"MaxConnNum": 20000
 }
