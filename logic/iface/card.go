@@ -47,6 +47,7 @@ type ICard interface {
 	GetFatherCard() ICard                          // 获得父卡牌
 	SetFatherCard(ICard)                           // 设置父卡牌
 	GetSubCards() []ICard                          // 获得子卡牌
+	SetSubCards([]ICard)                           // 设置子卡牌
 	AddSubCards(ICard, ICard)                      // 添加子卡牌
 	RemoveSubCards(ICard)                          // 删除子卡牌
 	SetAttackTimes(int)                            // 设置攻击次数
@@ -54,7 +55,7 @@ type ICard interface {
 	GetMaxAttackTimes() int                        // 获得最大攻击次数
 	Copy() (ICard, error)                          // 复制此卡
 	Reset()                                        // 重置此卡
-	Silent(ICard)                                  // 沉默此卡
+	Silent()                                       // 沉默此卡
 	IsSilent() bool                                // 是否被沉默
 	SetReleaseRound(int)                           // 设置出牌回合
 	GetReleaseRound() int                          // 获得出牌回合

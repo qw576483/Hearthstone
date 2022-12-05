@@ -87,25 +87,25 @@ func (c *Card) GetTraits() []define.CardTraits {
 }
 
 // 获得有影响的特质
-func (c *Card) GetHaveEffectTraits(oc iface.ICard) []define.CardTraits {
+func (c *Card) GetHaveEffectTraits(ic iface.ICard) []define.CardTraits {
 
-	ts := c.traits
-	for _, v := range c.subCards {
+	ts := ic.GetTraits()
+	for _, v := range ic.GetSubCards() {
 		for _, ct := range v.GetTraits() {
 
-			if !help.InArray(ct, c.traits) {
+			if !help.InArray(ct, ts) {
 				ts = append(ts, ct)
 			}
 		}
 	}
 
 	// 获得光环影响
-	for _, v := range c.owner.GetBothEventCards("OnNROtherGetTraits") {
+	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetTraits") {
 
-		nt := v.OnNROtherGetTraits(oc)
+		nt := v.OnNROtherGetTraits(ic)
 
 		if nt != -1 {
-			if !help.InArray(nt, c.traits) {
+			if !help.InArray(nt, ts) {
 				ts = append(ts, nt)
 			}
 		}
@@ -115,8 +115,8 @@ func (c *Card) GetHaveEffectTraits(oc iface.ICard) []define.CardTraits {
 }
 
 // 是否拥有卡牌特质
-func (c *Card) IsHaveTraits(ct define.CardTraits, oc iface.ICard) bool {
-	return help.InArray(ct, c.GetHaveEffectTraits(oc))
+func (c *Card) IsHaveTraits(ct define.CardTraits, ic iface.ICard) bool {
+	return help.InArray(ct, ic.GetHaveEffectTraits(ic))
 }
 
 // 添加特质
@@ -306,15 +306,15 @@ func (c *Card) GetDamage() int {
 }
 
 // 计算有效果加成的卡牌攻击力
-func (c *Card) GetHaveEffectDamage(tc iface.ICard) int {
-	d := c.GetDamage()
-	d += tc.OnGetDamage()
+func (c *Card) GetHaveEffectDamage(ic iface.ICard) int {
+	d := ic.GetDamage()
+	d += ic.OnGetDamage()
 
-	for _, v := range c.owner.GetBothEventCards("OnNROtherGetDamage") {
-		d += v.OnNROtherGetDamage(tc)
+	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetDamage") {
+		d += v.OnNROtherGetDamage(ic)
 	}
 
-	for _, v := range c.subCards {
+	for _, v := range ic.GetSubCards() {
 		d += v.GetDamage()
 	}
 
@@ -336,17 +336,17 @@ func (c *Card) SetDamage(d int) {
 }
 
 // 交换攻击和血
-func (c *Card) ExchangeHpDamage(oc iface.ICard) {
+func (c *Card) ExchangeHpDamage(ic iface.ICard) {
 
-	od := oc.GetHaveEffectDamage(oc)
-	oh := oc.GetHaveEffectHp()
+	od := ic.GetHaveEffectDamage(ic)
+	oh := ic.GetHaveEffectHp()
 
-	oc.SetHpMaxAndHp(od)
-	oc.SetDamage(oh)
+	ic.SetHpMaxAndHp(od)
+	ic.SetDamage(oh)
 
 	// 固化属性
-	oc.DeleteHpEffect()
-	scs := oc.GetSubCards()
+	ic.DeleteHpEffect()
+	scs := ic.GetSubCards()
 	for _, v := range scs {
 		if v.GetDamage() != 0 {
 			v.SetDamage(0)
@@ -363,12 +363,12 @@ func (c *Card) GetMona() int {
 }
 
 // 计算有效果加成的卡牌费用
-func (c *Card) GetHaveEffectMona(tc iface.ICard) int {
-	d := c.GetMona()
-	d += tc.OnGetMona()
+func (c *Card) GetHaveEffectMona(ic iface.ICard) int {
+	d := ic.GetMona()
+	d += ic.OnGetMona()
 
-	for _, v := range c.GetOwner().GetBothEventCards("OnNROtherGetMona") {
-		d += v.OnNROtherGetMona(tc)
+	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetMona") {
+		d += v.OnNROtherGetMona(ic)
 	}
 
 	if d < 0 {
@@ -430,10 +430,18 @@ func (c *Card) GetSubCards() []iface.ICard {
 	return c.subCards
 }
 
-// 添加子卡牌 , c2和c实际上一个东西
-func (c *Card) AddSubCards(c2, sc iface.ICard) {
-	c.subCards = append(c.subCards, sc)
-	sc.SetFatherCard(c2)
+// 设置子卡牌
+func (c *Card) SetSubCards(scs []iface.ICard) {
+	c.subCards = scs
+}
+
+// 添加子卡牌
+func (a *Card) AddSubCards(ic, sc iface.ICard) {
+	subCards := ic.GetSubCards()
+	subCards = append(subCards, sc)
+	ic.SetSubCards(subCards)
+
+	sc.SetFatherCard(ic)
 }
 
 // 删除子卡牌
@@ -496,7 +504,7 @@ func (c *Card) Reset() {
 }
 
 // 沉默此卡
-func (c *Card) Silent(c2 iface.ICard) {
+func (c *Card) Silent() {
 
 	if c.GetCardInCardsPos() != define.InCardsTypeBattle {
 		return
