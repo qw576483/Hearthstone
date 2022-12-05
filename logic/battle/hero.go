@@ -179,7 +179,7 @@ func (h *Hero) GetBattleCardsTraitsTauntCardIds() []int {
 
 	// 有嘲讽特质，没有潜行特质
 	for _, v := range h.GetBattleCards() {
-		if v.IsHaveTraits(define.CardTraitsTaunt) && !v.IsHaveTraits(define.CardTraitsSneak) {
+		if v.IsHaveTraits(define.CardTraitsTaunt, v) && !v.IsHaveTraits(define.CardTraitsSneak, v) {
 			tsid = append(tsid, v.GetId())
 		}
 	}
@@ -866,7 +866,7 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCost
 				c.OnHonorAnnihilate(ec)
 			} else if ec.GetHaveEffectHp() < 0 && !c.IsSilent() {
 				c.OnOverflowAnnihilate(ec)
-			} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) && !c.IsSilent() {
+			} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic, c) && !c.IsSilent() {
 				push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
 				ec.GetOwner().DieCard(ec)
 			}

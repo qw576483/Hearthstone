@@ -92,7 +92,7 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 		return errors.New("没有找到此卡牌")
 	}
 
-	if c.IsHaveTraits(define.CardTraitsUnableToAttack) {
+	if c.IsHaveTraits(define.CardTraitsUnableToAttack, c) {
 		return errors.New("此卡牌无法攻击")
 	}
 
@@ -112,12 +112,12 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 	// 如果是本局攻击
 	if c.GetReleaseRound() == b.GetIncrRoundId() {
 		// 如果不是冲锋 ， 不是突袭
-		if !c.IsHaveTraits(define.CardTraitsAssault) && !c.IsHaveTraits(define.CardTraitsSuddenStrike) {
+		if !c.IsHaveTraits(define.CardTraitsAssault, c) && !c.IsHaveTraits(define.CardTraitsSuddenStrike, c) {
 			return errors.New("卡牌在睡眠中")
 		}
 
 		// 突袭只能打英雄
-		if c.IsHaveTraits(define.CardTraitsSuddenStrike) && ehid != 0 {
+		if c.IsHaveTraits(define.CardTraitsSuddenStrike, c) && ehid != 0 {
 			return errors.New("突袭只能打英雄")
 		}
 	}
@@ -129,7 +129,7 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 			return errors.New("没有找到此卡")
 		}
 
-		if ec.IsHaveTraits(define.CardTraitsSneak) {
+		if ec.IsHaveTraits(define.CardTraitsSneak, ec) {
 			return errors.New("目标在潜行")
 		}
 	}
@@ -184,7 +184,7 @@ func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 			return errors.New("没有找到此卡")
 		}
 
-		if ec.IsHaveTraits(define.CardTraitsSneak) {
+		if ec.IsHaveTraits(define.CardTraitsSneak, ec) {
 			return errors.New("目标在潜行")
 		}
 	}
