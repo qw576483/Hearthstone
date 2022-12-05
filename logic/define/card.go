@@ -59,3 +59,14 @@ const (
 	CardSeriseClassic                    // 经典
 	CardSeriseDarkmoon                   // 暗月马戏团
 )
+
+// 卡牌品质
+type CardQuality int
+
+const (
+	CardQualityBase   CardQuality = iota // 基础
+	CardQualityWhite                     // 普通
+	CardQualityBlue                      // 稀有
+	CardQualityPurple                    // 史诗
+	CardQualityOrange                    // 传说
+)

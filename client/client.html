@@ -26,6 +26,7 @@
         <div id="wsMsg"></div>
         <hr />
         <table border="1" cellpadding="0px" cellspacing="0px" id="cardsConfig">
+            <tr><td>卡牌id</td><td>名称</td><td>描述</td><td>费用</td><td>攻击</td><td>血量</td><td>特质</td><td>种族</td><td>品质</td><td>类型</td><td>系列</td><td>职业</td><td>可收藏</td></tr>
         </table>
     </div>
 
@@ -231,11 +232,13 @@ ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌
 
     CTraits = ["战吼" , "亡语", "冲锋", "突袭", "风怒", "连击","无法攻击", "嘲讽","圣盾" ,"潜行" ,"剧毒"]
     CRace = ["野兽" , "恶魔" , "鱼人" , "机械" , "图腾"]
-    CType = ["随从" , "武器" , "法术" , "奥秘" , "buff"]
+    CType = ["随从" , "武器" , "法术" , "奥秘" , "Buff"]
     CSeries = ["基础" , "经典" , "暗月马戏团"]
+    CQuality = ["基础" , "普通" , "稀有" , "史诗" , "传说"]
     HVocation = ["盗贼" , "术士" , "猎人" , "萨满"]
+
     function buildCardsConfig(cardsConfig){
-        str = "<tr><td>卡牌id</td><td>名称</td><td>描述</td><td>费用</td><td>攻击</td><td>血量</td><td>特质</td><td>种族</td><td>类型</td><td>系列</td><td>职业</td><td>可收藏</td></tr>";
+        str = "";
         
         cardsConfig.forEach((item) => {
             str += "<tr><td>" +item.Id+"</td><td>" +item.Name+"</td><td>" +item.Desc+"</td><td>" +item.Mona+"</td><td>" +item.Damage+"</td><td>" +item.Hp+"</td>";
@@ -256,7 +259,7 @@ ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌
                 })
                 str = rtrim(str , ",")
             }
-            str += "</td><td>"+CType[item.Ctype]+"</td><td>"+CSeries[item.Series]+"</td>"
+            str += "</td><td>"+CQuality[item.Quality]+"</td><td>"+CType[item.Ctype]+"</td><td>"+CSeries[item.Series]+"</td>"
 
             str += "<td>"
             if (item.Vocation != null ){
@@ -277,7 +280,8 @@ ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌
 
         })
 
-        $("#cardsConfig").html(str)
+        html = $("#cardsConfig").html()
+        $("#cardsConfig").html(html + str)
     }
 
     function rtrim(s , charlist) {

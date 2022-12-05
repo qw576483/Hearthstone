@@ -134,6 +134,10 @@ func (cf *CardFact) ScreenCards(op []iface.ICard, scp *iface.ScreenCardParam) []
 			continue
 		}
 
+		if scp.CardQuality != nil && !help.InArray(v.GetConfig().Quality, scp.CardQuality) {
+			continue
+		}
+
 		if scp.CardTraits != nil {
 
 			for _, v2 := range v.GetConfig().Traits {
@@ -190,8 +194,14 @@ func GetScpKey(scp *iface.ScreenCardParam) string {
 		str += "0_"
 	}
 
-	if scp.CardTraits != nil {
-		str += help.Implode(",", scp.CardTraits) + "_"
+	if scp.CardRaces != nil {
+		str += help.Implode(",", scp.CardRaces) + "_"
+	} else {
+		str += "0_"
+	}
+
+	if scp.CardQuality != nil {
+		str += help.Implode(",", scp.CardQuality) + "_"
 	} else {
 		str += "0_"
 	}

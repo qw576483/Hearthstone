@@ -28,6 +28,7 @@ type ScreenCardParam struct {
 	CardTypes   []define.CardType
 	CardTraits  []define.CardTraits
 	CardRaces   []define.CardRace
+	CardQuality []define.CardQuality
 }
 
 type RandCardOption func(*ScreenCardParam)
@@ -75,6 +76,13 @@ func SCPWithCardTraits(ct []define.CardTraits) RandCardOption {
 func SCPWithCardRace(cr []define.CardRace) RandCardOption {
 	return func(q *ScreenCardParam) {
 		q.CardRaces = cr
+	}
+}
+
+// 筛选卡牌品质
+func SCPWithCardQuality(cr []define.CardQuality) RandCardOption {
+	return func(q *ScreenCardParam) {
+		q.CardQuality = cr
 	}
 }
 

@@ -478,7 +478,7 @@ func (c *Card20) NewPoint() iface.ICard {
 	return &Card20{}
 }
 
-// buff - 回合结束时消散
+// buff - 你的回合结束时消散
 type Card21 struct {
 	battle.Card
 }
@@ -493,7 +493,7 @@ func (c *Card21) OnInit() {
 }
 
 func (c *Card21) OnNROtherDie(oc iface.ICard) {
-	if oc.GetId() == c.GetId() {
+	if oc.GetId() == c.GetFatherCard().GetId() {
 		c.OnNRRoundEnd()
 	}
 }
@@ -501,6 +501,11 @@ func (c *Card21) OnNROtherDie(oc iface.ICard) {
 func (c *Card21) OnNRRoundEnd() {
 
 	fc := c.GetFatherCard()
+
+	if fc.GetOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+		return
+	}
+
 	if fc != nil {
 		fc.RemoveSubCards(c)
 		c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundEnd")
@@ -508,7 +513,7 @@ func (c *Card21) OnNRRoundEnd() {
 	}
 }
 
-// buff - 回合开始时消散
+// buff - 你的回合开始时消散
 type Card22 struct {
 	battle.Card
 }
@@ -523,7 +528,7 @@ func (c *Card22) OnInit() {
 }
 
 func (c *Card22) OnNROtherDie(oc iface.ICard) {
-	if oc.GetId() == c.GetId() {
+	if oc.GetId() == c.GetFatherCard().GetId() {
 		c.OnNRRoundBegin()
 	}
 }
@@ -531,6 +536,9 @@ func (c *Card22) OnNROtherDie(oc iface.ICard) {
 func (c *Card22) OnNRRoundBegin() {
 
 	fc := c.GetFatherCard()
+	if fc.GetOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+		return
+	}
 	if fc != nil {
 		fc.RemoveSubCards(c)
 		c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")

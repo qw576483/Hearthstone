@@ -554,6 +554,8 @@ func (h *Hero) DrawByTimes(t int) {
 
 			// 扣血
 			h.CostHp(f + 1)
+
+			push.PushAutoLog(h, "牌库没有牌了！受到了疲劳伤害"+strconv.Itoa(f+1))
 			return
 		}
 
