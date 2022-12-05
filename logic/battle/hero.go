@@ -18,6 +18,7 @@ type Hero struct {
 	battle           iface.IBattle            // 战斗句柄
 	id               int                      // 唯一id
 	config           *config.HeroConfig       // 配置数据
+	skill            iface.ICard              // 英雄技能
 	enemy            iface.IHero              // 敌人
 	preCards         []iface.ICard            // 预存卡牌
 	handCards        []iface.ICard            // 手牌
@@ -75,6 +76,10 @@ func (h *Hero) Init(cards []iface.ICard, b iface.IBattle) {
 	h.weapon = nil
 	h.maxHandCardsNum = 10
 
+	skill := iface.GetCardFact().GetCard(h.config.HeroSkillId)
+	skill.Init(skill, define.InCardsTypeNone, h, b)
+	h.skill = skill
+
 	for _, v := range h.libCards {
 		v.Init(v, define.InCardsTypeLib, h, b)
 	}
@@ -93,6 +98,16 @@ func (h *Hero) GetId() int {
 // 是否是我的回合
 func (h *Hero) IsRoundHero() bool {
 	return h.GetBattle().GetRoundHero().GetId() == h.GetId()
+}
+
+// 设置英雄技能
+func (h *Hero) SetHeroSkill(c iface.ICard) {
+	h.skill = c
+}
+
+// 获得英雄技能
+func (h *Hero) GetHeroSkill() iface.ICard {
+	return h.skill
 }
 
 // 设置配置数据
@@ -581,9 +596,6 @@ func (h *Hero) SetFatigue(f int) {
 // 出牌
 func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh iface.IHero, trickRelease bool) error {
 
-	// 增加出牌次数
-	h.releaseCardTimes += 1
-
 	cType := c.GetType()
 
 	if putidx == -1 {
@@ -887,9 +899,9 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCost
 				ec.GetOwner().DieCard(ec)
 			}
 		} else if eh != nil {
-			if ec.GetHaveEffectHp() == 0 && !c.IsSilent() {
+			if eh.GetHp() == 0 && !c.IsSilent() {
 				c.OnHonorAnnihilate(ec)
-			} else if ec.GetHaveEffectHp() < 0 && !c.IsSilent() {
+			} else if eh.GetHp() < 0 && !c.IsSilent() {
 				c.OnOverflowAnnihilate(ec)
 			}
 		}

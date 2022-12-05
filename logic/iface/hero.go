@@ -15,6 +15,8 @@ type IHero interface {
 	GetBattle() IBattle                                // 获得战斗句柄
 	GetId() int                                        // 获得英雄id
 	IsRoundHero() bool                                 // 是否是我的回合
+	SetHeroSkill(ICard)                                // 设置英雄技能
+	GetHeroSkill() ICard                               // 获得英雄技能
 	SetConfig(*config.HeroConfig)                      // 设置配置数据
 	GetConfig() *config.HeroConfig                     // 获得配置数据
 	SetEnemy(IHero)                                    // 设置敌人

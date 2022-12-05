@@ -16,6 +16,7 @@ func init() {
 	Processor.Register(&JoinRoom{})
 	Processor.Register(&BChangePre{})
 	Processor.Register(&BEndRound{})
+	Processor.Register(&BUseSkill{})
 	Processor.Register(&BRelease{})
 	Processor.Register(&BAttack{})
 	Processor.Register(&BHAttack{})

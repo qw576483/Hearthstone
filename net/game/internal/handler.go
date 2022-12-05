@@ -23,6 +23,7 @@ func init() {
 
 	handler(&msg.BChangePre{}, handleBChangePre)
 	handler(&msg.BEndRound{}, handleBEndRound)
+	handler(&msg.BUseSkill{}, handleBUseSkill)
 	handler(&msg.BRelease{}, handleBRelease)
 	handler(&msg.BAttack{}, handleBAttack)
 	handler(&msg.BHAttack{}, handleBHAttack)
@@ -164,6 +165,44 @@ func handleBEndRound(args []interface{}) {
 		return
 	}
 	b.PlayerRoundEnd(b.GetHeroByGateAgent(a).GetId())
+}
+
+func handleBUseSkill(args []interface{}) {
+	m := args[0].(*msg.BUseSkill)
+	a := args[1].(gate.Agent)
+
+	p := player.GetPlayerList().GetPlayer(a)
+	r := room.GetRoomList().GetRoom(p.GetRoomId())
+	b := r.GetBattle()
+
+	if b == nil {
+		a.WriteMsg(&push.ErrorMsg{
+			Error: "战斗无效",
+		})
+		return
+	}
+
+	if b.GetBattleStatus() != define.BattleStatusRun {
+		a.WriteMsg(&push.ErrorMsg{
+			Error: "当前不是战斗环节",
+		})
+		return
+	}
+
+	if b.GetHeroByGateAgent(a) != b.GetRoundHero() {
+		a.WriteMsg(&push.ErrorMsg{
+			Error: "不是我的出手回合",
+		})
+		return
+	}
+
+	err := b.PlayerUseHeroSkill(b.GetRoundHero().GetId(), m.ChoiceId, m.RCardId, m.RHeroId)
+
+	if err != nil {
+		a.WriteMsg(&push.ErrorMsg{
+			Error: err.Error(),
+		})
+	}
 }
 
 func handleBRelease(args []interface{}) {

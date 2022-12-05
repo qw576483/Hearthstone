@@ -127,7 +127,8 @@ r // 释放卡牌 , 例如：`r 10 1 2 3 0` 代表释放id为10的卡牌，选�
 例如：`r 10 0 2 0 3` 代表释放id为10的卡牌，选择战场上第二个站位，选择战吼目标为id为3的英雄
 a // 卡牌攻击 , 例如 `a 10 31 0` 代表id为10的卡牌，进攻对方场上id为31的卡牌
 例如 `a 10 0 15` 代表id为10的卡牌，进攻id为15的敌方英雄
-ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌
+ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌，0代表英雄id
+us // 英雄技能 , 例如 `us 1 10 0` 选择1号抉择，目标为10的卡牌，0代表英雄id
             </pre>
             指令：<input type="text" id="cmd">
             <br />
@@ -206,6 +207,8 @@ ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌
             ws.send(encodeMsg("BAttack" , {CardId:parseInt(cmdArr[1]) , ECardId:parseInt(cmdArr[2]) , EHeroId:parseInt(cmdArr[3])}))
         }else if (cmdArr[0] == "ha"){
             ws.send(encodeMsg("BHAttack" , {ECardId:parseInt(cmdArr[1]) , EHeroId:parseInt(cmdArr[2])}))
+        }else if (cmdArr[0] == "us"){
+            ws.send(encodeMsg("BUseSkill" , {ChoiceId:parseInt(cmdArr[1]) , RCardId:parseInt(cmdArr[2]) , RHeroId:parseInt(cmdArr[3])}))
         }
         $("#cmd").val("")
     }
@@ -230,10 +233,10 @@ ha // 英雄攻击 , 例如 `ha 10 0` 代表英雄攻击场上id为10的卡牌
 
     CTraits = ["战吼" , "亡语", "冲锋", "突袭", "风怒", "连击","无法攻击", "嘲讽","圣盾" ,"潜行" ,"剧毒"]
     CRace = ["野兽" , "恶魔" , "鱼人" , "机械" , "图腾"]
-    CType = ["随从" , "武器" , "法术" , "奥秘" , "Buff"]
+    CType = ["随从" , "武器" , "法术" , "奥秘" , "Buff" , "英雄技能"]
     CSeries = ["基础" , "经典" , "暗月马戏团"]
     CQuality = ["基础" , "普通" , "稀有" , "史诗" , "传说"]
-    HVocation = ["盗贼" , "术士" , "猎人" , "萨满"]
+    HVocation = ["盗贼" , "术士" , "猎人" , "萨满" , "圣骑士"]
 
     function buildCardsConfig(cardsConfig){
         str = "";

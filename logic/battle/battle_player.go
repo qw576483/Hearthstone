@@ -45,26 +45,27 @@ func (b *Battle) PlayerChangePreCards(hid int, putidxs []int /** 这个值是第
 	return nil
 }
 
-// 释放卡牌
+// 释放卡牌 - release
 func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) error {
 
 	h := b.GetHeroByIncrId(hid)
-	card := h.GetHandCardByIncrId(cid)
+	c := h.GetHandCardByIncrId(cid)
 
-	if card == nil {
+	if c == nil {
 		return errors.New("没有找到目标")
 	}
 
 	// 费用
-	if card.GetHaveEffectMona(card) > h.GetMona() {
+	if c.GetHaveEffectMona(c) > h.GetMona() {
 		return errors.New("法力不足")
 	}
-	h.CostMona(card.GetHaveEffectMona(card))
 
 	rh := b.GetHeroByIncrId(rhid)
 	if rhid != 0 && rh == nil {
 		return errors.New("没有找到目标")
 	}
+
+	h.CostMona(c.GetHaveEffectMona(c))
 
 	// 拼接
 	rc := h.GetBattleCardById(rcid)
@@ -72,10 +73,21 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 		rc = h.GetEnemy().GetBattleCardById(rcid)
 	}
 
-	// logs
-	push.PushAutoLog(h, "打出了"+push.GetCardLogString(card))
+	if rcid != 0 {
+		if rc == nil {
+			return errors.New("没有找到目标")
+		}
 
-	h.Release(card, choiceId, putidx, rc, rh, true)
+		if rc.IsHaveTraits(define.CardTraitsSneak, rc) {
+			return errors.New("目标在潜行")
+		}
+	}
+
+	// logs
+	push.PushAutoLog(h, "打出了"+push.GetCardLogString(c))
+
+	h.SetReleaseCardTimes(h.GetReleaseCardTimes() + 1)
+	h.Release(c, choiceId, putidx, rc, rh, true)
 
 	// info
 	push.PushInfoMsg(b)
@@ -83,7 +95,63 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 	return nil
 }
 
-// 操作卡牌
+// 使用英雄技能 - release
+func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
+
+	h := b.GetHeroByIncrId(hid)
+	c := h.GetHeroSkill()
+
+	if c == nil {
+		return errors.New("没找到英雄技能")
+	}
+
+	// 检查次数
+	ats := c.GetAttackTimes()
+	mats := c.GetMaxAttackTimes()
+	if ats >= mats {
+		return errors.New("最大攻击次数了")
+	}
+
+	// 费用
+	if c.GetHaveEffectMona(c) > h.GetMona() {
+		return errors.New("法力不足")
+	}
+
+	rh := b.GetHeroByIncrId(rhid)
+	if rhid != 0 && rh == nil {
+		return errors.New("没有找到目标")
+	}
+
+	h.CostMona(c.GetHaveEffectMona(c))
+
+	// 拼接
+	rc := h.GetBattleCardById(rcid)
+	if rc == nil {
+		rc = h.GetEnemy().GetBattleCardById(rcid)
+	}
+
+	if rcid != 0 {
+		if rc == nil {
+			return errors.New("没有找到目标")
+		}
+
+		if rc.IsHaveTraits(define.CardTraitsSneak, rc) {
+			return errors.New("目标在潜行")
+		}
+	}
+
+	// logs
+	push.PushAutoLog(h, "使用了英雄技能")
+
+	c.SetAttackTimes(ats + 1)
+	h.Release(c, choiceId, 0, rc, rh, true)
+
+	// info
+	push.PushInfoMsg(b)
+	return nil
+}
+
+// 操作卡牌攻击 -  attack
 func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 
 	h := b.GetHeroByIncrId(hid)
@@ -154,6 +222,7 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 	return nil
 }
 
+// 英雄攻击 - attack
 func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 
 	h := b.GetHeroByIncrId(hid)
@@ -201,14 +270,6 @@ func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 	h.HAttack(ec, eh)
 
 	push.PushInfoMsg(b)
-
-	return nil
-}
-
-// 释放角色技能
-func (b *Battle) PlayerHeroSkill(hid int, cs []iface.ICard, hs []iface.IHero) error {
-
-	// h := b.GetHeroByIncrId(hid)
 
 	return nil
 }

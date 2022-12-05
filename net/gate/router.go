@@ -13,6 +13,7 @@ func init() {
 	msg.Processor.SetRouter(&msg.JoinRoom{}, game.ChanRPC)
 	msg.Processor.SetRouter(&msg.BChangePre{}, game.ChanRPC)
 	msg.Processor.SetRouter(&msg.BEndRound{}, game.ChanRPC)
+	msg.Processor.SetRouter(&msg.BUseSkill{}, game.ChanRPC)
 	msg.Processor.SetRouter(&msg.BRelease{}, game.ChanRPC)
 	msg.Processor.SetRouter(&msg.BAttack{}, game.ChanRPC)
 	msg.Processor.SetRouter(&msg.BHAttack{}, game.ChanRPC)

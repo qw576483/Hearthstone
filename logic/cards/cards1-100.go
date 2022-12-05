@@ -588,3 +588,47 @@ func (c *Card24) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 	}
 
 }
+
+// 银色保卫者
+type Card25 struct {
+	battle.Card
+}
+
+func (c *Card25) NewPoint() iface.ICard {
+	return &Card25{}
+}
+
+func (c *Card25) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	if rc != nil {
+		rc.AddTraits(define.CardTraitsHolyShield)
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了圣盾")
+	}
+}
+
+// 盗贼基础技能
+type Card26 struct {
+	battle.Card
+}
+
+func (c *Card26) NewPoint() iface.ICard {
+	return &Card26{}
+}
+
+func (c *Card26) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	nc := iface.GetCardFact().GetCard(27)
+	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+	c.GetOwner().Release(nc, 0, 0, nil, nil, false)
+
+	push.PushAutoLog(c.GetOwner(), "装备了匕首")
+}
+
+// 盗贼基础技能 - 匕首
+type Card27 struct {
+	battle.Card
+}
+
+func (c *Card27) NewPoint() iface.ICard {
+	return &Card27{}
+}

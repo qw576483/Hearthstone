@@ -23,6 +23,13 @@ type BEndRound struct {
 	End int
 }
 
+// 释放英雄技能
+type BUseSkill struct {
+	ChoiceId int
+	RCardId  int
+	RHeroId  int
+}
+
 // 释放卡牌
 type BRelease struct {
 	CardId   int
