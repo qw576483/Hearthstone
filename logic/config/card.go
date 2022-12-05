@@ -86,7 +86,7 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 	3: &CardConfig{
 		Id:       3,
 		Name:     "寒光智者",
-		Desc:     "战吼：双方每个玩家抽两张牌。",
+		Desc:     "战吼：双方玩家抽两张牌。",
 		Mona:     3,
 		Damage:   2,
 		Hp:       2,
