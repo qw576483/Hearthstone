@@ -762,6 +762,11 @@ func (h *Hero) SetReleaseCardTimes(t int) {
 	h.releaseCardTimes = t
 }
 
+// 获得事件
+func (h *Hero) GetEvent() map[string][]iface.ICard {
+	return h.events
+}
+
 // 获得事件卡牌
 func (h *Hero) GetEventCards(e string) []iface.ICard {
 	cs, ok := h.events[e]
@@ -800,6 +805,18 @@ func (h *Hero) RemoveCardFromEvent(c iface.ICard, e string) {
 		if v.GetId() == c.GetId() {
 			_, h.events[e] = help.DeleteCardFromCardsByIdx(es, idx)
 		}
+	}
+}
+
+// 删除卡牌从双方的事件中
+func (h *Hero) RemoveCardFromBothEvent(c iface.ICard) {
+
+	for e := range h.events {
+		h.RemoveCardFromEvent(c, e)
+	}
+
+	for e := range h.GetEnemy().GetEvent() {
+		h.GetEnemy().RemoveCardFromEvent(c, e)
 	}
 }
 
@@ -845,18 +862,18 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCost
 	// 攻击者事件
 	if trueCostHp > 0 {
 		if ec != nil {
-			if ec.GetHaveEffectHp() == 0 && trueCostHp > 0 {
+			if ec.GetHaveEffectHp() == 0 && trueCostHp > 0 && !c.IsSilent() {
 				c.OnHonorAnnihilate(ec)
-			} else if ec.GetHaveEffectHp() < 0 {
+			} else if ec.GetHaveEffectHp() < 0 && !c.IsSilent() {
 				c.OnOverflowAnnihilate(ec)
-			} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) {
+			} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) && !c.IsSilent() {
 				push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
 				ec.GetOwner().DieCard(ec)
 			}
 		} else if eh != nil {
-			if ec.GetHaveEffectHp() == 0 {
+			if ec.GetHaveEffectHp() == 0 && !c.IsSilent() {
 				c.OnHonorAnnihilate(ec)
-			} else if ec.GetHaveEffectHp() < 0 {
+			} else if ec.GetHaveEffectHp() < 0 && !c.IsSilent() {
 				c.OnOverflowAnnihilate(ec)
 			}
 		}
@@ -867,7 +884,10 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCost
 // 触发死亡事件
 func (h *Hero) TrickDieCardEvent(c iface.ICard, bidx int) {
 
-	c.OnDie(bidx)
+	if !c.IsSilent() {
+		c.OnDie(bidx)
+	}
+
 	for _, v := range h.GetBothEventCards("OnNROtherDie") {
 		v.OnNROtherDie(c)
 	}
@@ -883,5 +903,9 @@ func (h *Hero) TrickPutToBattleEvent(c iface.ICard, bidx int) {
 
 // 触发离开战场事件
 func (h *Hero) TrickOutBattleEvent(c iface.ICard) {
-	c.OnOutBattle()
+
+	if !c.IsSilent() {
+		c.OnOutBattle()
+	}
+
 }

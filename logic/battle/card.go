@@ -28,6 +28,7 @@ type Card struct {
 	subCards     []iface.ICard       // 子卡牌
 	releaseRound int                 // 出牌回合
 	initSign     bool                // 设置初始化标记
+	silent       bool                // 是否被沉默
 }
 
 // 返回新指针
@@ -193,12 +194,34 @@ func (c *Card) GetHp() int {
 	return c.hp
 }
 
+// 删除hp影响数据
+func (c *Card) DeleteHpEffect() {
+	c.hpEffect = make(map[int]int, 0)
+}
+
 // 刷新影响数据
 func (c *Card) flushHpEffect() {
 	var cacheHpEffect = make(map[int]int, 0)
+
+	// 获得光环的+血
 	for _, v := range c.owner.GetBothEventCards("OnNROtherGetHp") {
 
 		eHp := v.OnNROtherGetHp(c)
+
+		if eHp <= 0 {
+			continue
+		}
+
+		cacheHpEffect[v.GetId()] = eHp
+
+		if _, ok := c.hpEffect[v.GetId()]; !ok {
+			c.hpEffect[v.GetId()] = cacheHpEffect[v.GetId()]
+		}
+	}
+
+	// 获得buff的加血
+	for _, v := range c.subCards {
+		eHp := v.GetHp()
 
 		if eHp <= 0 {
 			continue
@@ -216,7 +239,6 @@ func (c *Card) flushHpEffect() {
 			delete(c.hpEffect, k)
 		}
 	}
-
 }
 
 // 获得有血量影响的hp
@@ -266,6 +288,10 @@ func (c *Card) GetHaveEffectDamage(tc iface.ICard) int {
 		d += v.OnNROtherGetDamage(tc)
 	}
 
+	for _, v := range c.subCards {
+		d += v.GetDamage()
+	}
+
 	if d < 0 {
 		d = 0
 	}
@@ -281,6 +307,28 @@ func (c *Card) AddDamage(add int) {
 // 设置攻击力
 func (c *Card) SetDamage(d int) {
 	c.damage = d
+}
+
+// 交换攻击和血
+func (c *Card) ExchangeHpDamage(oc iface.ICard) {
+
+	od := oc.GetHaveEffectDamage(oc)
+	oh := oc.GetHaveEffectHp()
+
+	oc.SetHpMaxAndHp(od)
+	oc.SetDamage(oh)
+
+	// 固化属性
+	oc.DeleteHpEffect()
+	scs := oc.GetSubCards()
+	for _, v := range scs {
+		if v.GetDamage() != 0 {
+			v.SetDamage(0)
+		}
+		if v.GetHp() != 0 {
+			v.SetHpMaxAndHp(0)
+		}
+	}
 }
 
 // 获得费用
@@ -335,7 +383,41 @@ func (c *Card) SetOwner(h iface.IHero) {
 
 // 获得此卡拥有人
 func (c *Card) GetOwner() iface.IHero {
+	if c.GetFatherCard() != nil {
+		return c.GetFatherCard().GetOwner()
+	}
 	return c.owner
+}
+
+// 获得父级card
+func (c *Card) GetFatherCard() iface.ICard {
+	return c.fatherCard
+}
+
+// 获得子卡牌
+func (c *Card) GetSubCards() []iface.ICard {
+	return c.subCards
+}
+
+// 添加子卡牌
+func (c *Card) AddSubCards(sc iface.ICard) {
+	c.subCards = append(c.subCards, sc)
+}
+
+// 删除子卡牌
+func (c *Card) RemoveSubCards(sc iface.ICard) {
+
+	idx := -1
+	for k, v := range c.subCards {
+		if v.GetId() == sc.GetId() {
+			idx = k
+			break
+		}
+	}
+
+	if idx != -1 {
+		_, c.subCards = help.DeleteCardFromCardsByIdx(c.subCards, idx)
+	}
 }
 
 // 设置攻击次数
@@ -369,14 +451,16 @@ func (c *Card) Copy() (iface.ICard, error) {
 
 // 重置此卡
 func (c *Card) Reset() {
-	c.ctype = c.config.Ctype          // 卡牌类型
-	c.race = c.config.Race            // 卡牌种族
-	c.traits = c.config.Traits        // 卡牌特质
-	c.hp = c.config.Hp                // 卡牌血量
-	c.hpMax = c.config.Hp             // 卡牌血上限
-	c.damage = c.config.Damage        // 攻击力
-	c.mona = c.config.Mona            // 能量
-	c.hpEffect = make(map[int]int, 0) // hpEffect
+	c.ctype = c.config.Ctype            // 卡牌类型
+	c.race = c.config.Race              // 卡牌种族
+	c.traits = c.config.Traits          // 卡牌特质
+	c.hp = c.config.Hp                  // 卡牌血量
+	c.hpMax = c.config.Hp               // 卡牌血上限
+	c.damage = c.config.Damage          // 攻击力
+	c.mona = c.config.Mona              // 能量
+	c.hpEffect = make(map[int]int, 0)   // hpEffect
+	c.subCards = make([]iface.ICard, 0) // 子卡牌
+	c.silent = false                    // 沉默
 }
 
 // 沉默此卡
@@ -386,9 +470,16 @@ func (c *Card) Silent(c2 iface.ICard) {
 		return
 	}
 
-	// 属性，种族，buffs修正
+	// 属性，种族
 	c.traits = make([]define.CardTraits, 0)
 	c.race = make([]define.CardRace, 0)
+
+	// 移除子卡牌和子卡牌所有事件
+	for _, v := range c.subCards {
+		c.GetOwner().RemoveCardFromBothEvent(v)
+	}
+	c.subCards = make([]iface.ICard, 0)
+	c.GetOwner().RemoveCardFromBothEvent(c)
 
 	// 血量修正
 	c.hpMax = c.config.Hp
@@ -398,6 +489,12 @@ func (c *Card) Silent(c2 iface.ICard) {
 
 	// 攻击修正
 	c.damage = c.config.Damage
+	c.silent = true
+}
+
+// 是否被沉默
+func (c *Card) IsSilent() bool {
+	return c.silent
 }
 
 // 设置出牌回合

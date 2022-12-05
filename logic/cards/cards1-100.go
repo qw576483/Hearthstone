@@ -45,13 +45,7 @@ func (c *Card2) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 	if rc == nil {
 		return
 	}
-	th := rc.GetHaveEffectHp()
-	td := rc.GetHaveEffectDamage(rc)
-
-	// 可能需要个镇定的效果 ， 去除当前的时效buff
-
-	rc.SetDamage(th)
-	rc.SetHpMaxAndHp(td)
+	rc.ExchangeHpDamage(rc)
 	rc.CostHp(0)
 
 	// logs
@@ -482,4 +476,64 @@ type Card20 struct {
 
 func (c *Card20) NewPoint() iface.ICard {
 	return &Card20{}
+}
+
+// buff - 回合结束时消散
+type Card21 struct {
+	battle.Card
+}
+
+func (c *Card21) NewPoint() iface.ICard {
+	return &Card21{}
+}
+
+func (c *Card21) OnInit() {
+	c.GetOwner().AddCardToEvent(c, "OnNRRoundEnd")
+	c.GetOwner().AddCardToEvent(c, "OnNROtherDie")
+}
+
+func (c *Card21) OnNROtherDie(oc iface.ICard) {
+	if oc.GetId() == c.GetId() {
+		c.OnNRRoundEnd()
+	}
+}
+
+func (c *Card21) OnNRRoundEnd() {
+
+	fc := c.GetFatherCard()
+	if fc != nil {
+		fc.RemoveSubCards(c)
+		c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundEnd")
+		c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
+	}
+}
+
+// buff - 回合开始时消散
+type Card22 struct {
+	battle.Card
+}
+
+func (c *Card22) NewPoint() iface.ICard {
+	return &Card22{}
+}
+
+func (c *Card22) OnInit() {
+	c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")
+	c.GetOwner().AddCardToEvent(c, "OnNROtherDie")
+}
+
+func (c *Card22) OnNROtherDie(oc iface.ICard) {
+	if oc.GetId() == c.GetId() {
+		c.OnNRRoundBegin()
+	}
+}
+
+func (c *Card22) OnNRRoundBegin() {
+
+	fc := c.GetFatherCard()
+	if fc != nil {
+		fc.RemoveSubCards(c)
+		c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")
+		c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
+	}
 }

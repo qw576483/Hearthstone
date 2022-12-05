@@ -53,6 +53,17 @@ func SCPWithCardTypes(ct []define.CardType) RandCardOption {
 	}
 }
 
+func SCPWithCommonCardTypes() RandCardOption {
+	return func(q *ScreenCardParam) {
+		q.CardTypes = []define.CardType{
+			define.CardTypeEntourage,
+			define.CardTypeWeapon,
+			define.CardTypeSorcery,
+			define.CardTypeSecret,
+		}
+	}
+}
+
 // 筛选卡牌特质
 func SCPWithCardTraits(ct []define.CardTraits) RandCardOption {
 	return func(q *ScreenCardParam) {

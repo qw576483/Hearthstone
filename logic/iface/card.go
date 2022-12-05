@@ -26,6 +26,7 @@ type ICard interface {
 	CostHp(int) int                        // 扣除血量(返回值为实际消耗)
 	SetHp(int)                             // 设置血量
 	GetHp() int                            // 获得卡牌血量
+	DeleteHpEffect()                       // 删除hp的影响数据
 	GetHaveEffectHp() int                  // 获得有效果加成的卡牌血量
 	SetHpMax(int)                          // 设置血上限
 	GetHpMax() int                         // 获得卡牌最大血量
@@ -34,6 +35,7 @@ type ICard interface {
 	GetHaveEffectDamage(ICard) int         // 计算有效果加成的卡牌攻击力
 	AddDamage(int)                         // 添加攻击力
 	SetDamage(int)                         // 设置攻击
+	ExchangeHpDamage(ICard)                // 交换攻击和血
 	GetMona() int                          // 获得法力值
 	GetHaveEffectMona(ICard) int           // 计算有效果加成的卡牌费用
 	SetCardInCardsPos(define.InCardsType)  // 设置此卡的位置
@@ -41,12 +43,17 @@ type ICard interface {
 	GetHandPos() (int, error)              // 获得此卡在手牌中的位置
 	SetOwner(IHero)                        // 设置拥有人
 	GetOwner() IHero                       // 获得此卡拥有人
+	GetFatherCard() ICard                  // 获得父卡牌
+	GetSubCards() []ICard                  // 获得子卡牌
+	AddSubCards(ICard)                     // 添加子卡牌
+	RemoveSubCards(ICard)                  // 删除子卡牌
 	SetAttackTimes(int)                    // 设置攻击次数
 	GetAttackTimes() int                   // 获得攻击次数
 	GetMaxAttackTimes() int                // 获得最大攻击次数
 	Copy() (ICard, error)                  // 复制此卡
 	Reset()                                // 重置此卡
 	Silent(ICard)                          // 沉默此卡
+	IsSilent() bool                        // 是否被沉默
 	SetReleaseRound(int)                   // 设置出牌回合
 	GetReleaseRound() int                  // 获得出牌回合
 
