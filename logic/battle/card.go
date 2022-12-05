@@ -24,7 +24,8 @@ type Card struct {
 	inCardsType  define.InCardsType  // 卡牌的位置
 	owner        iface.IHero         // 所属人
 	attackTimes  int                 // 攻击次数
-	buffs        []iface.IBuff       // buff
+	fatherCard   iface.ICard         // 父卡牌
+	subCards     []iface.ICard       // 子卡牌
 	releaseRound int                 // 出牌回合
 	initSign     bool                // 设置初始化标记
 }
@@ -355,11 +356,6 @@ func (c *Card) GetMaxAttackTimes() int {
 	return 1
 }
 
-// 获得buffs
-func (c *Card) GetBuffs() []iface.IBuff {
-	return c.buffs
-}
-
 // 复制此卡
 func (c *Card) Copy() (iface.ICard, error) {
 
@@ -380,7 +376,6 @@ func (c *Card) Reset() {
 	c.hpMax = c.config.Hp             // 卡牌血上限
 	c.damage = c.config.Damage        // 攻击力
 	c.mona = c.config.Mona            // 能量
-	c.buffs = make([]iface.IBuff, 0)  // buff
 	c.hpEffect = make(map[int]int, 0) // hpEffect
 }
 
@@ -394,7 +389,6 @@ func (c *Card) Silent(c2 iface.ICard) {
 	// 属性，种族，buffs修正
 	c.traits = make([]define.CardTraits, 0)
 	c.race = make([]define.CardRace, 0)
-	c.buffs = make([]iface.IBuff, 0)
 
 	// 血量修正
 	c.hpMax = c.config.Hp

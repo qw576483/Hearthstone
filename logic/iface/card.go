@@ -44,7 +44,6 @@ type ICard interface {
 	SetAttackTimes(int)                    // 设置攻击次数
 	GetAttackTimes() int                   // 获得攻击次数
 	GetMaxAttackTimes() int                // 获得最大攻击次数
-	GetBuffs() []IBuff                     // 获得buffs
 	Copy() (ICard, error)                  // 复制此卡
 	Reset()                                // 重置此卡
 	Silent(ICard)                          // 沉默此卡
