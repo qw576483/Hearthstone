@@ -75,6 +75,7 @@ type ICard interface {
 	// 注册事件 - 实现前需要注册
 	OnNRRoundBegin()                            // 回合开始时
 	OnNRRoundEnd()                              // 回合结束时
+	OnNROtherRelease(ICard) bool                // 其他卡牌释放时，返回是否拦截
 	OnNRPutToBattle(ICard)                      // 其他卡牌步入战场时
 	OnNROtherDie(ICard)                         // 其他卡牌死亡时
 	OnNROtherGetMona(ICard) int                 // 其他卡牌获取自己的费用时， 返回费用加成

@@ -588,23 +588,37 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 		putidx = len(h.GetBattleCards())
 	}
 
-	// 战吼优先触发
-	if trickRelease {
+	// 是否拦截
+	intercept := false
+	for _, v := range h.GetBothEventCards("OnNROtherRelease") {
+		intercept = v.OnNROtherRelease(c)
+		if intercept {
+			break
+		}
+	}
+
+	// 战吼触发在拦截之前
+	// 法术不会触发，直接拦截
+	if trickRelease && (c.GetType() == define.CardTypeEntourage || !intercept) {
 		h.TrickRelease(c, choiceId, putidx, rc, rh)
 	}
 
-	if cType == define.CardTypeEntourage { // 随从
-		h.MoveToBattle(c, putidx)
-	} else if cType == define.CardTypeWeapon { // 武器
-		h.OnlyReleaseWeapon(c)
-	} else if cType == define.CardTypeSorcery {
-		h.MoveOutHandOnlyHandCards(c)
+	// 如果没被拦截，触发效果
+	if !intercept {
+		if cType == define.CardTypeEntourage { // 随从
+			h.MoveToBattle(c, putidx)
+		} else if cType == define.CardTypeWeapon { // 武器
+			h.OnlyReleaseWeapon(c)
+		} else if cType == define.CardTypeSorcery {
+			h.MoveOutHandOnlyHandCards(c)
+		}
 	}
 
 	c.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
 
-	// 使用完成后销毁法术
-	if cType == define.CardTypeSorcery {
+	// 如果是法术使用完成后销毁
+	// 如果是卡牌，被拦截，直接销毁
+	if cType == define.CardTypeSorcery || intercept {
 		c.SetCardInCardsPos(define.InCardsTypeGrave)
 		h.DieCard(c)
 	}
