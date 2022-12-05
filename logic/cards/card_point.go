@@ -27,4 +27,5 @@ var cardPoints []iface.ICard = []iface.ICard{
 	21: &Card21{},
 	22: &Card22{},
 	23: &Card23{},
+	24: &Card24{},
 }

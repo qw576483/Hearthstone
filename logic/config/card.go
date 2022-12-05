@@ -328,6 +328,13 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 	},
 	23: &CardConfig{
 		Id:       23,
+		Name:     "Buff",
+		Desc:     "永久生效",
+		Ctype:    define.CardTypeBuff,
+		CanCarry: false,
+	},
+	24: &CardConfig{
+		Id:       24,
 		Name:     "叫嚣的中士",
 		Desc:     "战吼：在本回合中，使一个随从获得+2攻击力。",
 		Mona:     1,

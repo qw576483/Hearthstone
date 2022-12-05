@@ -556,7 +556,7 @@ func (c *Card22) ClearBuff() {
 	}
 }
 
-// 叫嚣的中士
+// buff - 永久生效
 type Card23 struct {
 	battle.Card
 }
@@ -565,7 +565,16 @@ func (c *Card23) NewPoint() iface.ICard {
 	return &Card23{}
 }
 
-func (c *Card23) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+// 叫嚣的中士
+type Card24 struct {
+	battle.Card
+}
+
+func (c *Card24) NewPoint() iface.ICard {
+	return &Card24{}
+}
+
+func (c *Card24) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 	if rc != nil {
 

@@ -73,3 +73,4 @@ const (
 
 var BuffCardId_MyRoundEndClear = 21   // buffId ,我的回合结束清除效果
 var BuffCardId_MyRoundBeginClear = 22 // buffId ,我的回合开始清除效果
+var BuffCardId_Forever = 23           // buffId ,永久生效
