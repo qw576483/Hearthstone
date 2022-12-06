@@ -649,3 +649,36 @@ func (c *Card28) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(rc))
 	}
 }
+
+// 奉献
+type Card29 struct {
+	battle.Card
+}
+
+func (c *Card29) NewPoint() iface.ICard {
+	return &Card29{}
+}
+
+func (c *Card29) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	d := h.GetApDamage()
+	d += 2
+
+	for _, v := range h.GetEnemy().GetBattleCards() {
+		v.CostHp(d)
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"对"+push.GetCardLogString(v)+"造成了"+strconv.Itoa(d)+"点伤害")
+	}
+
+	h.GetEnemy().CostHp(d)
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"对"+push.GetHeroLogString(h.GetEnemy())+"造成了"+strconv.Itoa(d)+"点伤害")
+}
+
+// 狗头人地卜师
+type Card30 struct {
+	battle.Card
+}
+
+func (c *Card30) NewPoint() iface.ICard {
+	return &Card30{}
+}

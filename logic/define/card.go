@@ -50,6 +50,7 @@ const (
 	CardRaceFish                      // 鱼人
 	CardRaceMechanics                 // 机械
 	CardRaceTotems                    // 图腾
+	CardRaceSacred                    // 神圣
 )
 
 // 卡牌系列

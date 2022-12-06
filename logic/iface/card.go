@@ -37,6 +37,7 @@ type ICard interface {
 	AddDamage(int)                                 // 添加攻击力
 	SetDamage(int)                                 // 设置攻击
 	ExchangeHpDamage(ICard)                        // 交换攻击和血
+	GetApDamage() int                              // 获得法术伤害
 	GetMona() int                                  // 获得法力值
 	GetHaveEffectMona(ICard) int                   // 计算有效果加成的卡牌费用
 	SetCardInCardsPos(define.InCardsType)          // 设置此卡的位置
@@ -83,6 +84,7 @@ type ICard interface {
 	OnNROtherDie(ICard)                         // 其他卡牌死亡时
 	OnNROtherGetMona(ICard) int                 // 其他卡牌获取自己的费用时， 返回费用加成
 	OnNROtherGetDamage(ICard) int               // 其他卡牌获取自己的攻击力时 ， 返回攻击加成
+	OnNROtherGetApDamage(IHero) int             // 英雄获取自己的法术伤害时 ， 返回的法术伤害加成
 	OnNROtherGetHp(ICard) int                   // 其他卡牌获取自己的血量时 ， 返回血量加成
 	OnNROtherGetTraits(ICard) define.CardTraits // 其他卡牌获取自己的特质时 ， 返回特质加成
 

@@ -275,6 +275,21 @@ func (h *Hero) GetDamage() int {
 	return h.damage + w.GetHaveEffectDamage(w)
 }
 
+// 获得法术伤害
+func (h *Hero) GetApDamage() int {
+
+	d := 0
+	for _, v := range h.GetBattleCards() {
+		d += v.GetApDamage()
+	}
+
+	for _, v := range h.GetBothEventCards("OnNROtherGetApDamage") {
+		d += v.OnNROtherGetApDamage(h)
+	}
+
+	return d
+}
+
 // 设置攻击次数
 func (h *Hero) SetAttackTimes(t int) {
 	h.attackTimes = t

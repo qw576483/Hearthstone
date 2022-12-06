@@ -37,6 +37,7 @@ type IHero interface {
 	GetAllCards() []ICard                              // 获得全部卡牌
 	GetBothAllCards() []ICard                          // 获得全部卡牌
 	GetDamage() int                                    // 获得攻击力
+	GetApDamage() int                                  // 获得法术伤害
 	SetAttackTimes(int)                                // 设置攻击次数
 	GetAttackTimes() int                               // 获得攻击次数
 	GetMaxAttackTimes() int                            // 获得最大攻击次数

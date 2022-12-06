@@ -8,6 +8,7 @@ type CardConfig struct {
 	Desc     string              // 描述
 	Hp       int                 // 血量
 	Damage   int                 // 伤害
+	ApDamage int                 // 法术伤害
 	Mona     int                 // 费用
 	Ctype    define.CardType     // 类型
 	Quality  define.CardQuality  // 品质
@@ -380,6 +381,7 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 	28: &CardConfig{
 		Id:       28,
 		Name:     "铁喙猫头鹰",
+		Desc:     "战吼：沉默一个随从。",
 		Mona:     3,
 		Damage:   2,
 		Hp:       1,
@@ -387,6 +389,31 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Ctype:    define.CardTypeEntourage,
 		Race:     MakeCardRace(define.CardRaceBeast),
 		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
+	29: &CardConfig{
+		Id:       29,
+		Name:     "奉献",
+		Desc:     "对所有敌人造成2点伤害。",
+		Mona:     4,
+		Quality:  define.CardQualityBase,
+		Ctype:    define.CardTypeSorcery,
+		Race:     MakeCardRace(define.CardRaceSacred),
+		Series:   define.CardSeriseClassic,
+		Vocation: MakeCardVocation(define.VocationPaladin),
+		CanCarry: true,
+	},
+	30: &CardConfig{
+		Id:       30,
+		Name:     "狗头人地卜师",
+		Desc:     "法术伤害+1",
+		Mona:     2,
+		Damage:   2,
+		Hp:       2,
+		ApDamage: 1,
+		Quality:  define.CardQualityBase,
+		Ctype:    define.CardTypeEntourage,
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},

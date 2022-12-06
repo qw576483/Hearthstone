@@ -29,6 +29,7 @@ type Card struct {
 	releaseRound int                 // 出牌回合
 	initSign     bool                // 设置初始化标记
 	silent       bool                // 是否被沉默
+	apDamage     int                 // 法术伤害
 }
 
 // 返回新指针
@@ -360,6 +361,26 @@ func (c *Card) ExchangeHpDamage(ic iface.ICard) {
 	}
 }
 
+// 获得法术伤害
+func (c *Card) GetApDamage() int {
+	return c.apDamage
+}
+
+// 计算有效果加成的卡牌法术伤害
+func (c *Card) GetHaveEffectApDamage(ic iface.ICard) int {
+	d := ic.GetApDamage()
+
+	for _, v := range ic.GetSubCards() {
+		d += v.GetApDamage()
+	}
+
+	if d < 0 {
+		d = 0
+	}
+
+	return d
+}
+
 // 获得费用
 func (c *Card) GetMona() int {
 	return c.mona
@@ -423,7 +444,7 @@ func (c *Card) GetOwner() iface.IHero {
 }
 
 func (c *Card) GetNoLoopOwner() iface.IHero {
-	return c.GetOwner()
+	return c.owner
 }
 
 // 获得父级card
@@ -507,6 +528,7 @@ func (c *Card) Reset() {
 	c.traits = c.config.Traits          // 卡牌特质
 	c.hp = c.config.Hp                  // 卡牌血量
 	c.hpMax = c.config.Hp               // 卡牌血上限
+	c.apDamage = c.config.ApDamage      // 法术伤害
 	c.damage = c.config.Damage          // 攻击力
 	c.mona = c.config.Mona              // 能量
 	c.hpEffect = make(map[int]int, 0)   // hpEffect
@@ -540,7 +562,13 @@ func (c *Card) Silent() {
 
 	// 攻击修正
 	c.damage = c.config.Damage
+
+	// 费用修正
 	c.mona = c.config.Mona
+
+	// 放弃法术伤害
+	c.apDamage = 0
+
 	c.silent = true
 }
 
@@ -580,5 +608,6 @@ func (c *Card) OnNRPutToBattle(oc iface.ICard)                      {}          
 func (c *Card) OnNROtherDie(oc iface.ICard)                         {}               // 其他卡牌死亡时
 func (c *Card) OnNROtherGetMona(oc iface.ICard) int                 { return 0 }     // 其他卡牌获取自己的费用时， 返回费用加成
 func (c *Card) OnNROtherGetDamage(oc iface.ICard) int               { return 0 }     // 其他卡牌获取自己的攻击力时 ， 返回攻击加成
+func (c *Card) OnNROtherGetApDamage(oh iface.IHero) int             { return 0 }     // 英雄获取自己的法术伤害时 ， 返回的法术伤害加成
 func (c *Card) OnNROtherGetHp(oc iface.ICard) int                   { return 0 }     // 其他卡牌获取自己的血量时 ， 返回血量加成
 func (c *Card) OnNROtherGetTraits(oc iface.ICard) define.CardTraits { return -1 }    // 其他卡牌获得自己的特质时，返回特质加成
