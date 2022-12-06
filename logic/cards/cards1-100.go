@@ -1,7 +1,7 @@
 package cards
 
 import (
-	"hs/logic/battle"
+	"hs/logic/battle/bcard"
 	"hs/logic/define"
 	"hs/logic/iface"
 	"hs/logic/push"
@@ -11,7 +11,7 @@ import (
 
 // 幸运币
 type Card0 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card0) NewPoint() iface.ICard {
@@ -24,7 +24,7 @@ func (c *Card0) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 石牙野猪
 type Card1 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card1) NewPoint() iface.ICard {
@@ -33,7 +33,7 @@ func (c *Card1) NewPoint() iface.ICard {
 
 // 疯狂的炼金师
 type Card2 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card2) NewPoint() iface.ICard {
@@ -54,7 +54,7 @@ func (c *Card2) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 寒光智者
 type Card3 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card3) NewPoint() iface.ICard {
@@ -71,7 +71,7 @@ func (c *Card3) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 麦田傀儡
 type Card4 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card4) NewPoint() iface.ICard {
@@ -96,7 +96,7 @@ func (c *Card4) OnDie(bidx int) {
 
 // 损坏的傀儡（麦田傀儡衍生物）
 type Card5 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card5) NewPoint() iface.ICard {
@@ -105,7 +105,7 @@ func (c *Card5) NewPoint() iface.ICard {
 
 // 攻城车
 type Card6 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card6) NewPoint() iface.ICard {
@@ -145,7 +145,7 @@ func (c *Card6) OnNRRoundBegin() {
 
 // 铸剑师
 type Card7 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card7) NewPoint() iface.ICard {
@@ -181,7 +181,7 @@ func (c *Card7) OnNRRoundEnd() {
 
 // 螃蟹骑士
 type Card8 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card8) NewPoint() iface.ICard {
@@ -190,7 +190,7 @@ func (c *Card8) NewPoint() iface.ICard {
 
 // 毁灭之刃
 type Card9 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card9) NewPoint() iface.ICard {
@@ -221,7 +221,7 @@ func (c *Card9) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 食腐土狼
 type Card10 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card10) NewPoint() iface.ICard {
@@ -252,7 +252,7 @@ func (c *Card10) OnNROtherDie(tc iface.ICard) {
 
 // 上古看守者
 type Card11 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card11) NewPoint() iface.ICard {
@@ -261,7 +261,7 @@ func (c *Card11) NewPoint() iface.ICard {
 
 // 持盾卫士
 type Card12 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card12) NewPoint() iface.ICard {
@@ -270,7 +270,7 @@ func (c *Card12) NewPoint() iface.ICard {
 
 // 银色侍从
 type Card13 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card13) NewPoint() iface.ICard {
@@ -279,7 +279,7 @@ func (c *Card13) NewPoint() iface.ICard {
 
 // 耐心的刺客
 type Card14 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card14) NewPoint() iface.ICard {
@@ -288,7 +288,7 @@ func (c *Card14) NewPoint() iface.ICard {
 
 // 疯狂投弹者
 type Card15 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card15) NewPoint() iface.ICard {
@@ -315,7 +315,7 @@ func (c *Card15) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 飞刀杂耍者
 type Card16 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card16) NewPoint() iface.ICard {
@@ -353,7 +353,7 @@ func (c *Card16) OnNRPutToBattle(oc iface.ICard) {
 
 // 火舌图腾
 type Card17 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card17) NewPoint() iface.ICard {
@@ -391,7 +391,7 @@ func (c *Card17) OnNROtherGetDamage(oc iface.ICard) int {
 
 // 小个子召唤师
 type Card18 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card18) NewPoint() iface.ICard {
@@ -426,7 +426,7 @@ func (c *Card18) OnNROtherGetMona(oc iface.ICard) int {
 
 // 暴风城勇士
 type Card19 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card19) NewPoint() iface.ICard {
@@ -471,7 +471,7 @@ func (c *Card19) OnNROtherGetHp(oc iface.ICard) int {
 
 // 小精灵
 type Card20 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card20) NewPoint() iface.ICard {
@@ -480,7 +480,7 @@ func (c *Card20) NewPoint() iface.ICard {
 
 // buff - 你的回合结束时消散
 type Card21 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card21) NewPoint() iface.ICard {
@@ -520,7 +520,7 @@ func (c *Card21) ClearBuff() {
 
 // buff - 你的回合开始时消散
 type Card22 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card22) NewPoint() iface.ICard {
@@ -558,7 +558,7 @@ func (c *Card22) ClearBuff() {
 
 // buff - 永久生效
 type Card23 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card23) NewPoint() iface.ICard {
@@ -567,7 +567,7 @@ func (c *Card23) NewPoint() iface.ICard {
 
 // 叫嚣的中士
 type Card24 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card24) NewPoint() iface.ICard {
@@ -591,7 +591,7 @@ func (c *Card24) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 银色保卫者
 type Card25 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card25) NewPoint() iface.ICard {
@@ -608,7 +608,7 @@ func (c *Card25) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 盗贼基础技能
 type Card26 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card26) NewPoint() iface.ICard {
@@ -626,7 +626,7 @@ func (c *Card26) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 盗贼基础技能 - 匕首
 type Card27 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card27) NewPoint() iface.ICard {
@@ -635,7 +635,7 @@ func (c *Card27) NewPoint() iface.ICard {
 
 // 铁喙猫头鹰
 type Card28 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card28) NewPoint() iface.ICard {
@@ -652,7 +652,7 @@ func (c *Card28) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 奉献
 type Card29 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card29) NewPoint() iface.ICard {
@@ -676,7 +676,7 @@ func (c *Card29) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 
 // 狗头人地卜师
 type Card30 struct {
-	battle.Card
+	bcard.Card
 }
 
 func (c *Card30) NewPoint() iface.ICard {

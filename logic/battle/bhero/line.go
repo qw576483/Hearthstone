@@ -1,4 +1,4 @@
-package battle
+package bhero
 
 // 预备阶段
 func (h *Hero) PreBegin() {
