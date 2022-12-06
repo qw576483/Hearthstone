@@ -443,4 +443,17 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Vocation: MakeCardVocation(define.VocationDruid),
 		CanCarry: true,
 	},
+	33: &CardConfig{
+		Id:       33,
+		Name:     "年轻的酒仙",
+		Desc:     "战吼：使一个友方随从从战场上移回你的手牌。",
+		Mona:     2,
+		Damage:   3,
+		Hp:       2,
+		Quality:  define.CardQualityWhite,
+		Ctype:    define.CardTypeEntourage,
+		Series:   define.CardSeriseClassic,
+		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
+		CanCarry: true,
+	},
 }

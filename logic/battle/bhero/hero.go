@@ -416,6 +416,12 @@ func (h *Hero) MoveToHand(c iface.ICard) {
 		return
 	}
 
+	// 如果从战场中移回手牌，需要还原数据
+	if c.GetCardInCardsPos() == define.InCardsTypeBattle {
+		h.MoveOutBattleOnlyBattleCards(c)
+		c.Reset()
+	}
+
 	// 添加到手牌
 	h.handCards = append(h.handCards, c)
 	c.SetCardInCardsPos(define.InCardsTypeHand)

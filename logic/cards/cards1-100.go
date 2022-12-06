@@ -706,7 +706,6 @@ func (c *Card31) OnNROtherRelease(oc iface.ICard) bool {
 		return false
 	}
 
-	// copy一张卡
 	nc, err := oc.Copy(oc)
 	if err != nil {
 		fmt.Println(err)
@@ -746,5 +745,23 @@ func (c *Card32) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 			rc.Silent()
 			push.PushAutoLog(c.GetOwner(), "[抉择2]"+push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(rc))
 		}
+	}
+}
+
+// 年轻的酒仙
+type Card33 struct {
+	bcard.Card
+}
+
+func (c *Card33) NewPoint() iface.ICard {
+	return &Card33{}
+}
+
+func (c *Card33) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	if rc != nil && rc.GetOwner().GetId() == h.GetId() {
+		h.MoveToHand(rc)
+		push.PushAutoLog(h, push.GetCardLogString(c)+"将"+push.GetCardLogString(rc)+"移动回手牌")
 	}
 }

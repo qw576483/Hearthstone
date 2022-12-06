@@ -538,9 +538,8 @@ func (c *Card) Copy(ic iface.ICard) (iface.ICard, error) {
 
 	// 设置owner
 	nc.SetOwner(owner)
-
-	// 设置新id
 	nc.SetId(owner.GetBattle().GetIncrCardId())
+	nc.SetCardInCardsPos(define.InCardsTypeNone)
 
 	return nc, nil
 }
