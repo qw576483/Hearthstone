@@ -19,7 +19,6 @@ const (
 	CardTypeEntourage CardType = iota // 随从
 	CardTypeWeapon                    // 武器
 	CardTypeSorcery                   // 法术
-	CardTypeSecret                    // 奥秘
 	CardTypeBuff                      // buff - 不能直接使用
 	CardTypeHeroSkill                 // 英雄技能
 )
@@ -39,6 +38,7 @@ const (
 	CardTraitsHolyShield                       // 圣盾
 	CardTraitsSneak                            // 潜行
 	CardTraitsHighlyToxic                      // 剧毒
+	CardTraitsSecret                           // 奥秘
 )
 
 // 卡牌种族

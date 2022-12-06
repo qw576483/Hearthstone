@@ -417,4 +417,16 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	31: &CardConfig{
+		Id:       31,
+		Name:     "游学者周卓",
+		Desc:     "每当一个玩家施放一个法术，复制该法术，将其置入另一个玩家的手牌。",
+		Mona:     2,
+		Damage:   0,
+		Hp:       4,
+		Quality:  define.CardQualityOrange,
+		Ctype:    define.CardTypeEntourage,
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }

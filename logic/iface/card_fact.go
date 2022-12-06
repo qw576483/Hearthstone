@@ -60,7 +60,6 @@ func SCPWithCommonCardTypes() RandCardOption {
 			define.CardTypeEntourage,
 			define.CardTypeWeapon,
 			define.CardTypeSorcery,
-			define.CardTypeSecret,
 		}
 	}
 }

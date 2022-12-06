@@ -1,6 +1,7 @@
 package cards
 
 import (
+	"fmt"
 	"hs/logic/battle/bcard"
 	"hs/logic/define"
 	"hs/logic/iface"
@@ -681,4 +682,42 @@ type Card30 struct {
 
 func (c *Card30) NewPoint() iface.ICard {
 	return &Card30{}
+}
+
+// 游学者周卓
+type Card31 struct {
+	bcard.Card
+}
+
+func (c *Card31) NewPoint() iface.ICard {
+	return &Card31{}
+}
+
+func (c *Card31) OnPutToBattle(pidx int) {
+	c.GetOwner().AddCardToEvent(c, "OnNROtherRelease")
+}
+
+func (c *Card31) OnOutBattle() {
+	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherRelease")
+}
+
+func (c *Card31) OnNROtherRelease(oc iface.ICard) bool {
+	if oc.GetConfig().Ctype != define.CardTypeSorcery {
+		return false
+	}
+
+	// copy一张卡
+	nc, err := oc.Copy(oc)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	// 设置所属人
+	nc.SetOwner(oc.GetOwner().GetEnemy())
+	nc.GetNoLoopOwner().MoveToHand(nc)
+
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"复制了"+push.GetCardLogString(nc))
+
+	return false
 }

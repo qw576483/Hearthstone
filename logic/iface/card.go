@@ -10,6 +10,7 @@ type ICard interface {
 	NewPoint() ICard                                // 新指针
 	Init(ICard, define.InCardsType, IHero, IBattle) // 初始化
 
+	SetId(int)                                     // 设置id
 	GetId() int                                    // 获得卡牌id
 	SetConfig(*config.CardConfig)                  // 设置配置
 	GetConfig() *config.CardConfig                 // 获得配置
@@ -55,7 +56,7 @@ type ICard interface {
 	SetAttackTimes(int)                            // 设置攻击次数
 	GetAttackTimes() int                           // 获得攻击次数
 	GetMaxAttackTimes() int                        // 获得最大攻击次数
-	Copy() (ICard, error)                          // 复制此卡
+	Copy(ICard) (ICard, error)                     // 复制此卡
 	Reset()                                        // 重置此卡
 	Silent()                                       // 沉默此卡
 	IsSilent() bool                                // 是否被沉默

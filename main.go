@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/gob"
+	"hs/logic/battle/bcard"
+	"hs/logic/battle/bhero"
 	"hs/logic/cards"
 	"hs/net/conf"
 	"hs/net/game"
@@ -9,6 +12,11 @@ import (
 	"github.com/name5566/leaf"
 	lconf "github.com/name5566/leaf/conf"
 )
+
+func init() {
+	gob.Register(&bcard.Card{})
+	gob.Register(&bhero.Hero{})
+}
 
 func main() {
 

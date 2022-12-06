@@ -81,7 +81,12 @@ func (h *Hero) TrickDieCardEvent(c iface.ICard, bidx int) {
 
 // 触发步入战场事件
 func (h *Hero) TrickPutToBattleEvent(c iface.ICard, bidx int) {
-	c.OnPutToBattle(bidx)
+
+	// 有可能是复制出来的卡，然后put to battle，也需要检查是否沉默
+	if !c.IsSilent() {
+		c.OnPutToBattle(bidx)
+	}
+
 	for _, v := range h.GetBothEventCards("OnNRPutToBattle") {
 		v.OnNRPutToBattle(c)
 	}
@@ -93,5 +98,4 @@ func (h *Hero) TrickOutBattleEvent(c iface.ICard) {
 	if !c.IsSilent() {
 		c.OnOutBattle()
 	}
-
 }
