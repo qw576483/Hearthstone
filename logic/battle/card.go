@@ -308,7 +308,10 @@ func (c *Card) GetDamage() int {
 // 计算有效果加成的卡牌攻击力
 func (c *Card) GetHaveEffectDamage(ic iface.ICard) int {
 	d := ic.GetDamage()
-	d += ic.OnGetDamage()
+
+	if !ic.IsSilent() {
+		d += ic.OnGetDamage()
+	}
 
 	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetDamage") {
 		d += v.OnNROtherGetDamage(ic)
@@ -365,7 +368,10 @@ func (c *Card) GetMona() int {
 // 计算有效果加成的卡牌费用
 func (c *Card) GetHaveEffectMona(ic iface.ICard) int {
 	d := ic.GetMona()
-	d += ic.OnGetMona()
+
+	if !ic.IsSilent() {
+		d += ic.OnGetMona()
+	}
 
 	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetMona") {
 		d += v.OnNROtherGetMona(ic)
@@ -412,7 +418,12 @@ func (c *Card) GetOwner() iface.IHero {
 	if c.GetFatherCard() != nil {
 		return c.GetFatherCard().GetOwner()
 	}
-	return c.owner
+
+	return c.GetNoLoopOwner()
+}
+
+func (c *Card) GetNoLoopOwner() iface.IHero {
+	return c.GetOwner()
 }
 
 // 获得父级card
@@ -529,6 +540,7 @@ func (c *Card) Silent() {
 
 	// 攻击修正
 	c.damage = c.config.Damage
+	c.mona = c.config.Mona
 	c.silent = true
 }
 

@@ -44,6 +44,7 @@ type ICard interface {
 	GetHandPos() (int, error)                      // 获得此卡在手牌中的位置
 	SetOwner(IHero)                                // 设置拥有人
 	GetOwner() IHero                               // 获得此卡拥有人
+	GetNoLoopOwner() IHero                         // 获得不循环的拥有人，一般用于buff
 	GetFatherCard() ICard                          // 获得父卡牌
 	SetFatherCard(ICard)                           // 设置父卡牌
 	GetSubCards() []ICard                          // 获得子卡牌

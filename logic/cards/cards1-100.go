@@ -502,7 +502,7 @@ func (c *Card21) OnNRRoundEnd() {
 
 	fc := c.GetFatherCard()
 
-	if fc == nil || fc.GetOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+	if fc == nil || fc.GetNoLoopOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
 		return
 	}
 
@@ -541,7 +541,7 @@ func (c *Card22) OnNROtherDie(oc iface.ICard) {
 func (c *Card22) OnNRRoundBegin() {
 
 	fc := c.GetFatherCard()
-	if fc == nil || fc.GetOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+	if fc == nil || fc.GetNoLoopOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
 		return
 	}
 	c.ClearBuff()
@@ -631,4 +631,21 @@ type Card27 struct {
 
 func (c *Card27) NewPoint() iface.ICard {
 	return &Card27{}
+}
+
+// 铁喙猫头鹰
+type Card28 struct {
+	battle.Card
+}
+
+func (c *Card28) NewPoint() iface.ICard {
+	return &Card28{}
+}
+
+func (c *Card28) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	if rc != nil {
+		rc.Silent()
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(rc))
+	}
 }

@@ -377,4 +377,17 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Vocation: MakeCardVocation(define.VocationRobbers),
 		CanCarry: false,
 	},
+	28: &CardConfig{
+		Id:       28,
+		Name:     "铁喙猫头鹰",
+		Mona:     3,
+		Damage:   2,
+		Hp:       1,
+		Quality:  define.CardQualityWhite,
+		Ctype:    define.CardTypeEntourage,
+		Race:     MakeCardRace(define.CardRaceBeast),
+		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }
