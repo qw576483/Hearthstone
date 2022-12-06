@@ -75,4 +75,15 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		Shield:      0,
 		HeroSkillId: 26,
 	},
+	5: &HeroConfig{
+		Id:          5,
+		Vocation:    define.VocationDruid,
+		Name:        "玛法里奥",
+		Hp:          30,
+		HpMax:       30,
+		Mona:        0,
+		MonaMax:     10,
+		Shield:      0,
+		HeroSkillId: 26,
+	},
 }

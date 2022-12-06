@@ -429,4 +429,18 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	32: &CardConfig{
+		Id:       32,
+		Name:     "丛林守护者",
+		Desc:     "抉择：造成2点伤害；或者沉默一个随从。",
+		Mona:     4,
+		Damage:   2,
+		Hp:       4,
+		Quality:  define.CardQualityBlue,
+		Ctype:    define.CardTypeEntourage,
+		Series:   define.CardSeriseClassic,
+		Traits:   MakeCardTraits(define.CardTraitsChoice),
+		Vocation: MakeCardVocation(define.VocationDruid),
+		CanCarry: true,
+	},
 }

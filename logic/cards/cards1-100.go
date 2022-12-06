@@ -721,3 +721,30 @@ func (c *Card31) OnNROtherRelease(oc iface.ICard) bool {
 
 	return false
 }
+
+// 丛林守护者
+type Card32 struct {
+	bcard.Card
+}
+
+func (c *Card32) NewPoint() iface.ICard {
+	return &Card32{}
+}
+
+func (c *Card32) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	if choiceId == 0 {
+		if rc != nil {
+			rc.CostHp(2)
+			push.PushAutoLog(c.GetOwner(), "[抉择1]"+push.GetCardLogString(c)+"对"+push.GetCardLogString(rc)+"造成了2点伤害")
+		} else if rh != nil {
+			rh.CostHp(2)
+			push.PushAutoLog(c.GetOwner(), "[抉择1]"+push.GetCardLogString(c)+"对"+push.GetHeroLogString(rh)+"造成了2点伤害")
+		}
+	} else {
+		if rc != nil {
+			rc.Silent()
+			push.PushAutoLog(c.GetOwner(), "[抉择2]"+push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(rc))
+		}
+	}
+}

@@ -39,6 +39,7 @@ const (
 	CardTraitsSneak                            // 潜行
 	CardTraitsHighlyToxic                      // 剧毒
 	CardTraitsSecret                           // 奥秘
+	CardTraitsChoice                           // 抉择
 )
 
 // 卡牌种族

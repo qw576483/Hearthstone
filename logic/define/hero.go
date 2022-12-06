@@ -9,6 +9,7 @@ const (
 	VocationHunter                  // 猎人
 	VocationShaman                  // 萨满
 	VocationPaladin                 // 圣骑士
+	VocationDruid                   // 德鲁伊
 )
 
 var MaxBattleNum = 8

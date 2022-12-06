@@ -59,3 +59,12 @@ type Hero4 struct {
 func (h *Hero4) NewPoint() iface.IHero {
 	return &Hero4{}
 }
+
+// 德鲁伊
+type Hero5 struct {
+	bhero.Hero
+}
+
+func (h *Hero5) NewPoint() iface.IHero {
+	return &Hero5{}
+}
