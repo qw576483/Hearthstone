@@ -88,7 +88,6 @@ client:打开2个`client/client.html`
 - 永久生效(id:23)
 
 ## todo
-- 英雄死亡
 - 免疫
 - 过载
 - 受伤时

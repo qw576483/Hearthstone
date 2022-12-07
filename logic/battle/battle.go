@@ -3,6 +3,7 @@ package battle
 import (
 	"hs/logic/define"
 	"hs/logic/iface"
+	"hs/logic/push"
 	"math/rand"
 	"time"
 
@@ -70,6 +71,12 @@ func (b *Battle) SetDoneSign(s, v string) {
 // 获得战斗状态
 func (b *Battle) GetBattleStatus() define.BattleStatus {
 	return b.status
+}
+
+// 设置战斗状态
+func (b *Battle) SetBattleStatus(bs define.BattleStatus) {
+	b.status = bs
+	push.PushLine(b)
 }
 
 // 获得当前回合的英雄

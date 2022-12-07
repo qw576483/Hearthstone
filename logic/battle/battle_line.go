@@ -23,13 +23,12 @@ func (b *Battle) PreBegin() {
 	enemy.SetEnemy(b.hero)
 
 	// 设置状态
-	b.status = define.BattleStatusPre
-
 	for _, v := range b.heros {
 		v.PreBegin()
 	}
 
-	push.PushLine(b)
+	b.SetBattleStatus(define.BattleStatusPre)
+
 	push.PushInit(b)
 }
 
@@ -42,13 +41,12 @@ func (b *Battle) Begin() {
 	// 添加一个幸运币
 	b.hero.GetEnemy().GiveNewCardToHand(0)
 
-	b.status = define.BattleStatusRun
-
 	// 战斗开始
 	b.hero.TrickBattleBegin()
 	b.hero.GetEnemy().TrickBattleBegin()
 
-	push.PushLine(b)
+	// 设置状态
+	b.SetBattleStatus(define.BattleStatusRun)
 
 	// 补卡
 	b.RoundBegin()

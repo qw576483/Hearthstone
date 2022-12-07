@@ -757,6 +757,12 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 
 // 死亡
 func (h *Hero) Die() {
+
+	// 设置战斗状态
+	h.battle.SetBattleStatus(define.BattleStatusEnd)
+
+	// log
+	push.PushAutoLog(h, "已死亡")
 }
 
 // 推送数据

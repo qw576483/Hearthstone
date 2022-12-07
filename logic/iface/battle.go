@@ -13,6 +13,7 @@ type IBattle interface {
 	GetDoneSign(string) string            // 是否完成某项操作
 	SetDoneSign(string, string)           // 完成某项操作
 	GetBattleStatus() define.BattleStatus // 获得战斗运行状态
+	SetBattleStatus(define.BattleStatus)  // 设置战斗运行状态
 	GetRoundHero() IHero                  // 获得当前回合的英雄
 	GetHeroByIncrId(int) IHero            // 获得英雄，根据自增id
 	GetHeros() []IHero                    // 获得两个英雄
