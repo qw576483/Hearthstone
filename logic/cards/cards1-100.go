@@ -694,22 +694,22 @@ func (c *Card31) NewPoint() iface.ICard {
 }
 
 func (c *Card31) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNROtherRelease")
+	c.GetOwner().AddCardToEvent(c, "OnNROtherBeforeRelease")
 }
 
 func (c *Card31) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherRelease")
+	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherBeforeRelease")
 }
 
-func (c *Card31) OnNROtherRelease(oc iface.ICard) bool {
+func (c *Card31) OnNROtherBeforeRelease(oc iface.ICard) {
 	if oc.GetConfig().Ctype != define.CardTypeSorcery {
-		return false
+		return
 	}
 
 	nc, err := oc.Copy(oc)
 	if err != nil {
 		fmt.Println(err)
-		return false
+		return
 	}
 
 	// 设置所属人
@@ -718,7 +718,7 @@ func (c *Card31) OnNROtherRelease(oc iface.ICard) bool {
 
 	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"复制了"+push.GetCardLogString(nc))
 
-	return false
+	return
 }
 
 // 丛林守护者
@@ -763,5 +763,36 @@ func (c *Card33) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 	if rc != nil && rc.GetOwner().GetId() == h.GetId() {
 		h.MoveToHand(rc)
 		push.PushAutoLog(h, push.GetCardLogString(c)+"将"+push.GetCardLogString(rc)+"移动回手牌")
+	}
+}
+
+// 忏悔
+type Card34 struct {
+	bcard.Card
+}
+
+func (c *Card34) NewPoint() iface.ICard {
+	return &Card34{}
+}
+
+func (c *Card34) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	if h.OnlyReleaseSecret(c) {
+		c.GetOwner().AddCardToEvent(c, "OnNROtherAfterRelease")
+		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
+	}
+}
+
+func (c *Card34) OnNROtherAfterRelease(oc iface.ICard) {
+	h := c.GetOwner()
+	if oc.GetOwner().GetId() == h.GetEnemy().GetId() &&
+		oc.GetType() == define.CardTypeEntourage {
+
+		oc.SetHpMaxAndHp(1)
+		h.DeleteSecret(c)
+		h.RemoveCardFromBothEvent(c)
+
+		push.PushAutoLog(h, c.GetConfig().Name+"(奥秘)让"+push.GetCardLogString(oc)+"生命值变为1点")
 	}
 }

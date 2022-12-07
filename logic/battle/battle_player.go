@@ -83,6 +83,13 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 		}
 	}
 
+	// 检查是否能释放奥秘
+	if c.GetConfig().Ctype == define.CardTypeSorcery &&
+		c.IsHaveTraits(define.CardTraitsSecret, c) &&
+		!h.CanReleaseSecret(c) {
+		return errors.New("不能释放此奥秘")
+	}
+
 	// logs
 	push.PushAutoLog(h, "打出了"+push.GetCardLogString(c))
 

@@ -50,6 +50,7 @@ type EnemyMsg struct {
 	HandCardsNum int
 	LibCardsNum  int
 	Weapon       *CardMsg
+	Secret       []define.Vocation
 }
 type MyMsg struct {
 	Id          int
@@ -62,6 +63,7 @@ type MyMsg struct {
 	HandCards   []*CardMsg
 	LibCardsNum int
 	Weapon      *CardMsg
+	Secret      []*CardMsg
 }
 
 type CardMsg struct {
@@ -84,6 +86,7 @@ func BuildEnemyMsg(h iface.IHero) *EnemyMsg {
 		HandCardsNum: len(h.GetHandCards()),
 		LibCardsNum:  len(h.GetLibCards()),
 		Weapon:       BuildWeaponMsg(h.GetWeapon()),
+		Secret:       BuildEnemySecret(h.GetSecrets()),
 	}
 }
 func BuildMyMsg(h iface.IHero) *MyMsg {
@@ -98,6 +101,7 @@ func BuildMyMsg(h iface.IHero) *MyMsg {
 		HandCards:   BuildCardsMsg(h.GetHandCards()),
 		LibCardsNum: len(h.GetLibCards()),
 		Weapon:      BuildWeaponMsg(h.GetWeapon()),
+		Secret:      BuildCardsMsg(h.GetSecrets()),
 	}
 }
 
@@ -125,6 +129,19 @@ func BuildCardsMsg(cs []iface.ICard) []*CardMsg {
 		})
 	}
 	return cm
+}
+
+func BuildEnemySecret(s []iface.ICard) []define.Vocation {
+
+	esm := make([]define.Vocation, 0)
+	for _, v := range s {
+		cv := v.GetConfig().Vocation
+		for _, v2 := range cv {
+			esm = append(esm, v2)
+			break
+		}
+	}
+	return esm
 }
 
 func PushInit(b iface.IBattle) {
@@ -234,6 +251,14 @@ func PushAutoLog(h iface.IHero, l string) {
 }
 
 func GetCardLogString(c iface.ICard) string {
+
+	if c.GetType() == define.CardTypeSorcery {
+		if c.IsHaveTraits(define.CardTraitsSecret, c) {
+			return "奥秘"
+		}
+		return c.GetConfig().Name
+	}
+
 	return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")" + strconv.Itoa(c.GetHaveEffectMona(c)) + "-" + strconv.Itoa(c.GetHaveEffectDamage(c)) + "-" + strconv.Itoa(c.GetHaveEffectHp())
 }
 

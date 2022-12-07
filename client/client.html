@@ -46,6 +46,7 @@
                 <th>手牌卡数</th>
                 <th>牌库卡数</th>
                 <th>武器</th>
+                <th>奥秘</th>
             </tr>
             <tr>
                 <td id="eId"></td>
@@ -55,6 +56,7 @@
                 <td id="eHandCardsNum"></td>
                 <td id="eLibCardsNum"></td>
                 <td id="eWeapon"></td>
+                <td id="eSecret"></td>
             </tr>
         </table>
         <br />
@@ -88,6 +90,7 @@
                 <th>费用</th>
                 <th>牌库卡数</th>
                 <th>武器</th>
+                <th>奥秘</th>
             </tr>
             <tr>
                 <td id="mId"></td>
@@ -96,6 +99,7 @@
                 <td id="mMona"></td>
                 <td id="mLibCardsNum"></td>
                 <td id="mWeapon"></td>
+                <td id="mSecret"></td>
             </tr>
         </table>
 
@@ -370,6 +374,15 @@
         if(msg.Weapon != null){
             $("#eWeapon").html(msg.Weapon.Name+"("+msg.Weapon.Id+")" + msg.Weapon.Damage + "/"+ msg.Weapon.Hp);
         }
+
+        str = ""
+        if (msg.Secret != null) {    
+            msg.Secret.forEach((item) => {
+                str += HVocation[item]+"奥秘,"
+            })
+        }
+        str = rtrim(str , ",")
+        $("#eSecret").html(str);
     }
 
     function fMyField(msg){
@@ -382,6 +395,15 @@
         if(msg.Weapon != null){
             $("#mWeapon").html(msg.Weapon.Name+"("+msg.Weapon.Id+")" + msg.Weapon.Damage + "/"+ msg.Weapon.Hp);
         }
+
+        str = ""
+        if (msg.Secret != null) {
+            msg.Secret.forEach((item) => {
+                str += item.Name + ","
+            })
+        }
+        str = rtrim(str , ",")
+        $("#mSecret").html(str);
     }
 
     function fTField(msg){

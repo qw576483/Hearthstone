@@ -505,6 +505,10 @@ func (h *Hero) DieCard(c iface.ICard) {
 		}
 
 		h.TrickDieCardEvent(c, battleIdx)
+
+		// 进入坟场
+		c.Reset()
+		h.graveCards = append(h.graveCards, c)
 	}
 
 	// 触发销毁事件
@@ -623,29 +627,43 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 		putidx = len(h.GetBattleCards())
 	}
 
-	// 是否拦截
+	// 其他卡牌释放前
+	for _, v := range h.GetBothEventCards("OnNROtherBeforeRelease") {
+		v.OnNROtherBeforeRelease(c)
+	}
+
+	// 释放前是否拦截
 	intercept := false
-	for _, v := range h.GetBothEventCards("OnNROtherRelease") {
-		intercept = v.OnNROtherRelease(c)
+	for _, v := range h.GetBothEventCards("OnNROtherBeforeReleaseCheckValid") {
+		intercept = v.OnNROtherBeforeReleaseCheckValid(c)
 		if intercept {
 			break
 		}
 	}
 
-	// 战吼触发在拦截之前
-	// 法术不会触发，直接拦截
-	if trickRelease && (c.GetType() == define.CardTypeEntourage || !intercept) {
-		h.TrickRelease(c, choiceId, putidx, rc, rh)
-	}
-
 	// 如果没被拦截，触发效果
 	if !intercept {
+
+		if trickRelease {
+			h.TrickRelease(c, choiceId, putidx, rc, rh)
+		}
+
 		if cType == define.CardTypeEntourage { // 随从
 			h.MoveToBattle(c, putidx)
 		} else if cType == define.CardTypeWeapon { // 武器
 			h.OnlyReleaseWeapon(c)
-		} else if cType == define.CardTypeSorcery {
+		} else if cType == define.CardTypeSorcery { // 法术
+
+			// 如果法术不在身上，强制置为战场上
+			if c.GetCardInCardsPos() != define.InCardsTypeBody {
+				c.SetCardInCardsPos(define.InCardsTypeBattle)
+			}
 			h.MoveOutHandOnlyHandCards(c)
+		}
+
+		// 其他卡牌释放后
+		for _, v := range h.GetBothEventCards("OnNROtherAfterRelease") {
+			v.OnNROtherAfterRelease(c)
 		}
 	}
 
@@ -654,7 +672,6 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 	// 如果是法术使用完成后销毁
 	// 如果是卡牌，被拦截，直接销毁
 	if cType == define.CardTypeSorcery || intercept {
-		c.SetCardInCardsPos(define.InCardsTypeGrave)
 		h.DieCard(c)
 	}
 
@@ -809,4 +826,48 @@ func (h *Hero) GetReleaseCardTimes() int {
 // 设置本回合出牌次数
 func (h *Hero) SetReleaseCardTimes(t int) {
 	h.releaseCardTimes = t
+}
+
+// 获得全部奥秘
+func (h *Hero) GetSecrets() []iface.ICard {
+	return h.secretCards
+}
+
+// 是否能释放奥秘
+func (h *Hero) CanReleaseSecret(ic iface.ICard) bool {
+
+	// 奥秘满了
+	if len(h.secretCards) >= 5 {
+		return false
+	}
+
+	// 奥秘有相同的
+	for _, v := range h.secretCards {
+		if v.GetConfig().Id == ic.GetConfig().Id {
+			return false
+		}
+	}
+
+	return true
+}
+
+// 仅仅释放奥秘
+func (h *Hero) OnlyReleaseSecret(ic iface.ICard) bool {
+
+	if !h.CanReleaseSecret(ic) {
+		return false
+	}
+
+	h.secretCards = append(h.secretCards, ic)
+
+	return true
+}
+
+// 删除奥秘
+func (h *Hero) DeleteSecret(ic iface.ICard) {
+	for idx, v := range h.secretCards {
+		if v.GetId() == ic.GetId() {
+			_, h.secretCards = help.DeleteCardFromCardsByIdx(h.secretCards, idx)
+		}
+	}
 }

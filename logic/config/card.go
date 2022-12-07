@@ -456,4 +456,16 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
 		CanCarry: true,
 	},
+	34: &CardConfig{
+		Id:       34,
+		Name:     "忏悔",
+		Desc:     "奥秘：在你的对手使用一张随从牌后，使该随从的生命值降为1。",
+		Mona:     1,
+		Quality:  define.CardQualityWhite,
+		Ctype:    define.CardTypeSorcery,
+		Series:   define.CardSeriseClassic,
+		Traits:   MakeCardTraits(define.CardTraitsSecret),
+		Vocation: MakeCardVocation(define.VocationPaladin),
+		CanCarry: true,
+	},
 }

@@ -76,12 +76,17 @@ type IHero interface {
 	RandExcludeCard([]ICard, ICard) ICard              // 随机卡牌，排除一个卡牌
 	GetReleaseCardTimes() int                          // 获得出牌次数
 	SetReleaseCardTimes(int)                           // 设置出牌次数
-	GetEvent() map[string][]ICard                      // 获得所有事件
-	GetEventCards(string) []ICard                      // 获得事件卡牌
-	GetBothEventCards(string) []ICard                  // 获得双方事件卡牌
-	AddCardToEvent(ICard, string)                      // 添加卡牌到事件
-	RemoveCardFromEvent(ICard, string)                 // 从事件中删除卡牌
-	RemoveCardFromBothEvent(ICard)                     // 删除卡牌从双方的事件中
+	GetSecrets() []ICard                               // 获得奥秘
+	CanReleaseSecret(ICard) bool                       // 是否能释放奥秘
+	OnlyReleaseSecret(ICard) bool                      // 仅仅释放奥秘，返回是否释放成功
+	DeleteSecret(ICard)                                // 删除奥秘
+
+	GetEvent() map[string][]ICard      // 获得所有事件
+	GetEventCards(string) []ICard      // 获得事件卡牌
+	GetBothEventCards(string) []ICard  // 获得双方事件卡牌
+	AddCardToEvent(ICard, string)      // 添加卡牌到事件
+	RemoveCardFromEvent(ICard, string) // 从事件中删除卡牌
+	RemoveCardFromBothEvent(ICard)     // 删除卡牌从双方的事件中
 
 	PreBegin()   // 预备阶段
 	RoundBegin() // 回合开始
