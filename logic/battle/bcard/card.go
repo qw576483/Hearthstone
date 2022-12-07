@@ -88,6 +88,17 @@ func (c *Card) GetRace() []define.CardRace {
 	return c.Race
 }
 
+// 是否是某个种族
+func (c *Card) IsRace(cr define.CardRace) bool {
+	for _, v := range c.GetRace() {
+		if v == define.CardRaceAll || v == cr {
+			return true
+		}
+	}
+
+	return false
+}
+
 // 获得特质
 func (c *Card) GetTraits() []define.CardTraits {
 	return c.Traits
@@ -109,11 +120,9 @@ func (c *Card) GetHaveEffectTraits(ic iface.ICard) []define.CardTraits {
 	// 获得光环影响
 	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetTraits") {
 
-		nt := v.OnNROtherGetTraits(ic)
-
-		if nt != -1 {
-			if !help.InArray(nt, ts) {
-				ts = append(ts, nt)
+		for _, v2 := range v.OnNROtherGetTraits(ic) {
+			if !help.InArray(v2, ts) {
+				ts = append(ts, v2)
 			}
 		}
 	}
@@ -175,10 +184,15 @@ func (c *Card) SetHpMaxAndHp(set int) {
 func (c *Card) CostHp(num int) int {
 
 	// 是否拥有圣盾
-	if c.IsHaveTraits(define.CardTraitsHolyShield, c) {
+	if num > 0 && c.IsHaveTraits(define.CardTraitsHolyShield, c) {
 		num = 0
 		c.RemoveTraits(define.CardTraitsHolyShield)
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"圣盾消失")
+	}
+
+	if num > 0 && c.IsHaveTraits(define.CardTraitsImmune, c) {
+		num = 0
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"具有免疫，伤害无效")
 	}
 
 	// 扣一下光环加成的血

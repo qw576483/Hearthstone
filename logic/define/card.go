@@ -40,6 +40,7 @@ const (
 	CardTraitsHighlyToxic                      // 剧毒
 	CardTraitsSecret                           // 奥秘
 	CardTraitsChoice                           // 抉择
+	CardTraitsImmune                           // 免疫
 )
 
 // 卡牌种族
@@ -52,6 +53,7 @@ const (
 	CardRaceMechanics                 // 机械
 	CardRaceTotems                    // 图腾
 	CardRaceSacred                    // 神圣
+	CardRaceAll                       // 全部
 )
 
 // 卡牌系列

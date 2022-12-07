@@ -61,8 +61,14 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 	}
 
 	rh := b.GetHeroByIncrId(rhid)
-	if rhid != 0 && rh == nil {
-		return errors.New("没有找到目标")
+	if rhid != 0 {
+		if rh == nil {
+			return errors.New("没有找到目标")
+		}
+
+		if rh.IsHaveTraits(define.CardTraitsSneak) {
+			return errors.New("目标在潜行")
+		}
 	}
 
 	h.CostMona(c.GetHaveEffectMona(c))
@@ -79,6 +85,10 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 		}
 
 		if rc.IsHaveTraits(define.CardTraitsSneak, rc) {
+			return errors.New("目标在潜行")
+		}
+
+		if rc.IsHaveTraits(define.CardTraitsImmune, rc) {
 			return errors.New("目标在潜行")
 		}
 	}
@@ -125,8 +135,14 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
 	}
 
 	rh := b.GetHeroByIncrId(rhid)
-	if rhid != 0 && rh == nil {
-		return errors.New("没有找到目标")
+	if rhid != 0 {
+		if rh == nil {
+			return errors.New("没有找到目标")
+		}
+
+		if rh.IsHaveTraits(define.CardTraitsSneak) {
+			return errors.New("目标在潜行")
+		}
 	}
 
 	h.CostMona(c.GetHaveEffectMona(c))
@@ -215,6 +231,10 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 		if eh == nil {
 			return errors.New("没有找到此英雄")
 		}
+
+		if eh.IsHaveTraits(define.CardTraitsSneak) {
+			return errors.New("目标在潜行")
+		}
 	}
 
 	if eh != nil && eh.GetId() == h.GetId() {
@@ -270,6 +290,10 @@ func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 		eh = b.GetHeroByIncrId(ehid)
 		if eh == nil {
 			return errors.New("没有找到此英雄")
+		}
+
+		if eh.IsHaveTraits(define.CardTraitsSneak) {
+			return errors.New("目标在潜行")
 		}
 	}
 

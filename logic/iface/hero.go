@@ -2,6 +2,7 @@ package iface
 
 import (
 	"hs/logic/config"
+	"hs/logic/define"
 
 	"github.com/name5566/leaf/gate"
 )
@@ -80,6 +81,9 @@ type IHero interface {
 	CanReleaseSecret(ICard) bool                       // 是否能释放奥秘
 	OnlyReleaseSecret(ICard) bool                      // 仅仅释放奥秘，返回是否释放成功
 	DeleteSecret(ICard)                                // 删除奥秘
+	GetSubCards() []ICard                              // 获得子卡牌
+	GetTraits() []define.CardTraits                    // 获得特质
+	IsHaveTraits(define.CardTraits) bool               // 是否有某种特质
 
 	GetEvent() map[string][]ICard      // 获得所有事件
 	GetEventCards(string) []ICard      // 获得事件卡牌

@@ -241,7 +241,9 @@ func (c *Card10) OnNROtherDie(tc iface.ICard) {
 
 	if c.GetCardInCardsPos() != define.InCardsTypeBattle ||
 		tc.GetOwner().GetId() != c.GetOwner().GetId() ||
-		tc.GetId() == c.GetId() {
+		tc.GetId() == c.GetId() ||
+		tc.GetConfig().Ctype != define.CardTypeEntourage ||
+		!tc.IsRace(define.CardRaceBeast) {
 		return
 	}
 
@@ -794,5 +796,29 @@ func (c *Card34) OnNROtherAfterRelease(oc iface.ICard) {
 		h.RemoveCardFromBothEvent(c)
 
 		push.PushAutoLog(h, c.GetConfig().Name+"(奥秘)让"+push.GetCardLogString(oc)+"生命值变为1点")
+	}
+}
+
+// 狂野怒火
+type Card35 struct {
+	bcard.Card
+}
+
+func (c *Card35) NewPoint() iface.ICard {
+	return &Card35{}
+}
+
+func (c *Card35) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	if rc != nil && rc.IsRace(define.CardRaceBeast) {
+
+		nc := iface.GetCardFact().GetCard(define.BuffCardId_MyRoundEndClear)
+		nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+		nc.AddDamage(2)
+		nc.AddTraits(define.CardTraitsImmune)
+
+		rc.AddSubCards(rc, nc)
+
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了两点攻击力和免疫")
 	}
 }

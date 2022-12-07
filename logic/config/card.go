@@ -468,4 +468,15 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Vocation: MakeCardVocation(define.VocationPaladin),
 		CanCarry: true,
 	},
+	35: &CardConfig{
+		Id:       35,
+		Name:     "狂野怒火",
+		Desc:     "在本回合中，使一个友方野兽获得+2攻击力和免疫。",
+		Mona:     1,
+		Quality:  define.CardQualityPurple,
+		Ctype:    define.CardTypeSorcery,
+		Series:   define.CardSeriseClassic,
+		Vocation: MakeCardVocation(define.VocationHunter),
+		CanCarry: true,
+	},
 }

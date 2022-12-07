@@ -16,6 +16,7 @@ type ICard interface {
 	GetConfig() *config.CardConfig                 // 获得配置
 	GetType() define.CardType                      // 获得卡牌类型
 	GetRace() []define.CardRace                    // 获得卡牌种族
+	IsRace(define.CardRace) bool                   // 是否是某个种族
 	GetTraits() []define.CardTraits                // 获得卡牌特质（冲锋，突袭，风怒...）
 	GetHaveEffectTraits(ICard) []define.CardTraits // 获得有效果加成的卡牌特质
 	IsHaveTraits(define.CardTraits, ICard) bool    // 是否拥有卡牌特质
@@ -78,17 +79,18 @@ type ICard interface {
 	OnGetDamage() int                 // 获取自己的攻击力时 , 返回攻击加成
 
 	// 注册事件 - 实现前需要注册
-	OnNRRoundBegin()                             // 回合开始时
-	OnNRRoundEnd()                               // 回合结束时
-	OnNROtherBeforeRelease(ICard)                // 其他卡牌释放前
-	OnNROtherBeforeReleaseCheckValid(ICard) bool // 其他卡牌释放前，返回是否拦截
-	OnNROtherAfterRelease(ICard)                 // 其他卡牌释放前
-	OnNRPutToBattle(ICard)                       // 其他卡牌步入战场时
-	OnNROtherDie(ICard)                          // 其他卡牌死亡时
-	OnNROtherGetMona(ICard) int                  // 其他卡牌获取自己的费用时， 返回费用加成
-	OnNROtherGetDamage(ICard) int                // 其他卡牌获取自己的攻击力时 ， 返回攻击加成
-	OnNROtherGetApDamage(IHero) int              // 英雄获取自己的法术伤害时 ， 返回的法术伤害加成
-	OnNROtherGetHp(ICard) int                    // 其他卡牌获取自己的血量时 ， 返回血量加成
-	OnNROtherGetTraits(ICard) define.CardTraits  // 其他卡牌获取自己的特质时 ， 返回特质加成
+	OnNRRoundBegin()                                  // 回合开始时
+	OnNRRoundEnd()                                    // 回合结束时
+	OnNROtherBeforeRelease(ICard)                     // 其他卡牌释放前
+	OnNROtherBeforeReleaseCheckValid(ICard) bool      // 其他卡牌释放前，返回是否拦截
+	OnNROtherAfterRelease(ICard)                      // 其他卡牌释放前
+	OnNRPutToBattle(ICard)                            // 其他卡牌步入战场时
+	OnNROtherDie(ICard)                               // 其他卡牌死亡时
+	OnNROtherGetMona(ICard) int                       // 其他卡牌获取自己的费用时， 返回费用加成
+	OnNROtherGetDamage(ICard) int                     // 其他卡牌获取自己的攻击力时 ， 返回攻击加成
+	OnNROtherGetApDamage(IHero) int                   // 英雄获取自己的法术伤害时 ， 返回的法术伤害加成
+	OnNROtherGetHp(ICard) int                         // 其他卡牌获取自己的血量时 ， 返回血量加成
+	OnNROtherGetTraits(ICard) []define.CardTraits     // 其他卡牌获取自己的特质时 ， 返回特质加成
+	OnNROtherHeroGetTraits(IHero) []define.CardTraits // 英雄获得自己的特质时，返回特质加成
 
 }

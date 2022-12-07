@@ -38,4 +38,5 @@ var cardPoints []iface.ICard = []iface.ICard{
 	32: &Card32{},
 	33: &Card33{},
 	34: &Card34{},
+	35: &Card35{},
 }

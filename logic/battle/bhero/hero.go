@@ -39,6 +39,7 @@ type Hero struct {
 	maxHandCardsNum  int                      // 手牌上限数量
 	fatigue          int                      // 疲劳伤害
 	releaseCardTimes int                      // 本回合出牌次数
+	subCards         []iface.ICard            // buff
 }
 
 func (h *Hero) NewPoint() iface.IHero {
@@ -320,12 +321,19 @@ func (h *Hero) GetHp() int {
 // 消耗血量
 func (h *Hero) CostHp(num int) int {
 
-	if h.shield >= num {
-		h.shield -= num
-	} else {
-		num = num - h.shield
-		h.shield = 0
-		h.hp -= num
+	if num > 0 && h.IsHaveTraits(define.CardTraitsImmune) {
+		num = 0
+		push.PushAutoLog(h, push.GetHeroLogString(h)+"具有免疫，伤害无效")
+	}
+
+	if num > 0 {
+		if h.shield >= num {
+			h.shield -= num
+		} else {
+			num = num - h.shield
+			h.shield = 0
+			h.hp -= num
+		}
 	}
 
 	if h.hp <= 0 {
@@ -876,4 +884,40 @@ func (h *Hero) DeleteSecret(ic iface.ICard) {
 			_, h.secretCards = help.DeleteCardFromCardsByIdx(h.secretCards, idx)
 		}
 	}
+}
+
+// 获得子卡牌
+func (h *Hero) GetSubCards() []iface.ICard {
+	return h.subCards
+}
+
+// 获得特质
+func (h *Hero) GetTraits() []define.CardTraits {
+
+	// 获得子卡牌的特质
+	ts := make([]define.CardTraits, 0)
+	for _, v := range h.GetSubCards() {
+		for _, ct := range v.GetTraits() {
+
+			if !help.InArray(ct, ts) {
+				ts = append(ts, ct)
+			}
+		}
+	}
+
+	// 获得光环影响
+	for _, v := range h.GetBothEventCards("OnNROtherHeroGetTraits") {
+		for _, v2 := range v.OnNROtherHeroGetTraits(h) {
+			if !help.InArray(v2, ts) {
+				ts = append(ts, v2)
+			}
+		}
+	}
+
+	return ts
+}
+
+// 是否拥有某种特质
+func (h *Hero) IsHaveTraits(ct define.CardTraits) bool {
+	return help.InArray(ct, h.GetTraits())
 }
