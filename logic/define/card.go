@@ -41,6 +41,7 @@ const (
 	CardTraitsSecret                           // 奥秘
 	CardTraitsChoice                           // 抉择
 	CardTraitsImmune                           // 免疫
+	CardTraitsLockMona                         // 过载
 )
 
 // 卡牌种族
@@ -54,6 +55,7 @@ const (
 	CardRaceTotems                    // 图腾
 	CardRaceSacred                    // 神圣
 	CardRaceAll                       // 全部
+	CardRaceNatural                   // 自然
 )
 
 // 卡牌系列

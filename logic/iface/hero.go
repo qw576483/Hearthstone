@@ -51,6 +51,10 @@ type IHero interface {
 	GetMona() int                                      // 获得法力值
 	AddMonaMax(int)                                    // 添加最大法力值
 	GetMonaMax() int                                   // 获得最大法力（当前）
+	GetLockMona() int                                  // 获得锁定法力值
+	SetLockMona(int)                                   // 设置锁定法力值
+	GetLockMonaCache() int                             // 获得锁定法力值缓存
+	SetLockMonaCache(int)                              // 设置锁定法力值缓存
 	GetShield() int                                    // 获得护盾
 	SetWeapon(ICard)                                   // 设置武器
 	GetWeapon() ICard                                  // 获得当前武器

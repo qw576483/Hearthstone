@@ -17,7 +17,13 @@ func (h *Hero) RoundBegin() {
 		v.SetAttackTimes(0)
 	}
 	h.SetAttackTimes(0)
+
+	// 重置卡牌次数
 	h.SetReleaseCardTimes(0)
+
+	// 锁定法力值
+	h.SetLockMona(h.GetLockMonaCache())
+	h.SetLockMonaCache(0)
 
 	// 抽卡
 	h.DrawByTimes(1)
@@ -26,5 +32,6 @@ func (h *Hero) RoundBegin() {
 
 // 回合结束
 func (h *Hero) RoundEnd() {
+
 	h.TrickRoundEnd()
 }

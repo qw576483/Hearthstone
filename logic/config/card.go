@@ -479,4 +479,17 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Vocation: MakeCardVocation(define.VocationHunter),
 		CanCarry: true,
 	},
+	36: &CardConfig{
+		Id:       36,
+		Name:     "闪电箭",
+		Desc:     "造成3点伤害，过载：（1）",
+		Mona:     1,
+		Quality:  define.CardQualityWhite,
+		Ctype:    define.CardTypeSorcery,
+		Race:     MakeCardRace(define.CardRaceNatural),
+		Series:   define.CardSeriseClassic,
+		Traits:   MakeCardTraits(define.CardTraitsLockMona),
+		Vocation: MakeCardVocation(define.VocationShaman),
+		CanCarry: true,
+	},
 }

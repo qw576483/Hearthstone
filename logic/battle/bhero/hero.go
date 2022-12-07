@@ -34,6 +34,8 @@ type Hero struct {
 	hpMax            int                      // 最大血量
 	mona             int                      // 法力值
 	monaMax          int                      // 最大法力
+	lockMona         int                      // 锁定法力值
+	lockMonaCache    int                      // 下回合锁定的法力值
 	shield           int                      // 护盾
 	weapon           iface.ICard              // 武器
 	maxHandCardsNum  int                      // 手牌上限数量
@@ -375,7 +377,11 @@ func (h *Hero) SetMona(set int) {
 
 // 获得法力值
 func (h *Hero) GetMona() int {
-	return h.mona
+	mona := h.mona - h.lockMona
+	if mona < 0 {
+		mona = 0
+	}
+	return mona
 }
 
 // 添加最大法力值
@@ -389,6 +395,26 @@ func (h *Hero) AddMonaMax(add int) {
 // 获得法力值
 func (h *Hero) GetMonaMax() int {
 	return h.monaMax
+}
+
+// 获得锁定法力值
+func (h *Hero) GetLockMona() int {
+	return h.lockMona
+}
+
+// 设置锁定法力值
+func (h *Hero) SetLockMona(lm int) {
+	h.lockMona = lm
+}
+
+// 获得锁定法力值缓存
+func (h *Hero) GetLockMonaCache() int {
+	return h.lockMonaCache
+}
+
+// 设置锁定法力值缓存
+func (h *Hero) SetLockMonaCache(lmc int) {
+	h.lockMonaCache = lmc
 }
 
 // 获得护盾

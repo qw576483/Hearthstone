@@ -136,9 +136,7 @@ func (c *Card6) OnNRRoundBegin() {
 	if rc != nil {
 		push.PushAutoLog(h, push.GetCardLogString(c)+"的石头对"+push.GetCardLogString(rc)+"造成了2点伤害")
 		rc.CostHp(2)
-	}
-
-	if rh != nil {
+	} else if rh != nil {
 		push.PushAutoLog(h, push.GetCardLogString(c)+"的石头对"+push.GetHeroLogString(rh)+"造成了2点伤害")
 		rh.CostHp(2)
 	}
@@ -820,5 +818,32 @@ func (c *Card35) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 		rc.AddSubCards(rc, nc)
 
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了两点攻击力和免疫")
+	}
+}
+
+// 闪电箭
+type Card36 struct {
+	bcard.Card
+}
+
+func (c *Card36) NewPoint() iface.ICard {
+	return &Card36{}
+}
+
+func (c *Card36) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	dmg := 3
+	dmg += h.GetApDamage()
+
+	// 锁定一点法力值
+	h.SetLockMonaCache(h.GetLockMonaCache() + 1)
+
+	if rc != nil {
+		push.PushAutoLog(h, "[过载+1]"+push.GetCardLogString(c)+"对"+push.GetCardLogString(rc)+"造成了"+strconv.Itoa(dmg)+"点伤害")
+		rc.CostHp(dmg)
+	} else if rh != nil {
+		push.PushAutoLog(h, "[过载+1]"+push.GetCardLogString(c)+"对"+push.GetHeroLogString(rh)+"造成了"+strconv.Itoa(dmg)+"点伤害")
+		rh.CostHp(dmg)
 	}
 }
