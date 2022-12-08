@@ -504,4 +504,17 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	38: &CardConfig{
+		Id:       38,
+		Name:     "熔核巨人",
+		Desc:     "你的英雄每受到1点伤害，本牌的法力值消耗便减少（1）点。",
+		Mona:     20,
+		Damage:   8,
+		Hp:       8,
+		Quality:  define.CardQualityPurple,
+		Ctype:    define.CardTypeEntourage,
+		Race:     MakeCardRace(define.CardRaceElement),
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }

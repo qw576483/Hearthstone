@@ -56,6 +56,7 @@ const (
 	CardRaceSacred                    // 神圣
 	CardRaceAll                       // 全部
 	CardRaceNatural                   // 自然
+	CardRaceElement                   // 元素
 )
 
 // 卡牌系列

@@ -861,3 +861,22 @@ func (c *Card37) OnAfterCostHp() {
 	c.AddDamage(3)
 	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"获得了3点攻击")
 }
+
+// 熔核巨人
+type Card38 struct {
+	bcard.Card
+}
+
+func (c *Card38) NewPoint() iface.ICard {
+	return &Card38{}
+}
+
+func (c *Card38) OnGetMona(m int) int {
+
+	h := c.GetOwner()
+	if c.GetCardInCardsPos() == define.InCardsTypeHand {
+		m = m - (h.GetHpMax() - h.GetHp())
+	}
+
+	return m
+}

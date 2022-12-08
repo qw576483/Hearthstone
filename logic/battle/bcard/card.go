@@ -359,7 +359,7 @@ func (c *Card) GetHaveEffectDamage() int {
 	d := ic.GetDamage()
 
 	if !ic.IsSilent() {
-		d += ic.OnGetDamage()
+		d = ic.OnGetDamage(d)
 	}
 
 	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetDamage") {
@@ -435,24 +435,24 @@ func (c *Card) GetMona() int {
 	return c.Mona
 }
 
-// 计算ic有效果加成的卡牌费用
+// 计算有效果加成的卡牌费用
 func (c *Card) GetHaveEffectMona() int {
 	ic := c.GetRealization()
-	d := ic.GetMona()
+	m := ic.GetMona()
 
 	if !ic.IsSilent() {
-		d += ic.OnGetMona()
+		m = ic.OnGetMona(m)
 	}
 
 	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetMona") {
-		d += v.OnNROtherGetMona(ic)
+		m += v.OnNROtherGetMona(ic)
 	}
 
-	if d < 0 {
-		d = 0
+	if m < 0 {
+		m = 0
 	}
 
-	return d
+	return m
 }
 
 // 设置此卡在卡牌组中的位置
