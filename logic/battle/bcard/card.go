@@ -167,7 +167,15 @@ func (c *Card) RemoveTraits(ct define.CardTraits) {
 
 // 治疗血量
 func (c *Card) TreatmentHp(num int) {
+
+	ic := c.GetRealization()
+	oldHp := c.GetHaveEffectHp()
+
 	c.AddHp(num)
+
+	if c.GetHaveEffectHp() > oldHp && !c.IsSilent() {
+		ic.OnAfterHpChange()
+	}
 }
 
 // 加血
@@ -232,6 +240,7 @@ func (c *Card) CostHp(num int) int {
 
 	if tcNum > 0 && !c.IsSilent() {
 		ic.OnAfterCostHp()
+		ic.OnAfterHpChange()
 	}
 
 	if c.Hp <= 0 {

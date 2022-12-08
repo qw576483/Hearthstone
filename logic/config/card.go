@@ -517,4 +517,16 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	39: &CardConfig{
+		Id:       39,
+		Name:     "阿曼尼狂战士",
+		Desc:     "受伤时具有+3攻击力。",
+		Mona:     2,
+		Damage:   2,
+		Hp:       3,
+		Quality:  define.CardQualityWhite,
+		Ctype:    define.CardTypeEntourage,
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }

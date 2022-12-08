@@ -76,6 +76,7 @@ type ICard interface {
 	OnOverflowAnnihilate()            // 超杀
 	OnBeforeCostHp(int) int           // 受伤前，输入damage，输出新damage
 	OnAfterCostHp()                   // 受伤后
+	OnAfterHpChange()                 // 生命值改变后
 	OnDie(int)                        // 卡牌死亡时
 	OnDevastate()                     // 卡牌销毁时
 	OnGetMona(int) int                // 获取自己的费用时，输入mona ,输出新mona

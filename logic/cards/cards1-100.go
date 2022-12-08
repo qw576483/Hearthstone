@@ -880,3 +880,36 @@ func (c *Card38) OnGetMona(m int) int {
 
 	return m
 }
+
+// 阿曼尼狂战士
+type Card39 struct {
+	bcard.Card
+	sub iface.ICard
+}
+
+func (c *Card39) NewPoint() iface.ICard {
+	return &Card39{}
+}
+
+func (c *Card39) OnAfterHpChange() {
+
+	if c.GetHaveEffectHp() < c.GetHaveEffectHpMax() && c.sub == nil {
+
+		nc := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
+		nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+		nc.AddDamage(3)
+
+		c.sub = nc
+		c.AddSubCards(nc)
+
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"获得了3点攻击")
+
+	} else if c.GetHaveEffectHp() >= c.GetHaveEffectHpMax() && c.sub != nil {
+
+		c.RemoveSubCards(c.sub)
+		c.sub = nil
+
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"失去了3点攻击")
+	}
+
+}

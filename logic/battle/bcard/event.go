@@ -16,6 +16,7 @@ func (c *Card) OnHonorAnnihilate()                                           {}
 func (c *Card) OnOverflowAnnihilate()                                        {}
 func (c *Card) OnBeforeCostHp(d int) int                                     { return d }
 func (c *Card) OnAfterCostHp()                                               {}
+func (c *Card) OnAfterHpChange()                                             {}
 func (c *Card) OnDie(bidx int)                                               {}
 func (c *Card) OnDevastate()                                                 {}
 func (c *Card) OnGetMona(m int) int                                          { return m }
