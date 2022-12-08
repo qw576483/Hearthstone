@@ -1,7 +1,6 @@
 package cards
 
 import (
-	"fmt"
 	"hs/logic/battle/bcard"
 	"hs/logic/define"
 	"hs/logic/iface"
