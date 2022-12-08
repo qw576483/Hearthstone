@@ -701,15 +701,14 @@ func (c *Card31) OnOutBattle() {
 	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherBeforeRelease")
 }
 
-func (c *Card31) OnNROtherBeforeRelease(oc iface.ICard) {
+func (c *Card31) OnNROtherBeforeRelease(oc, rc iface.ICard, rh iface.IHero) (iface.ICard, iface.IHero, bool) {
 	if oc.GetConfig().Ctype != define.CardTypeSorcery {
-		return
+		return rc, rh, true
 	}
 
 	nc, err := oc.Copy()
 	if err != nil {
-		fmt.Println(err)
-		return
+		return rc, rh, true
 	}
 
 	// 设置所属人
@@ -718,7 +717,7 @@ func (c *Card31) OnNROtherBeforeRelease(oc iface.ICard) {
 
 	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"复制了"+push.GetCardLogString(nc))
 
-	return
+	return rc, rh, true
 }
 
 // 丛林守护者

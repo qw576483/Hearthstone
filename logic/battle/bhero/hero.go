@@ -668,27 +668,29 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 		putidx = len(h.GetBattleCards())
 	}
 
+	valid := true
+
 	// 其他卡牌释放前
 	for _, v := range h.GetBothEventCards("OnNROtherBeforeRelease") {
-		v.OnNROtherBeforeRelease(c)
-	}
-
-	// 释放前是否拦截
-	intercept := false
-	for _, v := range h.GetBothEventCards("OnNROtherBeforeReleaseCheckValid") {
-		intercept = v.OnNROtherBeforeReleaseCheckValid(c)
-		if intercept {
+		rc, rh, valid = v.OnNROtherBeforeRelease(c, rc, rh)
+		if !valid {
 			break
 		}
 	}
 
-	// 如果没被拦截，触发效果
-	if !intercept {
+	// 如果触发效果
+	if trickRelease {
 
-		if trickRelease {
+		// 如果法术被拦截
+		if cType == define.CardTypeSorcery && !valid {
+
+		} else {
+			// 战吼不拦截
 			h.TrickRelease(c, choiceId, putidx, rc, rh)
 		}
+	}
 
+	if valid {
 		if cType == define.CardTypeEntourage { // 随从
 			h.MoveToBattle(c, putidx)
 		} else if cType == define.CardTypeWeapon { // 武器
@@ -701,18 +703,16 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 			}
 			h.MoveOutHandOnlyHandCards(c)
 		}
+	}
 
-		// 其他卡牌释放后
-		for _, v := range h.GetBothEventCards("OnNROtherAfterRelease") {
-			v.OnNROtherAfterRelease(c)
-		}
+	// 其他卡牌释放后
+	for _, v := range h.GetBothEventCards("OnNROtherAfterRelease") {
+		v.OnNROtherAfterRelease(c)
 	}
 
 	c.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
 
-	// 如果是法术使用完成后销毁
-	// 如果是卡牌，被拦截，直接销毁
-	if cType == define.CardTypeSorcery || intercept {
+	if cType == define.CardTypeSorcery || !valid {
 		h.DieCard(c)
 	}
 
