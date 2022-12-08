@@ -733,29 +733,34 @@ func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
 // 进攻 ， 这里不减次数， 放在battle那边
 func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 
-	dmg := c.GetHaveEffectDamage()
+	// 攻击前
+	for _, v := range h.GetBothEventCards("OnNROtherBeforeAttack") {
+		ec, eh = v.OnNROtherBeforeAttack(c, ec, eh)
+	}
 
-	var trueCostHp int // 实际伤血
-	if ec != nil {     // 如果对手是卡牌
+	dmg := c.GetHaveEffectDamage()
+	if ec != nil { // 如果对手是卡牌
 
 		dmg2 := ec.GetHaveEffectDamage()
 
 		// logs
 		push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
-		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+" 对"+push.GetCardLogString(c)+"反击"+strconv.Itoa(dmg2)+"点伤害")
+		dmg = ec.CostHp(dmg)
 
-		trueCostHp = ec.CostHp(dmg)
+		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+" 对"+push.GetCardLogString(c)+"反击"+strconv.Itoa(dmg2)+"点伤害")
 		c.CostHp(dmg2)
 
 	} else if eh != nil { // 如果对手是英雄
 
 		// logs
 		push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetHeroLogString(eh)+"造成了"+strconv.Itoa(dmg)+"伤害")
-
-		trueCostHp = eh.CostHp(dmg)
+		dmg = eh.CostHp(dmg)
 	}
 
-	h.TrickAfterAttackEvent(c, ec, eh, trueCostHp)
+	// 攻击后
+	if ec != nil && eh != nil {
+		h.TrickAfterAttackEvent(c, ec, eh, dmg)
+	}
 
 	return nil
 }
@@ -764,16 +769,15 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 
 	dmg := h.GetDamage()
 
-	var trueCostHp int // 实际伤血
-	if ec != nil {     // 如果对手是卡牌
+	if ec != nil { // 如果对手是卡牌
 
 		dmg2 := ec.GetHaveEffectDamage()
 
 		// logs
 		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
-		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+"对"+push.GetHeroLogString(h)+"反击"+strconv.Itoa(dmg2)+"点伤害")
+		dmg = ec.CostHp(dmg)
 
-		trueCostHp = ec.CostHp(dmg)
+		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+"对"+push.GetHeroLogString(h)+"反击"+strconv.Itoa(dmg2)+"点伤害")
 		h.CostHp(dmg2)
 
 	} else if eh != nil { // 如果对手是英雄
@@ -781,12 +785,12 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 		// logs
 		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetHeroLogString(eh)+"造成了"+strconv.Itoa(dmg)+"伤害")
 
-		trueCostHp = eh.CostHp(dmg)
+		dmg = eh.CostHp(dmg)
 	}
 
 	if h.GetWeapon() != nil {
 		c := h.GetWeapon()
-		h.TrickAfterAttackEvent(c, ec, eh, trueCostHp)
+		h.TrickAfterAttackEvent(c, ec, eh, dmg)
 	}
 
 	if h.GetWeapon() != nil {

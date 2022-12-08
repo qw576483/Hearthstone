@@ -529,4 +529,16 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	40: &CardConfig{
+		Id:       40,
+		Name:     "冰冻陷阱",
+		Desc:     "奥秘：当一个敌方随从攻击时，将其移回拥有者的手牌，并且法力值消耗增加（2）点。",
+		Mona:     2,
+		Quality:  define.CardQualityWhite,
+		Ctype:    define.CardTypeSorcery,
+		Series:   define.CardSeriseClassic,
+		Traits:   MakeCardTraits(define.CardTraitsSecret),
+		Vocation: MakeCardVocation(define.VocationHunter),
+		CanCarry: true,
+	},
 }

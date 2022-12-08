@@ -787,7 +787,7 @@ func (c *Card34) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 func (c *Card34) OnNROtherAfterRelease(oc iface.ICard) {
 	h := c.GetOwner()
 	if oc.GetOwner().GetId() == h.GetEnemy().GetId() &&
-		oc.GetType() == define.CardTypeEntourage {
+		oc.GetType() == define.CardTypeEntourage && !h.IsRoundHero() {
 
 		oc.SetHpMaxAndHp(1)
 		h.DeleteSecret(c)
@@ -912,4 +912,42 @@ func (c *Card39) OnAfterHpChange() {
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"失去了3点攻击")
 	}
 
+}
+
+// 冰冻陷阱
+type Card40 struct {
+	bcard.Card
+}
+
+func (c *Card40) NewPoint() iface.ICard {
+	return &Card40{}
+}
+
+func (c *Card40) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	if h.OnlyReleaseSecret(c) {
+		c.GetOwner().AddCardToEvent(c, "OnNROtherBeforeAttack")
+		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
+	}
+}
+
+func (c *Card40) OnNROtherBeforeAttack(oc, rc iface.ICard, rh iface.IHero) (iface.ICard, iface.IHero) {
+
+	h := c.GetOwner()
+	if oc.GetOwner().GetId() == h.GetEnemy().GetId() &&
+		oc.GetType() == define.CardTypeEntourage && !h.IsRoundHero() {
+
+		rc = nil
+		rh = nil
+
+		h.DeleteSecret(c)
+		h.RemoveCardFromBothEvent(c)
+
+		h.MoveToHand(oc)
+		oc.SetMona(oc.GetMona() + 2)
+		push.PushAutoLog(h, push.GetCardLogString(c)+"将"+push.GetCardLogString(oc)+"移动回手牌，并+2费")
+	}
+
+	return rc, rh
 }

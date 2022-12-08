@@ -444,6 +444,11 @@ func (c *Card) GetMona() int {
 	return c.Mona
 }
 
+// 设置费用
+func (c *Card) SetMona(m int) {
+	c.Mona = m
+}
+
 // 计算有效果加成的卡牌费用
 func (c *Card) GetHaveEffectMona() int {
 	ic := c.GetRealization()
