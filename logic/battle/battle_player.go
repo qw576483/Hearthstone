@@ -56,7 +56,7 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 	}
 
 	// 费用
-	if c.GetHaveEffectMona(c) > h.GetMona() {
+	if c.GetHaveEffectMona() > h.GetMona() {
 		return errors.New("法力不足")
 	}
 
@@ -71,7 +71,7 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 		}
 	}
 
-	h.CostMona(c.GetHaveEffectMona(c))
+	h.CostMona(c.GetHaveEffectMona())
 
 	// 拼接
 	rc := h.GetBattleCardById(rcid)
@@ -84,18 +84,18 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 			return errors.New("没有找到目标")
 		}
 
-		if rc.IsHaveTraits(define.CardTraitsSneak, rc) {
+		if rc.IsHaveTraits(define.CardTraitsSneak) {
 			return errors.New("目标在潜行")
 		}
 
-		if rc.IsHaveTraits(define.CardTraitsImmune, rc) {
+		if rc.IsHaveTraits(define.CardTraitsImmune) {
 			return errors.New("目标在潜行")
 		}
 	}
 
 	// 检查是否能释放奥秘
 	if c.GetConfig().Ctype == define.CardTypeSorcery &&
-		c.IsHaveTraits(define.CardTraitsSecret, c) &&
+		c.IsHaveTraits(define.CardTraitsSecret) &&
 		!h.CanReleaseSecret(c) {
 		return errors.New("不能释放此奥秘")
 	}
@@ -130,7 +130,7 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
 	}
 
 	// 费用
-	if c.GetHaveEffectMona(c) > h.GetMona() {
+	if c.GetHaveEffectMona() > h.GetMona() {
 		return errors.New("法力不足")
 	}
 
@@ -145,7 +145,7 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
 		}
 	}
 
-	h.CostMona(c.GetHaveEffectMona(c))
+	h.CostMona(c.GetHaveEffectMona())
 
 	// 拼接
 	rc := h.GetBattleCardById(rcid)
@@ -158,7 +158,7 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
 			return errors.New("没有找到目标")
 		}
 
-		if rc.IsHaveTraits(define.CardTraitsSneak, rc) {
+		if rc.IsHaveTraits(define.CardTraitsSneak) {
 			return errors.New("目标在潜行")
 		}
 	}
@@ -183,7 +183,7 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 		return errors.New("没有找到此卡牌")
 	}
 
-	if c.IsHaveTraits(define.CardTraitsUnableToAttack, c) {
+	if c.IsHaveTraits(define.CardTraitsUnableToAttack) {
 		return errors.New("此卡牌无法攻击")
 	}
 
@@ -203,12 +203,12 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 	// 如果是本局攻击
 	if c.GetReleaseRound() == b.GetIncrRoundId() {
 		// 如果不是冲锋 ， 不是突袭
-		if !c.IsHaveTraits(define.CardTraitsAssault, c) && !c.IsHaveTraits(define.CardTraitsSuddenStrike, c) {
+		if !c.IsHaveTraits(define.CardTraitsAssault) && !c.IsHaveTraits(define.CardTraitsSuddenStrike) {
 			return errors.New("卡牌在睡眠中")
 		}
 
 		// 突袭只能打英雄
-		if c.IsHaveTraits(define.CardTraitsSuddenStrike, c) && ehid != 0 {
+		if c.IsHaveTraits(define.CardTraitsSuddenStrike) && ehid != 0 {
 			return errors.New("突袭只能打英雄")
 		}
 	}
@@ -220,7 +220,7 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 			return errors.New("没有找到此卡")
 		}
 
-		if ec.IsHaveTraits(define.CardTraitsSneak, ec) {
+		if ec.IsHaveTraits(define.CardTraitsSneak) {
 			return errors.New("目标在潜行")
 		}
 	}
@@ -280,7 +280,7 @@ func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 			return errors.New("没有找到此卡")
 		}
 
-		if ec.IsHaveTraits(define.CardTraitsSneak, ec) {
+		if ec.IsHaveTraits(define.CardTraitsSneak) {
 			return errors.New("目标在潜行")
 		}
 	}

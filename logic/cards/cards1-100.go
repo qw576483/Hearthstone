@@ -46,7 +46,7 @@ func (c *Card2) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 	if rc == nil {
 		return
 	}
-	rc.ExchangeHpDamage(rc)
+	rc.ExchangeHpDamage()
 	rc.CostHp(0)
 
 	// logs
@@ -583,7 +583,7 @@ func (c *Card24) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 		nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
 		nc.AddDamage(2)
 
-		rc.AddSubCards(rc, nc)
+		rc.AddSubCards(nc)
 
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了两点攻击力")
 	}
@@ -706,7 +706,7 @@ func (c *Card31) OnNROtherBeforeRelease(oc iface.ICard) {
 		return
 	}
 
-	nc, err := oc.Copy(oc)
+	nc, err := oc.Copy()
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -815,7 +815,7 @@ func (c *Card35) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 		nc.AddDamage(2)
 		nc.AddTraits(define.CardTraitsImmune)
 
-		rc.AddSubCards(rc, nc)
+		rc.AddSubCards(nc)
 
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了两点攻击力和免疫")
 	}
@@ -846,4 +846,18 @@ func (c *Card36) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 		push.PushAutoLog(h, "[过载+1]"+push.GetCardLogString(c)+"对"+push.GetHeroLogString(rh)+"造成了"+strconv.Itoa(dmg)+"点伤害")
 		rh.CostHp(dmg)
 	}
+}
+
+// 古拉巴什狂暴者
+type Card37 struct {
+	bcard.Card
+}
+
+func (c *Card37) NewPoint() iface.ICard {
+	return &Card37{}
+}
+
+func (c *Card37) OnAfterCostHp() {
+	c.AddDamage(3)
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"获得了3点攻击")
 }

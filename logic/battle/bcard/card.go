@@ -14,6 +14,7 @@ import (
 // 卡牌
 type Card struct {
 	Id           int                 // battle中id
+	Realization  iface.ICard         // 我的实现
 	Config       *config.CardConfig  // 配置
 	Ctype        define.CardType     // 卡牌类型
 	Race         []define.CardRace   // 卡牌种族
@@ -51,6 +52,7 @@ func (c *Card) Init(ic iface.ICard, ict define.InCardsType, h iface.IHero, b ifa
 	c.InCardsType = ict
 	c.Owner = h
 	c.AttackTimes = 0
+	c.Realization = ic
 
 	h.AppendToAllCards(ic)
 	c.Reset()
@@ -66,6 +68,11 @@ func (c *Card) SetId(id int) {
 // 获得id
 func (c *Card) GetId() int {
 	return c.Id
+}
+
+// 获得实现
+func (c *Card) GetRealization() iface.ICard {
+	return c.Realization
 }
 
 // 设置配置
@@ -105,7 +112,9 @@ func (c *Card) GetTraits() []define.CardTraits {
 }
 
 // 获得有影响的特质 , ic = c
-func (c *Card) GetHaveEffectTraits(ic iface.ICard) []define.CardTraits {
+func (c *Card) GetHaveEffectTraits() []define.CardTraits {
+
+	ic := c.GetRealization()
 
 	ts := ic.GetTraits()
 	for _, v := range ic.GetSubCards() {
@@ -131,8 +140,9 @@ func (c *Card) GetHaveEffectTraits(ic iface.ICard) []define.CardTraits {
 }
 
 // ic是否拥有卡牌特质
-func (c *Card) IsHaveTraits(ct define.CardTraits, ic iface.ICard) bool {
-	return help.InArray(ct, ic.GetHaveEffectTraits(ic))
+func (c *Card) IsHaveTraits(ct define.CardTraits) bool {
+	ic := c.GetRealization()
+	return help.InArray(ct, ic.GetHaveEffectTraits())
 }
 
 // 添加特质
@@ -163,8 +173,8 @@ func (c *Card) TreatmentHp(num int) {
 // 加血
 func (c *Card) AddHp(num int) {
 	c.Hp += num
-	if c.Hp > c.HpMax {
-		c.Hp = c.HpMax
+	if c.Hp > c.GetHaveEffectHpMax() {
+		c.Hp = c.GetHaveEffectHpMax()
 	}
 }
 
@@ -183,18 +193,25 @@ func (c *Card) SetHpMaxAndHp(set int) {
 // 扣除血量
 func (c *Card) CostHp(num int) int {
 
+	ic := c.GetRealization()
+
 	// 是否拥有圣盾
-	if num > 0 && c.IsHaveTraits(define.CardTraitsHolyShield, c) {
+	if num > 0 && c.IsHaveTraits(define.CardTraitsHolyShield) {
 		num = 0
 		c.RemoveTraits(define.CardTraitsHolyShield)
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"圣盾消失")
 	}
 
-	if num > 0 && c.IsHaveTraits(define.CardTraitsImmune, c) {
+	if num > 0 && c.IsHaveTraits(define.CardTraitsImmune) {
 		num = 0
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"具有免疫，伤害无效")
 	}
 
+	if num > 0 && !c.IsSilent() {
+		num = ic.OnBeforeCostHp(num)
+	}
+
+	tcNum := num
 	// 扣一下光环加成的血
 	if num > 0 {
 		c.GetHaveEffectHp()
@@ -212,6 +229,11 @@ func (c *Card) CostHp(num int) int {
 	}
 
 	c.Hp -= num
+
+	if tcNum > 0 && !c.IsSilent() {
+		ic.OnAfterCostHp()
+	}
+
 	if c.Hp <= 0 {
 
 		// logs
@@ -318,6 +340,10 @@ func (c *Card) GetHaveEffectHpMax() int {
 		HpMax += v.OnNROtherGetHp(c)
 	}
 
+	for _, v := range c.SubCards {
+		HpMax += v.GetHpMax()
+	}
+
 	return HpMax
 }
 
@@ -327,7 +353,9 @@ func (c *Card) GetDamage() int {
 }
 
 // 计算ic有效果加成的卡牌攻击力
-func (c *Card) GetHaveEffectDamage(ic iface.ICard) int {
+func (c *Card) GetHaveEffectDamage() int {
+
+	ic := c.GetRealization()
 	d := ic.GetDamage()
 
 	if !ic.IsSilent() {
@@ -360,9 +388,10 @@ func (c *Card) SetDamage(d int) {
 }
 
 // 交换ic攻击和血
-func (c *Card) ExchangeHpDamage(ic iface.ICard) {
+func (c *Card) ExchangeHpDamage() {
 
-	od := ic.GetHaveEffectDamage(ic)
+	ic := c.GetRealization()
+	od := ic.GetHaveEffectDamage()
 	oh := ic.GetHaveEffectHp()
 
 	ic.SetHpMaxAndHp(od)
@@ -407,7 +436,8 @@ func (c *Card) GetMona() int {
 }
 
 // 计算ic有效果加成的卡牌费用
-func (c *Card) GetHaveEffectMona(ic iface.ICard) int {
+func (c *Card) GetHaveEffectMona() int {
+	ic := c.GetRealization()
 	d := ic.GetMona()
 
 	if !ic.IsSilent() {
@@ -488,7 +518,10 @@ func (c *Card) SetSubCards(scs []iface.ICard) {
 }
 
 // 添加子卡牌
-func (a *Card) AddSubCards(ic, sc iface.ICard) {
+func (c *Card) AddSubCards(sc iface.ICard) {
+
+	ic := c.GetRealization()
+
 	subCards := ic.GetSubCards()
 	subCards = append(subCards, sc)
 	ic.SetSubCards(subCards)
@@ -531,8 +564,9 @@ func (c *Card) GetMaxAttackTimes() int {
 }
 
 // 复制此卡 ic = c
-func (c *Card) Copy(ic iface.ICard) (iface.ICard, error) {
+func (c *Card) Copy() (iface.ICard, error) {
 
+	ic := c.GetRealization()
 	nc := iface.GetCardFact().GetCard(ic.GetConfig().Id)
 
 	// 先去除owner , 结束时候还原回来

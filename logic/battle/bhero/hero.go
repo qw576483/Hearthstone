@@ -17,6 +17,7 @@ type Hero struct {
 	gateAgnet        gate.Agent               // 连接
 	battle           iface.IBattle            // 战斗句柄
 	id               int                      // 唯一id
+	realization      iface.IHero              // 实现
 	config           *config.HeroConfig       // 配置数据
 	skill            iface.ICard              // 英雄技能
 	enemy            iface.IHero              // 敌人
@@ -59,7 +60,7 @@ func (h *Hero) GetGateAgent() gate.Agent {
 }
 
 // 初始化
-func (h *Hero) Init(cards []iface.ICard, b iface.IBattle) {
+func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 
 	h.battle = b
 	h.id = b.GetIncrCardId()
@@ -78,6 +79,7 @@ func (h *Hero) Init(cards []iface.ICard, b iface.IBattle) {
 	h.shield = h.config.Shield
 	h.weapon = nil
 	h.maxHandCardsNum = 10
+	h.realization = ih
 
 	skill := iface.GetCardFact().GetCard(h.config.HeroSkillId)
 	skill.Init(skill, define.InCardsTypeNone, h, b)
@@ -86,6 +88,11 @@ func (h *Hero) Init(cards []iface.ICard, b iface.IBattle) {
 	for _, v := range h.libCards {
 		v.Init(v, define.InCardsTypeLib, h, b)
 	}
+}
+
+// 获得实现
+func (h *Hero) GetRealization() iface.IHero {
+	return h.realization
 }
 
 // 获得战斗句柄
@@ -197,7 +204,7 @@ func (h *Hero) GetBattleCardsTraitsTauntCardIds() []int {
 
 	// 有嘲讽特质，没有潜行特质
 	for _, v := range h.GetBattleCards() {
-		if v.IsHaveTraits(define.CardTraitsTaunt, v) && !v.IsHaveTraits(define.CardTraitsSneak, v) {
+		if v.IsHaveTraits(define.CardTraitsTaunt) && !v.IsHaveTraits(define.CardTraitsSneak) {
 			tsid = append(tsid, v.GetId())
 		}
 	}
@@ -275,7 +282,7 @@ func (h *Hero) GetDamage() int {
 		return h.damage
 	}
 
-	return h.damage + w.GetHaveEffectDamage(w)
+	return h.damage + w.GetHaveEffectDamage()
 }
 
 // 获得法术伤害
@@ -726,12 +733,12 @@ func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
 // 进攻 ， 这里不减次数， 放在battle那边
 func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 
-	dmg := c.GetHaveEffectDamage(c)
+	dmg := c.GetHaveEffectDamage()
 
 	var trueCostHp int // 实际伤血
 	if ec != nil {     // 如果对手是卡牌
 
-		dmg2 := ec.GetHaveEffectDamage(ec)
+		dmg2 := ec.GetHaveEffectDamage()
 
 		// logs
 		push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
@@ -760,7 +767,7 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 	var trueCostHp int // 实际伤血
 	if ec != nil {     // 如果对手是卡牌
 
-		dmg2 := ec.GetHaveEffectDamage(ec)
+		dmg2 := ec.GetHaveEffectDamage()
 
 		// logs
 		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")

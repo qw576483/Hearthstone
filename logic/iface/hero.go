@@ -8,10 +8,10 @@ import (
 )
 
 type IHero interface {
-	SetGateAgent(gate.Agent)  // 设置连接
-	GetGateAgent() gate.Agent // 获得连接
-	NewPoint() IHero          // 新指针
-	Init([]ICard, IBattle)    // 初始化
+	SetGateAgent(gate.Agent)      // 设置连接
+	GetGateAgent() gate.Agent     // 获得连接
+	NewPoint() IHero              // 新指针
+	Init(IHero, []ICard, IBattle) // 初始化
 
 	GetBattle() IBattle                                // 获得战斗句柄
 	GetId() int                                        // 获得英雄id

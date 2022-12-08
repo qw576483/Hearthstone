@@ -112,7 +112,7 @@ func BuildWeaponMsg(w iface.ICard) *CardMsg {
 	return &CardMsg{
 		Id:     w.GetId(),
 		Name:   w.GetConfig().Name,
-		Damage: w.GetHaveEffectDamage(w),
+		Damage: w.GetHaveEffectDamage(),
 		Hp:     w.GetHaveEffectHp(),
 	}
 }
@@ -123,8 +123,8 @@ func BuildCardsMsg(cs []iface.ICard) []*CardMsg {
 		cm = append(cm, &CardMsg{
 			Id:     v.GetId(),
 			Name:   v.GetConfig().Name,
-			Mona:   v.GetHaveEffectMona(v),
-			Damage: v.GetHaveEffectDamage(v),
+			Mona:   v.GetHaveEffectMona(),
+			Damage: v.GetHaveEffectDamage(),
 			Hp:     v.GetHaveEffectHp(),
 		})
 	}
@@ -253,13 +253,13 @@ func PushAutoLog(h iface.IHero, l string) {
 func GetCardLogString(c iface.ICard) string {
 
 	if c.GetType() == define.CardTypeSorcery {
-		if c.IsHaveTraits(define.CardTraitsSecret, c) {
+		if c.IsHaveTraits(define.CardTraitsSecret) {
 			return "奥秘"
 		}
 		return c.GetConfig().Name
 	}
 
-	return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")" + strconv.Itoa(c.GetHaveEffectMona(c)) + "-" + strconv.Itoa(c.GetHaveEffectDamage(c)) + "-" + strconv.Itoa(c.GetHaveEffectHp())
+	return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")" + strconv.Itoa(c.GetHaveEffectMona()) + "-" + strconv.Itoa(c.GetHaveEffectDamage()) + "-" + strconv.Itoa(c.GetHaveEffectHp())
 }
 
 func GetHeroLogString(h iface.IHero) string {

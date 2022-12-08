@@ -33,8 +33,8 @@ func NewBattle(h1, h2 iface.IHero, cs1, cs2 []iface.ICard) iface.IBattle {
 	b.randSeed = time.Now().UnixNano()
 	b.rand = rand.New(rand.NewSource(b.randSeed))
 
-	h1.Init(cs1, b)
-	h2.Init(cs2, b)
+	h1.Init(h1, cs1, b)
+	h2.Init(h2, cs2, b)
 	b.heros = []iface.IHero{h1, h2}
 
 	b.PreBegin()

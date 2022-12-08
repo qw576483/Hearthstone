@@ -492,4 +492,16 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Vocation: MakeCardVocation(define.VocationShaman),
 		CanCarry: true,
 	},
+	37: &CardConfig{
+		Id:       37,
+		Name:     "古拉巴什狂暴者",
+		Desc:     "每当该随从受到伤害，便获得+3攻击力。",
+		Mona:     5,
+		Damage:   2,
+		Hp:       8,
+		Quality:  define.CardQualityWhite,
+		Ctype:    define.CardTypeEntourage,
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }
