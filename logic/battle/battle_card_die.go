@@ -1,7 +1,6 @@
 package battle
 
 import (
-	"fmt"
 	"hs/logic/iface"
 	"sort"
 )
@@ -36,7 +35,7 @@ func (b *Battle) TrickCardDie() {
 func (b *Battle) WhileTrickCardDie() {
 	for i := 1; i <= 10; i++ {
 		if len(b.recordCardsDie) > 0 {
-			fmt.Println(b.recordCardsDie)
+			// fmt.Println(b.recordCardsDie)
 			b.TrickCardDie()
 		} else {
 			break

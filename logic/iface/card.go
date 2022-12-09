@@ -7,11 +7,12 @@ import (
 
 // 接口
 type ICard interface {
+	ICHCommon
+
 	NewPoint() ICard                                // 新指针
 	Init(ICard, define.InCardsType, IHero, IBattle) // 初始化
 
 	SetId(int)                                // 设置id
-	GetId() int                               // 获得卡牌id
 	GetReleaseId() int                        // 获得releaseid
 	GetRealization() ICard                    // 获得实现
 	SetConfig(*config.CardConfig)             // 设置配置
@@ -52,12 +53,6 @@ type ICard interface {
 	SetOwner(IHero)                           // 设置拥有人
 	GetOwner() IHero                          // 获得此卡拥有人
 	GetNoLoopOwner() IHero                    // 获得不循环的拥有人，一般用于buff
-	GetFatherCard() ICard                     // 获得父卡牌
-	SetFatherCard(ICard)                      // 设置父卡牌
-	GetSubCards() []ICard                     // 获得子卡牌
-	SetSubCards([]ICard)                      // 设置子卡牌
-	AddSubCards(ICard)                        // 添加子卡牌
-	RemoveSubCards(ICard)                     // 删除子卡牌
 	SetAttackTimes(int)                       // 设置攻击次数
 	GetAttackTimes() int                      // 获得攻击次数
 	GetMaxAttackTimes() int                   // 获得最大攻击次数

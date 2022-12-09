@@ -492,7 +492,7 @@ func (c *Card21) OnInit() {
 }
 
 func (c *Card21) OnNROtherDie(oc iface.ICard) {
-	if oc.GetId() == c.GetFatherCard().GetId() {
+	if c.GetFatherCard() != nil && oc.GetId() == c.GetFatherCard().GetId() {
 		c.ClearBuff()
 	}
 }
@@ -500,18 +500,23 @@ func (c *Card21) OnNROtherDie(oc iface.ICard) {
 func (c *Card21) OnNRRoundEnd() {
 
 	fc := c.GetFatherCard()
-
-	if fc == nil || fc.GetNoLoopOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+	if fc != nil && fc.GetNoLoopOwner().GetId() == fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+		c.ClearBuff()
 		return
 	}
 
-	c.ClearBuff()
+	fh := c.GetFatherHero()
+	if fh != nil && fh.GetId() == fh.GetBattle().GetRoundHero().GetId() {
+		c.ClearBuff()
+		return
+	}
 }
 
 func (c *Card21) ClearBuff() {
-	fc := c.GetFatherCard()
-	if fc != nil {
-		fc.RemoveSubCards(c)
+
+	f := c.GetFather()
+	if f != nil {
+		f.RemoveSubCards(c)
 		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
 		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherDie")
 	}
@@ -532,7 +537,7 @@ func (c *Card22) OnInit() {
 }
 
 func (c *Card22) OnNROtherDie(oc iface.ICard) {
-	if oc.GetId() == c.GetFatherCard().GetId() {
+	if c.GetFatherCard() != nil && oc.GetId() == c.GetFatherCard().GetId() {
 		c.ClearBuff()
 	}
 }
@@ -540,17 +545,23 @@ func (c *Card22) OnNROtherDie(oc iface.ICard) {
 func (c *Card22) OnNRRoundBegin() {
 
 	fc := c.GetFatherCard()
-	if fc == nil || fc.GetNoLoopOwner().GetId() != fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+	if fc != nil && fc.GetNoLoopOwner().GetId() == fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+		c.ClearBuff()
 		return
 	}
-	c.ClearBuff()
+
+	fh := c.GetFatherHero()
+	if fh != nil && fh.GetId() == fh.GetBattle().GetRoundHero().GetId() {
+		c.ClearBuff()
+		return
+	}
 }
 
 func (c *Card22) ClearBuff() {
-	fc := c.GetFatherCard()
-	if fc != nil {
-		fc.RemoveSubCards(c)
-		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundBegin")
+	f := c.GetFather()
+	if f != nil {
+		f.RemoveSubCards(c)
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundBegin")
 		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherDie")
 	}
 }
@@ -581,7 +592,7 @@ func (c *Card24) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 		nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
 		nc.AddDamage(2)
 
-		rc.AddSubCards(nc)
+		rc.AddSubCards(nc, rc)
 
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了两点攻击力")
 	}
@@ -812,7 +823,7 @@ func (c *Card35) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 		nc.AddDamage(2)
 		nc.AddTraits(define.CardTraitsImmune)
 
-		rc.AddSubCards(nc)
+		rc.AddSubCards(nc, rc)
 
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了两点攻击力和免疫")
 	}
@@ -897,7 +908,7 @@ func (c *Card39) OnAfterHpChange() {
 		nc.AddDamage(3)
 
 		c.sub = nc
-		c.AddSubCards(nc)
+		c.AddSubCards(nc, c)
 
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"获得了3点攻击")
 

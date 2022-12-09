@@ -8,13 +8,14 @@ import (
 )
 
 type IHero interface {
+	ICHCommon
+
 	SetGateAgent(gate.Agent)      // 设置连接
 	GetGateAgent() gate.Agent     // 获得连接
 	NewPoint() IHero              // 新指针
 	Init(IHero, []ICard, IBattle) // 初始化
 
 	GetBattle() IBattle                                // 获得战斗句柄
-	GetId() int                                        // 获得英雄id
 	IsRoundHero() bool                                 // 是否是我的回合
 	SetHeroSkill(ICard)                                // 设置英雄技能
 	GetHeroSkill() ICard                               // 获得英雄技能
@@ -88,7 +89,6 @@ type IHero interface {
 	CanReleaseSecret(ICard) bool                       // 是否能释放奥秘
 	OnlyReleaseSecret(ICard) bool                      // 仅仅释放奥秘，返回是否释放成功
 	DeleteSecret(ICard, bool)                          // 删除奥秘
-	GetSubCards() []ICard                              // 获得子卡牌
 	GetTraits() []define.CardTraits                    // 获得特质
 	IsHaveTraits(define.CardTraits) bool               // 是否有某种特质
 

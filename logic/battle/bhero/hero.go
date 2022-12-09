@@ -1,6 +1,7 @@
 package bhero
 
 import (
+	"hs/logic/battle/bchcommon"
 	"hs/logic/config"
 	"hs/logic/define"
 	"hs/logic/help"
@@ -14,9 +15,9 @@ import (
 )
 
 type Hero struct {
+	bchcommon.CHCommon
 	gateAgnet        gate.Agent         // 连接
 	battle           iface.IBattle      // 战斗句柄
-	id               int                // 唯一id
 	realization      iface.IHero        // 实现
 	config           *config.HeroConfig // 配置数据
 	skill            iface.ICard        // 英雄技能
@@ -41,7 +42,6 @@ type Hero struct {
 	maxHandCardsNum  int                // 手牌上限数量
 	fatigue          int                // 疲劳伤害
 	releaseCardTimes int                // 本回合出牌次数
-	subCards         []iface.ICard      // buff
 }
 
 func (h *Hero) NewPoint() iface.IHero {
@@ -62,7 +62,7 @@ func (h *Hero) GetGateAgent() gate.Agent {
 func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 
 	h.battle = b
-	h.id = b.GetIncrCardId()
+	h.Id = b.GetIncrCardId()
 	h.enemy = nil
 	h.preCards = make([]iface.ICard, 0)
 	h.handCards = make([]iface.ICard, 0)
@@ -96,11 +96,6 @@ func (h *Hero) GetRealization() iface.IHero {
 // 获得战斗句柄
 func (h *Hero) GetBattle() iface.IBattle {
 	return h.battle
-}
-
-// 获得英雄id
-func (h *Hero) GetId() int {
-	return h.id
 }
 
 // 是否是我的回合
@@ -980,24 +975,6 @@ func (h *Hero) DeleteSecret(ic iface.ICard, istTigger bool) {
 			_, h.secretCards = help.DeleteCardFromCardsByIdx(h.secretCards, idx)
 		}
 	}
-}
-
-// 获得子卡牌
-func (h *Hero) GetSubCards() []iface.ICard {
-	return h.subCards
-}
-
-// 设置子卡牌
-func (h *Hero) SetSubCards(scs []iface.ICard) {
-	h.subCards = scs
-}
-
-// 添加子卡牌
-func (h *Hero) AddSubCards(sc iface.ICard) {
-
-	subCards := h.GetSubCards()
-	subCards = append(subCards, sc)
-	h.SetSubCards(subCards)
 }
 
 // 获得特质
