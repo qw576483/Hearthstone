@@ -86,7 +86,7 @@ type IHero interface {
 	GetSecrets() []ICard                               // 获得奥秘
 	CanReleaseSecret(ICard) bool                       // 是否能释放奥秘
 	OnlyReleaseSecret(ICard) bool                      // 仅仅释放奥秘，返回是否释放成功
-	DeleteSecret(ICard)                                // 删除奥秘
+	DeleteSecret(ICard, bool)                          // 删除奥秘
 	GetSubCards() []ICard                              // 获得子卡牌
 	GetTraits() []define.CardTraits                    // 获得特质
 	IsHaveTraits(define.CardTraits) bool               // 是否有某种特质

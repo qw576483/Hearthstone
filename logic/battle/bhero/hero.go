@@ -967,7 +967,7 @@ func (h *Hero) OnlyReleaseSecret(ic iface.ICard) bool {
 }
 
 // 删除奥秘
-func (h *Hero) DeleteSecret(ic iface.ICard) {
+func (h *Hero) DeleteSecret(ic iface.ICard, istTigger bool) {
 	for idx, v := range h.secretCards {
 		if v.GetId() == ic.GetId() {
 			_, h.secretCards = help.DeleteCardFromCardsByIdx(h.secretCards, idx)

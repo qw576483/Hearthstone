@@ -788,7 +788,7 @@ func (c *Card34) OnNROtherAfterRelease(oc iface.ICard) {
 		oc.GetType() == define.CardTypeEntourage && !h.IsRoundHero() {
 
 		oc.SetHpMaxAndHp(1)
-		h.DeleteSecret(c)
+		h.DeleteSecret(c, true)
 		h.GetBattle().RemoveCardFromAllEvent(c)
 
 		push.PushAutoLog(h, c.GetConfig().Name+"(奥秘)让"+push.GetCardLogString(oc)+"生命值变为1点")
@@ -939,7 +939,7 @@ func (c *Card40) OnNROtherBeforeAttack(oc, rc iface.ICard, rh iface.IHero) (ifac
 		rc = nil
 		rh = nil
 
-		h.DeleteSecret(c)
+		h.DeleteSecret(c, true)
 		h.GetBattle().RemoveCardFromAllEvent(c)
 
 		h.MoveToHand(oc)

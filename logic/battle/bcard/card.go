@@ -165,6 +165,10 @@ func (c *Card) RemoveTraits(ct define.CardTraits) {
 			return
 		}
 	}
+
+	for _, v := range c.SubCards {
+		v.RemoveTraits(ct)
+	}
 }
 
 // 治疗血量
