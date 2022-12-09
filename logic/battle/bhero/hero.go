@@ -275,12 +275,13 @@ func (h *Hero) GetBattleCardsByIds(ids []int) []iface.ICard {
 // 获得英雄攻击力
 func (h *Hero) GetDamage() int {
 
+	wDamage := 0
 	w := h.GetWeapon()
-	if w == nil {
-		return h.damage
+	if w != nil {
+		wDamage = w.GetHaveEffectDamage()
 	}
 
-	return h.damage + w.GetHaveEffectDamage()
+	return h.damage + wDamage
 }
 
 // 获得法术伤害
@@ -554,6 +555,12 @@ func (h *Hero) CaptureCard(c iface.ICard, bidx int) {
 	// else if c.GetCardInCardsPos() == define.InCardsTypeLib {
 
 	// }
+}
+
+// 丢弃手牌
+func (h *Hero) DiscardCard(c iface.ICard) {
+	h.MoveOutHandOnlyHandCards(c)
+	c.OnAfterDisCard()
 }
 
 // 卡牌死亡
@@ -978,6 +985,19 @@ func (h *Hero) DeleteSecret(ic iface.ICard, istTigger bool) {
 // 获得子卡牌
 func (h *Hero) GetSubCards() []iface.ICard {
 	return h.subCards
+}
+
+// 设置子卡牌
+func (h *Hero) SetSubCards(scs []iface.ICard) {
+	h.subCards = scs
+}
+
+// 添加子卡牌
+func (h *Hero) AddSubCards(sc iface.ICard) {
+
+	subCards := h.GetSubCards()
+	subCards = append(subCards, sc)
+	h.SetSubCards(subCards)
 }
 
 // 获得特质

@@ -81,6 +81,7 @@ type ICard interface {
 	OnAfterCostHp()                   // 受伤后
 	OnAfterHpChange()                 // 生命值改变后
 	OnDie()                           // 卡牌死亡时
+	OnAfterDisCard()                  // 卡牌丢弃后
 	OnGetMona(int) int                // 获取自己的费用时，输入mona ,输出新mona
 	OnGetDamage(int) int              // 获取自己的攻击力时，输入damage ,输出新damage
 

@@ -16,6 +16,7 @@ func (h *Hero) RoundBegin() {
 	for _, v := range bcs {
 		v.SetAttackTimes(0)
 	}
+	h.GetHeroSkill().SetAttackTimes(0)
 	h.SetAttackTimes(0)
 
 	// 重置卡牌次数

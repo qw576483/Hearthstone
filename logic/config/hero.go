@@ -40,7 +40,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		Mona:        0,
 		MonaMax:     10,
 		Shield:      0,
-		HeroSkillId: 26,
+		HeroSkillId: 45,
 	},
 	2: &HeroConfig{
 		Id:          2,
@@ -51,7 +51,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		Mona:        0,
 		MonaMax:     10,
 		Shield:      0,
-		HeroSkillId: 26,
+		HeroSkillId: 46,
 	},
 	3: &HeroConfig{
 		Id:          3,
@@ -62,7 +62,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		Mona:        0,
 		MonaMax:     10,
 		Shield:      0,
-		HeroSkillId: 26,
+		HeroSkillId: 47,
 	},
 	4: &HeroConfig{
 		Id:          4,
@@ -73,7 +73,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		Mona:        0,
 		MonaMax:     10,
 		Shield:      0,
-		HeroSkillId: 26,
+		HeroSkillId: 53,
 	},
 	5: &HeroConfig{
 		Id:          5,

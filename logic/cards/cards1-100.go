@@ -158,7 +158,6 @@ func (c *Card7) OnOutBattle() {
 	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
 }
 
-// 在你的回合结束时，随机使另一个友方随从获得+1攻击力。
 func (c *Card7) OnNRRoundEnd() {
 
 	// 在我的回合结束时
@@ -606,7 +605,7 @@ func (c *Card25) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	}
 }
 
-// 盗贼基础技能
+// 匕首精通
 type Card26 struct {
 	bcard.Card
 }
@@ -624,7 +623,7 @@ func (c *Card26) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	push.PushAutoLog(c.GetOwner(), "装备了匕首")
 }
 
-// 盗贼基础技能 - 匕首
+// 邪恶短刀
 type Card27 struct {
 	bcard.Card
 }
@@ -1023,4 +1022,191 @@ func (c *Card44) OnDie() {
 
 	h.CaptureCard(rc, dbidx)
 	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡时，夺取了"+push.GetCardLogString(rc))
+}
+
+// 生命分流
+type Card45 struct {
+	bcard.Card
+}
+
+func (c *Card45) NewPoint() iface.ICard {
+	return &Card45{}
+}
+
+func (c *Card45) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	c.GetOwner().DrawByTimes(1)
+	push.PushAutoLog(c.GetOwner(), "抽了一张牌")
+}
+
+// 稳固射击
+type Card46 struct {
+	bcard.Card
+}
+
+func (c *Card46) NewPoint() iface.ICard {
+	return &Card46{}
+}
+
+func (c *Card46) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	e := h.GetEnemy()
+	e.CostHp(2)
+	push.PushAutoLog(c.GetOwner(), push.GetHeroLogString(h)+"对"+push.GetHeroLogString(e)+"造成了两点伤害")
+}
+
+// 图腾召唤
+type Card47 struct {
+	bcard.Card
+}
+
+func (c *Card47) NewPoint() iface.ICard {
+	return &Card47{}
+}
+
+func (c *Card47) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	if len(c.GetOwner().GetBattleCards()) >= define.MaxBattleNum {
+		return
+	}
+
+	h := c.GetOwner()
+
+	randIdx := h.GetBattle().GetRand().Intn(len(define.ShamanHeroSkillBaseTotemsIds))
+	nc := iface.GetCardFact().GetCard(define.ShamanHeroSkillBaseTotemsIds[randIdx])
+
+	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+	nc.GetOwner().MoveToBattle(nc, -1)
+	nc.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
+
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"召唤了"+push.GetCardLogString(nc))
+}
+
+// 空气之怒图腾
+type Card48 struct {
+	bcard.Card
+}
+
+func (c *Card48) NewPoint() iface.ICard {
+	return &Card48{}
+}
+
+// 灼热图腾
+type Card49 struct {
+	bcard.Card
+}
+
+func (c *Card49) NewPoint() iface.ICard {
+	return &Card49{}
+}
+
+// 治疗图腾
+type Card50 struct {
+	bcard.Card
+}
+
+func (c *Card50) NewPoint() iface.ICard {
+	return &Card50{}
+}
+
+func (c *Card50) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundEnd")
+}
+
+func (c *Card50) OnOutBattle() {
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
+}
+
+func (c *Card50) OnNRRoundEnd() {
+
+	// 在我的回合结束时
+	if c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		!c.GetOwner().IsRoundHero() {
+		return
+	}
+
+	h := c.GetOwner()
+
+	for _, v := range h.GetBattleCards() {
+		v.TreatmentHp(1)
+	}
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让所有随从恢复1点生命值")
+}
+
+// 石爪图腾
+type Card51 struct {
+	bcard.Card
+}
+
+func (c *Card51) NewPoint() iface.ICard {
+	return &Card51{}
+}
+
+// 力量图腾
+type Card52 struct {
+	bcard.Card
+}
+
+func (c *Card52) NewPoint() iface.ICard {
+	return &Card52{}
+}
+
+func (c *Card52) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundEnd")
+}
+
+func (c *Card52) OnOutBattle() {
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
+}
+
+func (c *Card52) OnNRRoundEnd() {
+
+	// 在我的回合结束时
+	if c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		!c.GetOwner().IsRoundHero() {
+		return
+	}
+
+	h := c.GetOwner()
+	tr := h.RandExcludeCard(h.GetBattleCards(), c)
+	if tr == nil {
+		return
+	}
+
+	tr.AddDamage(1)
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(tr)+"提升1点攻击力")
+}
+
+// 援军
+type Card53 struct {
+	bcard.Card
+}
+
+func (c *Card53) NewPoint() iface.ICard {
+	return &Card53{}
+}
+
+func (c *Card53) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	if len(c.GetOwner().GetBattleCards()) >= define.MaxBattleNum {
+		return
+	}
+
+	nc := iface.GetCardFact().GetCard(define.PaladinHeroSkillSilverHandRecruit)
+
+	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+	nc.GetOwner().MoveToBattle(nc, -1)
+	nc.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
+
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"召唤了"+push.GetCardLogString(nc))
+}
+
+// 白银之手新兵
+type Card54 struct {
+	bcard.Card
+}
+
+func (c *Card54) NewPoint() iface.ICard {
+	return &Card54{}
 }

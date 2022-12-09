@@ -18,6 +18,7 @@ func (c *Card) OnBeforeCostHp(d int) int                                     { r
 func (c *Card) OnAfterCostHp()                                               {}
 func (c *Card) OnAfterHpChange()                                             {}
 func (c *Card) OnDie()                                                       {}
+func (c *Card) OnAfterDisCard()                                              {}
 func (c *Card) OnGetMona(m int) int                                          { return m }
 func (c *Card) OnGetDamage(d int) int                                        { return d }
 
