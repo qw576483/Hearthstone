@@ -18,7 +18,7 @@ func (c *Card0) NewPoint() iface.ICard {
 	return &Card0{}
 }
 
-func (c *Card0) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card0) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	c.GetOwner().AddMona(1)
 }
 
@@ -40,7 +40,7 @@ func (c *Card2) NewPoint() iface.ICard {
 	return &Card2{}
 }
 
-func (c *Card2) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card2) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	if rc == nil {
 		return
@@ -61,7 +61,7 @@ func (c *Card3) NewPoint() iface.ICard {
 	return &Card3{}
 }
 
-func (c *Card3) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card3) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	c.GetOwner().DrawByTimes(2)
 	c.GetOwner().GetEnemy().DrawByTimes(2)
 
@@ -78,16 +78,16 @@ func (c *Card4) NewPoint() iface.ICard {
 	return &Card4{}
 }
 
-// 死亡效果
-func (c *Card4) OnDie(bidx int) {
+func (c *Card4) OnDie() {
 
 	if len(c.GetOwner().GetBattleCards()) >= define.MaxBattleNum {
 		return
 	}
+	dbidx := c.GetAfterDieBidx()
 
 	nc := iface.GetCardFact().GetCard(5)
-	nc.Init(nc, define.InCardsTypeBattle, c.GetOwner(), c.GetOwner().GetBattle())
-	nc.GetOwner().MoveToBattle(nc, bidx)
+	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+	nc.GetOwner().MoveToBattle(nc, dbidx)
 	nc.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
 
 	// logs
@@ -112,12 +112,12 @@ func (c *Card6) NewPoint() iface.ICard {
 	return &Card6{}
 }
 
-func (c *Card6) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")
+func (c *Card6) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundBegin")
 }
 
 func (c *Card6) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundBegin")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundBegin")
 }
 
 func (c *Card6) OnNRRoundBegin() {
@@ -150,12 +150,12 @@ func (c *Card7) NewPoint() iface.ICard {
 	return &Card7{}
 }
 
-func (c *Card7) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNRRoundEnd")
+func (c *Card7) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundEnd")
 }
 
 func (c *Card7) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundEnd")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
 }
 
 // 在你的回合结束时，随机使另一个友方随从获得+1攻击力。
@@ -195,7 +195,7 @@ func (c *Card9) NewPoint() iface.ICard {
 	return &Card9{}
 }
 
-func (c *Card9) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card9) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	h := c.GetOwner()
 	dmg := 1
@@ -226,12 +226,12 @@ func (c *Card10) NewPoint() iface.ICard {
 	return &Card10{}
 }
 
-func (c *Card10) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNROtherDie")
+func (c *Card10) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherDie")
 }
 
 func (c *Card10) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherDie")
 }
 
 func (c *Card10) OnNROtherDie(tc iface.ICard) {
@@ -295,7 +295,7 @@ func (c *Card15) NewPoint() iface.ICard {
 	return &Card15{}
 }
 
-func (c *Card15) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card15) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	h := c.GetOwner()
 	for i := 1; i <= 3; i++ {
@@ -322,12 +322,12 @@ func (c *Card16) NewPoint() iface.ICard {
 	return &Card16{}
 }
 
-func (c *Card16) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNRPutToBattle")
+func (c *Card16) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRPutToBattle")
 }
 
 func (c *Card16) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNRPutToBattle")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRPutToBattle")
 }
 
 func (c *Card16) OnNRPutToBattle(oc iface.ICard) {
@@ -360,12 +360,12 @@ func (c *Card17) NewPoint() iface.ICard {
 	return &Card17{}
 }
 
-func (c *Card17) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNROtherGetDamage")
+func (c *Card17) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherGetDamage")
 }
 
 func (c *Card17) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherGetDamage")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherGetDamage")
 }
 
 func (c *Card17) OnNROtherGetDamage(oc iface.ICard) int {
@@ -398,12 +398,12 @@ func (c *Card18) NewPoint() iface.ICard {
 	return &Card18{}
 }
 
-func (c *Card18) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNROtherGetMona")
+func (c *Card18) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherGetMona")
 }
 
 func (c *Card18) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherGetMona")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherGetMona")
 }
 
 func (c *Card18) OnNROtherGetMona(oc iface.ICard) int {
@@ -433,14 +433,14 @@ func (c *Card19) NewPoint() iface.ICard {
 	return &Card19{}
 }
 
-func (c *Card19) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNROtherGetHp")
-	c.GetOwner().AddCardToEvent(c, "OnNROtherGetDamage")
+func (c *Card19) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherGetHp")
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherGetDamage")
 }
 
 func (c *Card19) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherGetHp")
-	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherGetDamage")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherGetHp")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherGetDamage")
 }
 
 func (c *Card19) OnNROtherGetDamage(oc iface.ICard) int {
@@ -488,8 +488,8 @@ func (c *Card21) NewPoint() iface.ICard {
 }
 
 func (c *Card21) OnInit() {
-	c.GetOwner().AddCardToEvent(c, "OnNRRoundEnd")
-	c.GetOwner().AddCardToEvent(c, "OnNROtherDie")
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundEnd")
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherDie")
 }
 
 func (c *Card21) OnNROtherDie(oc iface.ICard) {
@@ -513,8 +513,8 @@ func (c *Card21) ClearBuff() {
 	fc := c.GetFatherCard()
 	if fc != nil {
 		fc.RemoveSubCards(c)
-		c.GetOwner().RemoveCardFromEvent(c, "OnNRRoundEnd")
-		c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherDie")
 	}
 }
 
@@ -528,8 +528,8 @@ func (c *Card22) NewPoint() iface.ICard {
 }
 
 func (c *Card22) OnInit() {
-	c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")
-	c.GetOwner().AddCardToEvent(c, "OnNROtherDie")
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundBegin")
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherDie")
 }
 
 func (c *Card22) OnNROtherDie(oc iface.ICard) {
@@ -551,8 +551,8 @@ func (c *Card22) ClearBuff() {
 	fc := c.GetFatherCard()
 	if fc != nil {
 		fc.RemoveSubCards(c)
-		c.GetOwner().AddCardToEvent(c, "OnNRRoundBegin")
-		c.GetOwner().RemoveCardFromEvent(c, "OnNROtherDie")
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundBegin")
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherDie")
 	}
 }
 
@@ -574,7 +574,7 @@ func (c *Card24) NewPoint() iface.ICard {
 	return &Card24{}
 }
 
-func (c *Card24) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card24) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	if rc != nil {
 
@@ -598,7 +598,7 @@ func (c *Card25) NewPoint() iface.ICard {
 	return &Card25{}
 }
 
-func (c *Card25) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card25) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	if rc != nil {
 		rc.AddTraits(define.CardTraitsHolyShield)
@@ -615,7 +615,7 @@ func (c *Card26) NewPoint() iface.ICard {
 	return &Card26{}
 }
 
-func (c *Card26) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card26) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	nc := iface.GetCardFact().GetCard(27)
 	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
@@ -642,7 +642,7 @@ func (c *Card28) NewPoint() iface.ICard {
 	return &Card28{}
 }
 
-func (c *Card28) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card28) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	if rc != nil {
 		rc.Silent()
@@ -659,7 +659,7 @@ func (c *Card29) NewPoint() iface.ICard {
 	return &Card29{}
 }
 
-func (c *Card29) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card29) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	h := c.GetOwner()
 	d := h.GetApDamage()
@@ -692,12 +692,12 @@ func (c *Card31) NewPoint() iface.ICard {
 	return &Card31{}
 }
 
-func (c *Card31) OnPutToBattle(pidx int) {
-	c.GetOwner().AddCardToEvent(c, "OnNROtherBeforeRelease")
+func (c *Card31) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherBeforeRelease")
 }
 
 func (c *Card31) OnOutBattle() {
-	c.GetOwner().RemoveCardFromEvent(c, "OnNROtherBeforeRelease")
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherBeforeRelease")
 }
 
 func (c *Card31) OnNROtherBeforeRelease(oc, rc iface.ICard, rh iface.IHero) (iface.ICard, iface.IHero, bool) {
@@ -728,7 +728,7 @@ func (c *Card32) NewPoint() iface.ICard {
 	return &Card32{}
 }
 
-func (c *Card32) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card32) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	if choiceId == 0 {
 		if rc != nil {
@@ -755,7 +755,7 @@ func (c *Card33) NewPoint() iface.ICard {
 	return &Card33{}
 }
 
-func (c *Card33) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card33) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	h := c.GetOwner()
 	if rc != nil && rc.GetOwner().GetId() == h.GetId() {
@@ -773,11 +773,11 @@ func (c *Card34) NewPoint() iface.ICard {
 	return &Card34{}
 }
 
-func (c *Card34) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card34) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	h := c.GetOwner()
 	if h.OnlyReleaseSecret(c) {
-		c.GetOwner().AddCardToEvent(c, "OnNROtherAfterRelease")
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherAfterRelease")
 		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
 	}
 }
@@ -789,7 +789,7 @@ func (c *Card34) OnNROtherAfterRelease(oc iface.ICard) {
 
 		oc.SetHpMaxAndHp(1)
 		h.DeleteSecret(c)
-		h.RemoveCardFromBothEvent(c)
+		h.GetBattle().RemoveCardFromAllEvent(c)
 
 		push.PushAutoLog(h, c.GetConfig().Name+"(奥秘)让"+push.GetCardLogString(oc)+"生命值变为1点")
 	}
@@ -804,7 +804,7 @@ func (c *Card35) NewPoint() iface.ICard {
 	return &Card35{}
 }
 
-func (c *Card35) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card35) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	if rc != nil && rc.IsRace(define.CardRaceBeast) {
 
@@ -828,7 +828,7 @@ func (c *Card36) NewPoint() iface.ICard {
 	return &Card36{}
 }
 
-func (c *Card36) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card36) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	h := c.GetOwner()
 	dmg := 3
@@ -921,11 +921,11 @@ func (c *Card40) NewPoint() iface.ICard {
 	return &Card40{}
 }
 
-func (c *Card40) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card40) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	h := c.GetOwner()
 	if h.OnlyReleaseSecret(c) {
-		c.GetOwner().AddCardToEvent(c, "OnNROtherBeforeAttack")
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherBeforeAttack")
 		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
 	}
 }
@@ -940,7 +940,7 @@ func (c *Card40) OnNROtherBeforeAttack(oc, rc iface.ICard, rh iface.IHero) (ifac
 		rh = nil
 
 		h.DeleteSecret(c)
-		h.RemoveCardFromBothEvent(c)
+		h.GetBattle().RemoveCardFromAllEvent(c)
 
 		h.MoveToHand(oc)
 		oc.SetMona(oc.GetMona() + 2)
@@ -977,13 +977,13 @@ func (c *Card43) NewPoint() iface.ICard {
 	return &Card43{}
 }
 
-func (c *Card43) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+func (c *Card43) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	h := c.GetOwner()
 	if rc != nil {
 
 		rch := rc.GetOwner()
-		rcPidx := h.GetCardIdx(rc, rch.GetBattleCards())
+		rcbidx := h.GetCardIdx(rc, rch.GetBattleCards())
 		rch.MoveOutBattleOnlyBattleCards(rc)
 
 		var nc iface.ICard
@@ -994,8 +994,33 @@ func (c *Card43) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
 			nc = iface.GetCardFact().GetCard(42)
 			push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"变成了魔暴龙！")
 		}
-		nc.Init(nc, define.InCardsTypeBattle, rch, rch.GetBattle())
+		nc.Init(nc, define.InCardsTypeNone, rch, rch.GetBattle())
 		nc.SetReleaseRound(rch.GetBattle().GetIncrRoundId())
-		rch.MoveToBattle(nc, rcPidx)
+		rch.MoveToBattle(nc, rcbidx)
 	}
+}
+
+// 希尔瓦娜斯·风行者
+type Card44 struct {
+	bcard.Card
+}
+
+func (c *Card44) NewPoint() iface.ICard {
+	return &Card44{}
+}
+
+func (c *Card44) OnDie() {
+
+	h := c.GetOwner()
+	eh := h.GetEnemy()
+
+	rc := eh.RandCard(h.GetEnemy().GetBattleCards())
+	if rc == nil {
+		return
+	}
+
+	dbidx := c.GetAfterDieBidx()
+
+	h.CaptureCard(rc, dbidx)
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡时，夺取了"+push.GetCardLogString(rc))
 }

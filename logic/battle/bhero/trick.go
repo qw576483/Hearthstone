@@ -14,20 +14,20 @@ func (h *Hero) TrickBattleBegin() {
 }
 
 // 触发战吼
-func (h *Hero) TrickRelease(c iface.ICard, choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
-	c.OnRelease(choiceId, pidx, rc, rh)
+func (h *Hero) TrickRelease(c iface.ICard, choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+	c.OnRelease(choiceId, bidx, rc, rh)
 }
 
 // 触发回合开始
 func (h *Hero) TrickRoundBegin() {
-	for _, v := range h.GetBothEventCards("OnNRRoundBegin") {
+	for _, v := range h.GetBattle().GetEventCards("OnNRRoundBegin") {
 		v.OnNRRoundBegin()
 	}
 }
 
 // 触发回合结束
 func (h *Hero) TrickRoundEnd() {
-	for _, v := range h.GetBothEventCards("OnNRRoundEnd") {
+	for _, v := range h.GetBattle().GetEventCards("OnNRRoundEnd") {
 		v.OnNRRoundEnd()
 	}
 }
@@ -35,11 +35,6 @@ func (h *Hero) TrickRoundEnd() {
 // 触发得到事件
 func (h *Hero) TrickGetCardEvent(c iface.ICard) {
 	c.OnGet()
-}
-
-// 触发销毁事件
-func (h *Hero) TrickDevastateCardEvent(c iface.ICard) {
-	c.OnDevastate()
 }
 
 // 触发攻击后事件
@@ -68,13 +63,13 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCost
 }
 
 // 触发死亡事件
-func (h *Hero) TrickDieCardEvent(c iface.ICard, bidx int) {
+func (h *Hero) TrickDieCardEvent(c iface.ICard) {
 
 	if !c.IsSilent() {
-		c.OnDie(bidx)
+		c.OnDie()
 	}
 
-	for _, v := range h.GetBothEventCards("OnNROtherDie") {
+	for _, v := range h.GetBattle().GetEventCards("OnNROtherDie") {
 		v.OnNROtherDie(c)
 	}
 }
@@ -87,7 +82,7 @@ func (h *Hero) TrickPutToBattleEvent(c iface.ICard, bidx int) {
 		c.OnPutToBattle(bidx)
 	}
 
-	for _, v := range h.GetBothEventCards("OnNRPutToBattle") {
+	for _, v := range h.GetBattle().GetEventCards("OnNRPutToBattle") {
 		v.OnNRPutToBattle(c)
 	}
 }

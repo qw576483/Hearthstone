@@ -63,6 +63,7 @@ type IHero interface {
 	MoveOutHandOnlyHandCards(ICard)                    // 撤出手牌
 	MoveToBattle(ICard, int)                           // 布入战场
 	MoveOutBattleOnlyBattleCards(ICard) int            // 移出战场
+	CaptureCard(ICard, int)                            // 夺取卡牌
 	DieCard(ICard)                                     // 杀死卡牌
 	GetMaxHandCardsNum() int                           // 获得手牌上限数量
 	DrawForPreBegin(int)                               // 预备开始时的抽卡
@@ -78,6 +79,7 @@ type IHero interface {
 	Push(interface{})                                  // 推送数据
 	RandBattleCardOrHero() (ICard, IHero)              // 随机战场上的卡牌或者英雄
 	RandBothBattleCardOrHero() (ICard, IHero)          // 随机战场上的卡牌或者英雄
+	RandCard([]ICard) ICard                            // 随机卡牌
 	RandExcludeCard([]ICard, ICard) ICard              // 随机卡牌，排除一个卡牌
 	GetReleaseCardTimes() int                          // 获得出牌次数
 	SetReleaseCardTimes(int)                           // 设置出牌次数
@@ -88,13 +90,6 @@ type IHero interface {
 	GetSubCards() []ICard                              // 获得子卡牌
 	GetTraits() []define.CardTraits                    // 获得特质
 	IsHaveTraits(define.CardTraits) bool               // 是否有某种特质
-
-	GetEvent() map[string][]ICard      // 获得所有事件
-	GetEventCards(string) []ICard      // 获得事件卡牌
-	GetBothEventCards(string) []ICard  // 获得双方事件卡牌
-	AddCardToEvent(ICard, string)      // 添加卡牌到事件
-	RemoveCardFromEvent(ICard, string) // 从事件中删除卡牌
-	RemoveCardFromBothEvent(ICard)     // 删除卡牌从双方的事件中
 
 	PreBegin()   // 预备阶段
 	RoundBegin() // 回合开始
@@ -107,7 +102,6 @@ type IHero interface {
 	TrickRoundEnd()                                 // 触发回合结束事件
 	TrickPutToBattleEvent(ICard, int)               // 触发步入战场事件
 	TrickOutBattleEvent(ICard)                      // 触发离开战场事件
-	TrickDevastateCardEvent(ICard)                  // 触发销毁事件
 	TrickAfterAttackEvent(ICard, ICard, IHero, int) // 触发攻击后事件
-	TrickDieCardEvent(ICard, int)                   // 触发死亡事件
+	TrickDieCardEvent(ICard)                        // 触发死亡事件
 }

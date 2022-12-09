@@ -10,6 +10,7 @@ import (
 type IBattle interface {
 	GetIncrRoundId() int                  // 获得自增的roundId
 	GetIncrCardId() int                   // 获得自增的cardId
+	GetIncrReleaseId() int                // 获得自增的releaseId
 	GetDoneSign(string) string            // 是否完成某项操作
 	SetDoneSign(string, string)           // 完成某项操作
 	GetBattleStatus() define.BattleStatus // 获得战斗运行状态
@@ -33,4 +34,15 @@ type IBattle interface {
 	Begin()      // 开始战斗
 	RoundBegin() // 回合开始
 	RoundEnd()   // 回合结束
+
+	// 事件
+	GetEvent() map[string][]ICard      // 获得所有事件
+	GetEventCards(string) []ICard      // 获得事件卡牌
+	AddCardToEvent(ICard, string)      // 添加卡牌到事件
+	RemoveCardFromEvent(ICard, string) // 从事件中删除卡牌
+	RemoveCardFromAllEvent(ICard)      // 从事件中删除卡牌
+
+	// 收集亡语
+	RecordCardDie(ICard) // 收集真实死亡
+	TrickCardDie()       // 触发死亡
 }

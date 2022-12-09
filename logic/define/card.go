@@ -4,11 +4,11 @@ package define
 type InCardsType int
 
 const (
-	InCardsTypeNone   InCardsType = iota // 不知道在哪
+	InCardsTypeNone   InCardsType = iota // 还没设置位置
 	InCardsTypeHand                      // 手牌中
 	InCardsTypeLib                       // 牌库中
 	InCardsTypeGrave                     // 坟场
-	InCardsTypeBattle                    // 战场
+	InCardsTypeBattle                    // 战场（如果从战场上移动到战场上，战场已满情况下会触发死亡）（如果从战场上移动到手牌，满牌情况下会触发死亡）
 	InCardsTypeBody                      // 身上
 )
 
@@ -57,6 +57,7 @@ const (
 	CardRaceAll                       // 全部
 	CardRaceNatural                   // 自然
 	CardRaceElement                   // 元素
+	CardRaceUndead                    // 亡灵
 )
 
 // 卡牌系列

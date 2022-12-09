@@ -578,4 +578,18 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
 		CanCarry: true,
 	},
+	44: &CardConfig{
+		Id:       44,
+		Name:     "希尔瓦娜斯·风行者",
+		Desc:     "亡语：随机获得一个敌方随从的控制权。",
+		Mona:     6,
+		Damage:   5,
+		Hp:       5,
+		Quality:  define.CardQualityOrange,
+		Ctype:    define.CardTypeEntourage,
+		Race:     MakeCardRace(define.CardRaceUndead),
+		Traits:   MakeCardTraits(define.CardTraitsOnDie),
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }

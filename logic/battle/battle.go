@@ -11,23 +11,30 @@ import (
 )
 
 type Battle struct {
-	incrCardId  int                 // 自增id
-	incrRoundId int                 // 自增回合id
-	doneSign    map[string]string   // 完成标记
-	status      define.BattleStatus // 状态
-	hero        iface.IHero         // 当前回合的英雄
-	heros       []iface.IHero       // 保存一下
-	randSeed    int64               // 随机数种子
-	rand        *rand.Rand          // 随机数句柄
+	incrCardId    int                 // 自增id
+	incrRoundId   int                 // 自增回合id
+	incrReleaseId int                 // 自增释放id
+	doneSign      map[string]string   // 完成标记
+	status        define.BattleStatus // 状态
+	hero          iface.IHero         // 当前回合的英雄
+	heros         []iface.IHero       // 保存一下
+	randSeed      int64               // 随机数种子
+	rand          *rand.Rand          // 随机数句柄
+
+	events        map[string][]iface.ICard // 事件
+	recordCardDie map[int]iface.ICard      // 亡语收集器
 }
 
 // 初始化句柄
 func NewBattle(h1, h2 iface.IHero, cs1, cs2 []iface.ICard) iface.IBattle {
 
 	b := &Battle{
-		incrCardId:  0,
-		incrRoundId: 0,
-		doneSign:    make(map[string]string, 0),
+		incrCardId:    0,
+		incrRoundId:   0,
+		incrReleaseId: 0,
+		doneSign:      make(map[string]string, 0),
+		events:        make(map[string][]iface.ICard, 0),
+		recordCardDie: make(map[int]iface.ICard, 0),
 	}
 
 	b.randSeed = time.Now().UnixNano()
@@ -51,6 +58,12 @@ func (b *Battle) GetIncrCardId() int {
 // 获得回合id
 func (b *Battle) GetIncrRoundId() int {
 	return b.incrRoundId
+}
+
+// 获得释放id
+func (b *Battle) GetIncrReleaseId() int {
+	b.incrReleaseId += 1
+	return b.incrReleaseId
 }
 
 // 是否完成某项操作

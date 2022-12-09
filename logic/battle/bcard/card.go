@@ -3,7 +3,6 @@ package bcard
 import (
 	"bytes"
 	"encoding/gob"
-	"errors"
 	"hs/logic/config"
 	"hs/logic/define"
 	"hs/logic/help"
@@ -14,6 +13,7 @@ import (
 // 卡牌
 type Card struct {
 	Id           int                 // battle中id
+	ReleaseId    int                 // battle中的释放id
 	Realization  iface.ICard         // 我的实现
 	Config       *config.CardConfig  // 配置
 	Ctype        define.CardType     // 卡牌类型
@@ -33,6 +33,8 @@ type Card struct {
 	InitSign     bool                // 设置初始化标记
 	SilentSign   bool                // 是否被沉默
 	ApDamage     int                 // 法术伤害
+	DbIdx        int                 // 死亡后的idx
+
 }
 
 // 返回新指针
@@ -127,7 +129,7 @@ func (c *Card) GetHaveEffectTraits() []define.CardTraits {
 	}
 
 	// 获得光环影响
-	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetTraits") {
+	for _, v := range ic.GetOwner().GetBattle().GetEventCards("OnNROtherGetTraits") {
 
 		for _, v2 := range v.OnNROtherGetTraits(ic) {
 			if !help.InArray(v2, ts) {
@@ -282,7 +284,7 @@ func (c *Card) flushHpEffect() {
 	var cacheHpEffect = make(map[int]int, 0)
 
 	// 获得光环的+血
-	for _, v := range c.Owner.GetBothEventCards("OnNROtherGetHp") {
+	for _, v := range c.Owner.GetBattle().GetEventCards("OnNROtherGetHp") {
 
 		eHp := v.OnNROtherGetHp(c)
 
@@ -344,7 +346,7 @@ func (c *Card) GetHpMax() int {
 func (c *Card) GetHaveEffectHpMax() int {
 
 	HpMax := c.GetHpMax()
-	for _, v := range c.Owner.GetBothEventCards("OnNROtherGetHp") {
+	for _, v := range c.Owner.GetBattle().GetEventCards("OnNROtherGetHp") {
 
 		HpMax += v.OnNROtherGetHp(c)
 	}
@@ -371,7 +373,7 @@ func (c *Card) GetHaveEffectDamage() int {
 		d = ic.OnGetDamage(d)
 	}
 
-	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetDamage") {
+	for _, v := range ic.GetOwner().GetBattle().GetEventCards("OnNROtherGetDamage") {
 		d += v.OnNROtherGetDamage(ic)
 	}
 
@@ -458,7 +460,7 @@ func (c *Card) GetHaveEffectMona() int {
 		m = ic.OnGetMona(m)
 	}
 
-	for _, v := range ic.GetOwner().GetBothEventCards("OnNROtherGetMona") {
+	for _, v := range ic.GetOwner().GetBattle().GetEventCards("OnNROtherGetMona") {
 		m += v.OnNROtherGetMona(ic)
 	}
 
@@ -479,18 +481,14 @@ func (c *Card) GetCardInCardsPos() define.InCardsType {
 	return c.InCardsType
 }
 
-// 获得此卡在手牌中的位置
-func (c *Card) GetHandPos() (int, error) {
+// 设置死亡后的bidx
+func (c *Card) SetAfterDieBidx(dbidx int) {
+	c.DbIdx = dbidx
+}
 
-	handCards := c.GetOwner().GetHandCards()
-
-	for k, v := range handCards {
-		if v.GetId() == c.Id {
-			return k, nil
-		}
-	}
-
-	return 0, errors.New("not found this card")
+// 获得死亡后的bidx
+func (c *Card) GetAfterDieBidx() int {
+	return c.DbIdx
 }
 
 // 设置拥有人
@@ -634,10 +632,10 @@ func (c *Card) Silent() {
 
 	// 移除子卡牌和子卡牌所有事件
 	for _, v := range c.SubCards {
-		c.GetOwner().RemoveCardFromBothEvent(v)
+		c.GetOwner().GetBattle().RemoveCardFromAllEvent(v)
 	}
 	c.SubCards = make([]iface.ICard, 0)
-	c.GetOwner().RemoveCardFromBothEvent(c)
+	c.GetOwner().GetBattle().RemoveCardFromAllEvent(c)
 
 	// 血量修正
 	c.HpMax = c.Config.Hp
@@ -665,9 +663,15 @@ func (c *Card) IsSilent() bool {
 // 设置出牌回合
 func (c *Card) SetReleaseRound(r int) {
 	c.ReleaseRound = r
+	c.ReleaseId = c.GetOwner().GetBattle().GetIncrReleaseId()
 }
 
 // 获得出牌回合
 func (c *Card) GetReleaseRound() int {
 	return c.ReleaseRound
+}
+
+// 获得释放id
+func (c *Card) GetReleaseId() int {
+	return c.ReleaseId
 }

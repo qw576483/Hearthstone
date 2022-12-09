@@ -12,6 +12,7 @@ type ICard interface {
 
 	SetId(int)                                // 设置id
 	GetId() int                               // 获得卡牌id
+	GetReleaseId() int                        // 获得releaseid
 	GetRealization() ICard                    // 获得实现
 	SetConfig(*config.CardConfig)             // 设置配置
 	GetConfig() *config.CardConfig            // 获得配置
@@ -46,7 +47,8 @@ type ICard interface {
 	GetHaveEffectMona() int                   // 计算有效果加成的卡牌费用
 	SetCardInCardsPos(define.InCardsType)     // 设置此卡的位置
 	GetCardInCardsPos() define.InCardsType    // 获得此卡的位置
-	GetHandPos() (int, error)                 // 获得此卡在手牌中的位置
+	SetAfterDieBidx(int)                      // 设置死亡时的idx
+	GetAfterDieBidx() int                     // 获得死亡时的idx
 	SetOwner(IHero)                           // 设置拥有人
 	GetOwner() IHero                          // 获得此卡拥有人
 	GetNoLoopOwner() IHero                    // 获得不循环的拥有人，一般用于buff
@@ -78,8 +80,7 @@ type ICard interface {
 	OnBeforeCostHp(int) int           // 受伤前，输入damage，输出新damage
 	OnAfterCostHp()                   // 受伤后
 	OnAfterHpChange()                 // 生命值改变后
-	OnDie(int)                        // 卡牌死亡时
-	OnDevastate()                     // 卡牌销毁时
+	OnDie()                           // 卡牌死亡时
 	OnGetMona(int) int                // 获取自己的费用时，输入mona ,输出新mona
 	OnGetDamage(int) int              // 获取自己的攻击力时，输入damage ,输出新damage
 

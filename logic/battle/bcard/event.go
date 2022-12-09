@@ -11,14 +11,13 @@ func (c *Card) OnBattleBegin()                                               {}
 func (c *Card) OnGet()                                                       {}
 func (c *Card) OnPutToBattle(pix int)                                        {}
 func (c *Card) OnOutBattle()                                                 {}
-func (c *Card) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {}
+func (c *Card) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {}
 func (c *Card) OnHonorAnnihilate()                                           {}
 func (c *Card) OnOverflowAnnihilate()                                        {}
 func (c *Card) OnBeforeCostHp(d int) int                                     { return d }
 func (c *Card) OnAfterCostHp()                                               {}
 func (c *Card) OnAfterHpChange()                                             {}
-func (c *Card) OnDie(bidx int)                                               {}
-func (c *Card) OnDevastate()                                                 {}
+func (c *Card) OnDie()                                                       {}
 func (c *Card) OnGetMona(m int) int                                          { return m }
 func (c *Card) OnGetDamage(d int) int                                        { return d }
 

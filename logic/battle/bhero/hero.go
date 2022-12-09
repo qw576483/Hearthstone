@@ -14,35 +14,34 @@ import (
 )
 
 type Hero struct {
-	gateAgnet        gate.Agent               // 连接
-	battle           iface.IBattle            // 战斗句柄
-	id               int                      // 唯一id
-	realization      iface.IHero              // 实现
-	config           *config.HeroConfig       // 配置数据
-	skill            iface.ICard              // 英雄技能
-	enemy            iface.IHero              // 敌人
-	preCards         []iface.ICard            // 预存卡牌
-	handCards        []iface.ICard            // 手牌
-	libCards         []iface.ICard            // 牌库
-	graveCards       []iface.ICard            // 坟场
-	battleCards      []iface.ICard            // 战场
-	allCards         []iface.ICard            // 全部卡牌
-	secretCards      []iface.ICard            // 奥秘
-	events           map[string][]iface.ICard // 事件
-	damage           int                      // 攻击力
-	attackTimes      int                      // 攻击次数
-	hp               int                      // 血量
-	hpMax            int                      // 最大血量
-	mona             int                      // 法力值
-	monaMax          int                      // 最大法力
-	lockMona         int                      // 锁定法力值
-	lockMonaCache    int                      // 下回合锁定的法力值
-	shield           int                      // 护盾
-	weapon           iface.ICard              // 武器
-	maxHandCardsNum  int                      // 手牌上限数量
-	fatigue          int                      // 疲劳伤害
-	releaseCardTimes int                      // 本回合出牌次数
-	subCards         []iface.ICard            // buff
+	gateAgnet        gate.Agent         // 连接
+	battle           iface.IBattle      // 战斗句柄
+	id               int                // 唯一id
+	realization      iface.IHero        // 实现
+	config           *config.HeroConfig // 配置数据
+	skill            iface.ICard        // 英雄技能
+	enemy            iface.IHero        // 敌人
+	preCards         []iface.ICard      // 预存卡牌
+	handCards        []iface.ICard      // 手牌
+	libCards         []iface.ICard      // 牌库
+	graveCards       []iface.ICard      // 坟场
+	battleCards      []iface.ICard      // 战场
+	allCards         []iface.ICard      // 全部卡牌
+	secretCards      []iface.ICard      // 奥秘
+	damage           int                // 攻击力
+	attackTimes      int                // 攻击次数
+	hp               int                // 血量
+	hpMax            int                // 最大血量
+	mona             int                // 法力值
+	monaMax          int                // 最大法力
+	lockMona         int                // 锁定法力值
+	lockMonaCache    int                // 下回合锁定的法力值
+	shield           int                // 护盾
+	weapon           iface.ICard        // 武器
+	maxHandCardsNum  int                // 手牌上限数量
+	fatigue          int                // 疲劳伤害
+	releaseCardTimes int                // 本回合出牌次数
+	subCards         []iface.ICard      // buff
 }
 
 func (h *Hero) NewPoint() iface.IHero {
@@ -71,7 +70,6 @@ func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 	h.graveCards = make([]iface.ICard, 0)
 	h.allCards = make([]iface.ICard, 0)
 	h.secretCards = make([]iface.ICard, 0)
-	h.events = make(map[string][]iface.ICard, 0)
 	h.hp = h.config.Hp
 	h.hpMax = h.config.HpMax
 	h.mona = h.config.Mona
@@ -293,7 +291,7 @@ func (h *Hero) GetApDamage() int {
 		d += v.GetApDamage()
 	}
 
-	for _, v := range h.GetBothEventCards("OnNROtherGetApDamage") {
+	for _, v := range h.GetBattle().GetEventCards("OnNROtherGetApDamage") {
 		d += v.OnNROtherGetApDamage(h)
 	}
 
@@ -489,26 +487,31 @@ func (h *Hero) MoveOutHandOnlyHandCards(card iface.ICard) {
 }
 
 // 步入战场
-func (h *Hero) MoveToBattle(c iface.ICard, pidx int) {
+func (h *Hero) MoveToBattle(c iface.ICard, bidx int) {
 
 	h.MoveOutHandOnlyHandCards(c)
 
 	// 满员了
 	if len(h.GetBattleCards()) >= define.MaxBattleNum {
+
+		// 如果从战场上移动到战场上，触发死亡
+		if c.GetCardInCardsPos() == define.InCardsTypeBattle {
+			h.DieCard(c)
+		}
 		return
 	}
 
 	// 位置修正
-	if pidx < 0 || pidx > len(h.GetBattleCards()) {
-		pidx = len(h.GetBattleCards())
+	if bidx < 0 || bidx > len(h.GetBattleCards()) {
+		bidx = len(h.GetBattleCards())
 	}
 
 	// 添加到战场
-	h.battleCards = help.AddCardToCardsByIdx(h.GetBattleCards(), pidx, c)
+	h.battleCards = help.AddCardToCardsByIdx(h.GetBattleCards(), bidx, c)
 	c.SetCardInCardsPos(define.InCardsTypeBattle)
 
 	// 触发效果
-	h.TrickPutToBattleEvent(c, pidx)
+	h.TrickPutToBattleEvent(c, bidx)
 }
 
 // 移出战场
@@ -530,30 +533,48 @@ func (h *Hero) MoveOutBattleOnlyBattleCards(c iface.ICard) int {
 	return idx
 }
 
+// 夺取卡牌
+func (h *Hero) CaptureCard(c iface.ICard, bidx int) {
+
+	if c == nil {
+		return
+	}
+
+	eh := h.GetEnemy()
+	c.SetOwner(h)
+	if c.GetCardInCardsPos() == define.InCardsTypeBattle {
+
+		eh.MoveOutBattleOnlyBattleCards(c)
+		h.MoveToBattle(c, bidx)
+	}
+
+	// 未来在做夺取牌库
+	// else if c.GetCardInCardsPos() == define.InCardsTypeLib {
+
+	// }
+}
+
 // 卡牌死亡
 func (h *Hero) DieCard(c iface.ICard) {
 
 	// 如果在身上或者在场上触发死亡效果
 	if c.GetCardInCardsPos() == define.InCardsTypeBattle || c.GetCardInCardsPos() == define.InCardsTypeBody {
 
-		// 如果在场上，则移出场
-
-		battleIdx := h.MoveOutBattleOnlyBattleCards(c)
-
 		// 如果在身上就卸下
 		if c.GetCardInCardsPos() == define.InCardsTypeBody {
 			c.GetOwner().SetWeapon(nil)
+		} else {
+			// 如果在场上，则移出场
+			battleIdx := h.MoveOutBattleOnlyBattleCards(c)
+			c.SetAfterDieBidx(battleIdx)
 		}
 
-		h.TrickDieCardEvent(c, battleIdx)
+		h.GetBattle().RecordCardDie(c)
 
 		// 进入坟场
-		c.Reset()
+		// c.Reset()
 		h.graveCards = append(h.graveCards, c)
 	}
-
-	// 触发销毁事件
-	h.TrickDevastateCardEvent(c)
 
 	// 设置位置为坟场
 	c.SetCardInCardsPos(define.InCardsTypeGrave)
@@ -671,7 +692,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 	valid := true
 
 	// 其他卡牌释放前
-	for _, v := range h.GetBothEventCards("OnNROtherBeforeRelease") {
+	for _, v := range h.GetBattle().GetEventCards("OnNROtherBeforeRelease") {
 		rc, rh, valid = v.OnNROtherBeforeRelease(c, rc, rh)
 		if !valid {
 			break
@@ -706,7 +727,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 	}
 
 	// 其他卡牌释放后
-	for _, v := range h.GetBothEventCards("OnNROtherAfterRelease") {
+	for _, v := range h.GetBattle().GetEventCards("OnNROtherAfterRelease") {
 		v.OnNROtherAfterRelease(c)
 	}
 
@@ -715,6 +736,8 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 	if cType == define.CardTypeSorcery || !valid {
 		h.DieCard(c)
 	}
+
+	h.GetBattle().TrickCardDie()
 
 	return nil
 }
@@ -734,13 +757,14 @@ func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
 func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 
 	// 攻击前
-	for _, v := range h.GetBothEventCards("OnNROtherBeforeAttack") {
+	for _, v := range h.GetBattle().GetEventCards("OnNROtherBeforeAttack") {
 		ec, eh = v.OnNROtherBeforeAttack(c, ec, eh)
 	}
 
 	dmg := c.GetHaveEffectDamage()
 	if ec != nil { // 如果对手是卡牌
 
+		// 伤害可能和血量挂钩，所以先取
 		dmg2 := ec.GetHaveEffectDamage()
 
 		// logs
@@ -762,6 +786,8 @@ func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 		h.TrickAfterAttackEvent(c, ec, eh, dmg)
 	}
 
+	h.GetBattle().TrickCardDie()
+
 	return nil
 }
 
@@ -771,6 +797,7 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 
 	if ec != nil { // 如果对手是卡牌
 
+		// 伤害可能和血量挂钩，所以先取
 		dmg2 := ec.GetHaveEffectDamage()
 
 		// logs
@@ -796,6 +823,8 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 	if h.GetWeapon() != nil {
 		h.GetWeapon().CostHp(1)
 	}
+
+	h.GetBattle().TrickCardDie()
 
 	return nil
 }
@@ -851,6 +880,19 @@ func (h *Hero) RandBothBattleCardOrHero() (iface.ICard, iface.IHero) {
 	}
 
 	return bs[rn], nil
+}
+
+// 随机卡牌
+func (h *Hero) RandCard(cs []iface.ICard) iface.ICard {
+
+	r := h.GetBattle().GetRand()
+	if len(cs) <= 0 {
+		return nil
+	}
+
+	idx := r.Intn(len(cs))
+
+	return cs[idx]
 }
 
 // 随机卡牌，并且排除其中一个卡牌
@@ -943,7 +985,7 @@ func (h *Hero) GetTraits() []define.CardTraits {
 	}
 
 	// 获得光环影响
-	for _, v := range h.GetBothEventCards("OnNROtherHeroGetTraits") {
+	for _, v := range h.GetBattle().GetEventCards("OnNROtherHeroGetTraits") {
 		for _, v2 := range v.OnNROtherHeroGetTraits(h) {
 			if !help.InArray(v2, ts) {
 				ts = append(ts, v2)
