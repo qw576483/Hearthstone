@@ -49,7 +49,7 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCost
 				c.OnOverflowAnnihilate()
 			} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) {
 				push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
-				ec.GetOwner().DieCard(ec)
+				ec.GetOwner().DieCard(ec, false)
 			}
 		} else if eh != nil {
 			if eh.GetHp() == 0 && !c.IsSilent() {

@@ -258,7 +258,7 @@ func (c *Card) CostHp(num int) int {
 			tc = h.GetBattleCardById(c.GetId())
 		}
 
-		h.DieCard(tc)
+		h.DieCard(tc, false)
 	}
 
 	return num
@@ -617,6 +617,8 @@ func (c *Card) Reset() {
 	c.HpEffect = make(map[int]int, 0)   // HpEffect
 	c.SubCards = make([]iface.ICard, 0) // 子卡牌
 	c.SilentSign = false                // 沉默
+	c.ReleaseId = 0                     // 释放id
+	c.DbIdx = 0                         // 死亡后的bidx
 }
 
 // 沉默此卡

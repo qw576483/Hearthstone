@@ -451,7 +451,8 @@ func (h *Hero) GiveNewCardToHand(configId int) iface.ICard {
 func (h *Hero) MoveToHand(c iface.ICard) {
 
 	if len(h.handCards) >= h.GetMaxHandCardsNum() {
-		h.DieCard(c)
+		push.PushAutoLog(h, "手牌满了")
+		h.DieCard(c, false)
 		return
 	}
 
@@ -496,7 +497,8 @@ func (h *Hero) MoveToBattle(c iface.ICard, bidx int) {
 
 		// 如果从战场上移动到战场上，触发死亡
 		if c.GetCardInCardsPos() == define.InCardsTypeBattle {
-			h.DieCard(c)
+			push.PushAutoLog(h, "战场满了")
+			h.DieCard(c, true)
 		}
 		return
 	}
@@ -555,7 +557,7 @@ func (h *Hero) CaptureCard(c iface.ICard, bidx int) {
 }
 
 // 卡牌死亡
-func (h *Hero) DieCard(c iface.ICard) {
+func (h *Hero) DieCard(c iface.ICard, immediatelyDie bool) {
 
 	// 如果在身上或者在场上触发死亡效果
 	if c.GetCardInCardsPos() == define.InCardsTypeBattle || c.GetCardInCardsPos() == define.InCardsTypeBody {
@@ -569,7 +571,12 @@ func (h *Hero) DieCard(c iface.ICard) {
 			c.SetAfterDieBidx(battleIdx)
 		}
 
-		h.GetBattle().RecordCardDie(c)
+		// 是否立即触发
+		if immediatelyDie {
+			h.TrickDieCardEvent(c)
+		} else {
+			h.GetBattle().RecordCardDie(c)
+		}
 
 		// 进入坟场
 		// c.Reset()
@@ -734,7 +741,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 	c.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
 
 	if cType == define.CardTypeSorcery || !valid {
-		h.DieCard(c)
+		h.DieCard(c, false)
 	}
 
 	h.GetBattle().TrickCardDie()
@@ -746,7 +753,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
 	w := h.GetWeapon()
 	if w != nil {
-		h.DieCard(w)
+		h.DieCard(w, false)
 	}
 	h.SetWeapon(c)
 	h.MoveOutHandOnlyHandCards(c)
