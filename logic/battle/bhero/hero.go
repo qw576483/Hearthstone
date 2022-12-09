@@ -705,6 +705,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 			break
 		}
 	}
+	h.GetBattle().WhileTrickCardDie()
 
 	// 如果触发效果
 	if trickRelease {
@@ -737,6 +738,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 	for _, v := range h.GetBattle().GetEventCards("OnNROtherAfterRelease") {
 		v.OnNROtherAfterRelease(c)
 	}
+	h.GetBattle().WhileTrickCardDie()
 
 	c.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
 
@@ -744,7 +746,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 		h.DieCard(c, false)
 	}
 
-	h.GetBattle().TrickCardDie()
+	h.GetBattle().WhileTrickCardDie()
 
 	return nil
 }
@@ -767,6 +769,7 @@ func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 	for _, v := range h.GetBattle().GetEventCards("OnNROtherBeforeAttack") {
 		ec, eh = v.OnNROtherBeforeAttack(c, ec, eh)
 	}
+	h.GetBattle().WhileTrickCardDie()
 
 	dmg := c.GetHaveEffectDamage()
 	if ec != nil { // 如果对手是卡牌
@@ -793,7 +796,7 @@ func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
 		h.TrickAfterAttackEvent(c, ec, eh, dmg)
 	}
 
-	h.GetBattle().TrickCardDie()
+	h.GetBattle().WhileTrickCardDie()
 
 	return nil
 }
@@ -831,7 +834,7 @@ func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
 		h.GetWeapon().CostHp(1)
 	}
 
-	h.GetBattle().TrickCardDie()
+	h.GetBattle().WhileTrickCardDie()
 
 	return nil
 }

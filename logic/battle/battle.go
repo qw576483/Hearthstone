@@ -21,20 +21,20 @@ type Battle struct {
 	randSeed      int64               // 随机数种子
 	rand          *rand.Rand          // 随机数句柄
 
-	events        map[string][]iface.ICard // 事件
-	recordCardDie map[int]iface.ICard      // 亡语收集器
+	events         map[string][]iface.ICard // 事件
+	recordCardsDie map[int]iface.ICard      // 亡语收集器
 }
 
 // 初始化句柄
 func NewBattle(h1, h2 iface.IHero, cs1, cs2 []iface.ICard) iface.IBattle {
 
 	b := &Battle{
-		incrCardId:    0,
-		incrRoundId:   0,
-		incrReleaseId: 0,
-		doneSign:      make(map[string]string, 0),
-		events:        make(map[string][]iface.ICard, 0),
-		recordCardDie: make(map[int]iface.ICard, 0),
+		incrCardId:     0,
+		incrRoundId:    0,
+		incrReleaseId:  0,
+		doneSign:       make(map[string]string, 0),
+		events:         make(map[string][]iface.ICard, 0),
+		recordCardsDie: make(map[int]iface.ICard, 0),
 	}
 
 	b.randSeed = time.Now().UnixNano()

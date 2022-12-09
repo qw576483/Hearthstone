@@ -11,11 +11,22 @@ func (h *Hero) TrickBattleBegin() {
 	for _, v := range h.GetBothAllCards() {
 		v.OnBattleBegin()
 	}
+
+	h.GetBattle().WhileTrickCardDie()
+}
+
+// 触发得到事件
+func (h *Hero) TrickGetCardEvent(c iface.ICard) {
+	c.OnGet()
+
+	h.GetBattle().WhileTrickCardDie()
 }
 
 // 触发战吼
 func (h *Hero) TrickRelease(c iface.ICard, choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	c.OnRelease(choiceId, bidx, rc, rh)
+
+	h.GetBattle().WhileTrickCardDie()
 }
 
 // 触发回合开始
@@ -23,6 +34,8 @@ func (h *Hero) TrickRoundBegin() {
 	for _, v := range h.GetBattle().GetEventCards("OnNRRoundBegin") {
 		v.OnNRRoundBegin()
 	}
+
+	h.GetBattle().WhileTrickCardDie()
 }
 
 // 触发回合结束
@@ -30,11 +43,32 @@ func (h *Hero) TrickRoundEnd() {
 	for _, v := range h.GetBattle().GetEventCards("OnNRRoundEnd") {
 		v.OnNRRoundEnd()
 	}
+
+	h.GetBattle().WhileTrickCardDie()
 }
 
-// 触发得到事件
-func (h *Hero) TrickGetCardEvent(c iface.ICard) {
-	c.OnGet()
+// 触发步入战场事件
+func (h *Hero) TrickPutToBattleEvent(c iface.ICard, bidx int) {
+
+	// 有可能是复制出来的卡，然后put to battle，也需要检查是否沉默
+	if !c.IsSilent() {
+		c.OnPutToBattle(bidx)
+	}
+
+	for _, v := range h.GetBattle().GetEventCards("OnNRPutToBattle") {
+		v.OnNRPutToBattle(c)
+	}
+
+	h.GetBattle().WhileTrickCardDie()
+}
+
+// 触发离开战场事件
+func (h *Hero) TrickOutBattleEvent(c iface.ICard) {
+
+	if !c.IsSilent() {
+		c.OnOutBattle()
+	}
+	h.GetBattle().WhileTrickCardDie()
 }
 
 // 触发攻击后事件
@@ -71,26 +105,5 @@ func (h *Hero) TrickDieCardEvent(c iface.ICard) {
 
 	for _, v := range h.GetBattle().GetEventCards("OnNROtherDie") {
 		v.OnNROtherDie(c)
-	}
-}
-
-// 触发步入战场事件
-func (h *Hero) TrickPutToBattleEvent(c iface.ICard, bidx int) {
-
-	// 有可能是复制出来的卡，然后put to battle，也需要检查是否沉默
-	if !c.IsSilent() {
-		c.OnPutToBattle(bidx)
-	}
-
-	for _, v := range h.GetBattle().GetEventCards("OnNRPutToBattle") {
-		v.OnNRPutToBattle(c)
-	}
-}
-
-// 触发离开战场事件
-func (h *Hero) TrickOutBattleEvent(c iface.ICard) {
-
-	if !c.IsSilent() {
-		c.OnOutBattle()
 	}
 }

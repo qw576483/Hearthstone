@@ -45,4 +45,5 @@ type IBattle interface {
 	// 收集亡语
 	RecordCardDie(ICard) // 收集真实死亡
 	TrickCardDie()       // 触发死亡
+	WhileTrickCardDie()  // 循环的触发亡语
 }
