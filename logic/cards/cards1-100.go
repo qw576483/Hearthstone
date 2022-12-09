@@ -88,7 +88,7 @@ func (c *Card4) OnDie(bidx int) {
 	nc := iface.GetCardFact().GetCard(5)
 	nc.Init(nc, define.InCardsTypeBattle, c.GetOwner(), c.GetOwner().GetBattle())
 	nc.GetOwner().MoveToBattle(nc, bidx)
-	nc.SetReleaseRound(c.GetReleaseRound())
+	nc.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
 
 	// logs
 	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡时，召唤了"+push.GetCardLogString(nc))
@@ -948,4 +948,54 @@ func (c *Card40) OnNROtherBeforeAttack(oc, rc iface.ICard, rh iface.IHero) (ifac
 	}
 
 	return rc, rh
+}
+
+// 松鼠
+type Card41 struct {
+	bcard.Card
+}
+
+func (c *Card41) NewPoint() iface.ICard {
+	return &Card41{}
+}
+
+// 魔暴龙
+type Card42 struct {
+	bcard.Card
+}
+
+func (c *Card42) NewPoint() iface.ICard {
+	return &Card42{}
+}
+
+// 工匠大师欧沃斯巴克
+type Card43 struct {
+	bcard.Card
+}
+
+func (c *Card43) NewPoint() iface.ICard {
+	return &Card43{}
+}
+
+func (c *Card43) OnRelease(choiceId, pidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	if rc != nil {
+
+		rch := rc.GetOwner()
+		rcPidx := h.GetCardIdx(rc, rch.GetBattleCards())
+		rch.MoveOutBattleOnlyBattleCards(rc)
+
+		var nc iface.ICard
+		if h.GetBattle().GetRand().Intn(2) == 0 {
+			nc = iface.GetCardFact().GetCard(41)
+			push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"变成了小松鼠...")
+		} else {
+			nc = iface.GetCardFact().GetCard(42)
+			push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"变成了魔暴龙！")
+		}
+		nc.Init(nc, define.InCardsTypeBattle, rch, rch.GetBattle())
+		nc.SetReleaseRound(rch.GetBattle().GetIncrRoundId())
+		rch.MoveToBattle(nc, rcPidx)
+	}
 }
