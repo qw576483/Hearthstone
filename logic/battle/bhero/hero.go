@@ -270,13 +270,17 @@ func (h *Hero) GetBattleCardsByIds(ids []int) []iface.ICard {
 // 获得英雄攻击力
 func (h *Hero) GetDamage() int {
 
-	wDamage := 0
+	d := 0
 	w := h.GetWeapon()
 	if w != nil {
-		wDamage = w.GetHaveEffectDamage()
+		d += w.GetHaveEffectDamage()
 	}
 
-	return h.damage + wDamage
+	for _, v := range h.GetSubCards() {
+		d += v.GetDamage()
+	}
+
+	return d
 }
 
 // 获得法术伤害
@@ -319,6 +323,19 @@ func (h *Hero) GetMaxAttackTimes() int {
 // 获得血量
 func (h *Hero) GetHp() int {
 	return h.hp
+}
+
+// 治疗
+func (h *Hero) TreatmentHp(th int) {
+	h.AddHp(th)
+}
+
+// 加血
+func (h *Hero) AddHp(num int) {
+	h.hp += num
+	if h.hp > h.GetHpMax() {
+		h.hp = h.GetHpMax()
+	}
 }
 
 // 消耗血量
@@ -421,6 +438,11 @@ func (h *Hero) SetLockMonaCache(lmc int) {
 // 获得护盾
 func (h *Hero) GetShield() int {
 	return h.shield
+}
+
+// 设置护盾
+func (h *Hero) SetShield(s int) {
+	h.shield += s
 }
 
 // 设置武器

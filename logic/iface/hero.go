@@ -45,6 +45,8 @@ type IHero interface {
 	GetMaxAttackTimes() int                            // 获得最大攻击次数
 	GetHp() int                                        // 获得血量
 	GetHpMax() int                                     // 获得最大血量
+	TreatmentHp(int)                                   // 治疗
+	AddHp(int)                                         // 加血
 	CostHp(int) int                                    // 扣血
 	AddMona(int)                                       // 添加法力值
 	CostMona(int) bool                                 // 消耗法力值
@@ -57,6 +59,7 @@ type IHero interface {
 	GetLockMonaCache() int                             // 获得锁定法力值缓存
 	SetLockMonaCache(int)                              // 设置锁定法力值缓存
 	GetShield() int                                    // 获得护盾
+	SetShield(int)                                     // 设置护盾
 	SetWeapon(ICard)                                   // 设置武器
 	GetWeapon() ICard                                  // 获得当前武器
 	GiveNewCardToHand(int) ICard                       // 给一个新卡牌到手上

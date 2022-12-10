@@ -208,9 +208,7 @@ func (c *Card9) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	if rc != nil {
 		push.PushAutoLog(h, push.GetCardLogString(c)+"对"+push.GetCardLogString(rc)+"造成了"+strconv.Itoa(dmg)+"点伤害")
 		rc.CostHp(dmg)
-	}
-
-	if rh != nil {
+	} else if rh != nil {
 		push.PushAutoLog(h, push.GetCardLogString(c)+"对"+push.GetHeroLogString(rh)+"造成了"+strconv.Itoa(dmg)+"点伤害")
 		rh.CostHp(dmg)
 	}
@@ -1220,4 +1218,85 @@ type Card54 struct {
 
 func (c *Card54) NewPoint() iface.ICard {
 	return &Card54{}
+}
+
+// 变形
+type Card55 struct {
+	bcard.Card
+}
+
+func (c *Card55) NewPoint() iface.ICard {
+	return &Card55{}
+}
+func (c *Card55) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+
+	nc := iface.GetCardFact().GetCard(define.BuffCardId_MyRoundEndClear)
+	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+	nc.AddDamage(1)
+
+	h.AddSubCards(nc, h)
+	h.SetShield(h.GetShield() + 1)
+
+	push.PushAutoLog(h, push.GetHeroLogString(h)+"获得了1点攻击力,1点护盾")
+}
+
+// 火焰冲击
+type Card56 struct {
+	bcard.Card
+}
+
+func (c *Card56) NewPoint() iface.ICard {
+	return &Card56{}
+}
+
+func (c *Card56) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	if rc != nil {
+		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetCardLogString(rc)+"造成了1点伤害")
+		rc.CostHp(1)
+	} else if rh != nil {
+		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetHeroLogString(rh)+"造成了1点伤害")
+		rh.CostHp(1)
+	}
+}
+
+// 次级治疗术
+type Card57 struct {
+	bcard.Card
+}
+
+func (c *Card57) NewPoint() iface.ICard {
+	return &Card57{}
+}
+
+func (c *Card57) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	if rc != nil {
+		push.PushAutoLog(h, push.GetHeroLogString(h)+"让"+push.GetCardLogString(rc)+"恢复了两点生命值")
+		rc.TreatmentHp(2)
+	} else if rh != nil {
+		push.PushAutoLog(h, push.GetHeroLogString(h)+"让"+push.GetHeroLogString(rh)+"恢复了两点生命值")
+		rh.TreatmentHp(2)
+	}
+}
+
+// 全副武装！
+type Card58 struct {
+	bcard.Card
+}
+
+func (c *Card58) NewPoint() iface.ICard {
+	return &Card58{}
+}
+
+func (c *Card58) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	h.SetShield(h.GetShield() + 2)
+
+	push.PushAutoLog(h, push.GetHeroLogString(h)+"获得了2点护盾")
 }

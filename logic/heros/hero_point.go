@@ -9,4 +9,7 @@ var heros []iface.IHero = []iface.IHero{
 	3: &Hero3{},
 	4: &Hero4{},
 	5: &Hero5{},
+	6: &Hero6{},
+	7: &Hero7{},
+	8: &Hero8{},
 }

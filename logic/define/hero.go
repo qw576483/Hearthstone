@@ -10,6 +10,9 @@ const (
 	VocationShaman                  // 萨满
 	VocationPaladin                 // 圣骑士
 	VocationDruid                   // 德鲁伊
+	VocationMaster                  // 法师
+	VocationPastor                  // 牧师
+	VocationWarrior                 // 战士
 )
 
 var MaxBattleNum = 8
