@@ -69,7 +69,7 @@ type IHero interface {
 	MoveOutBattleOnlyBattleCards(ICard) int            // 移出战场
 	CaptureCard(ICard, int)                            // 夺取卡牌
 	DiscardCard(ICard)                                 // 丢弃手牌
-	DieCard(ICard, bool)                               // 杀死卡牌
+	DieCard(ICard, bool)                               // 杀死卡牌，是否立即触发亡语
 	GetMaxHandCardsNum() int                           // 获得手牌上限数量
 	DrawForPreBegin(int)                               // 预备开始时的抽卡
 	ChangePreCrards([]int)                             // 修改预备抽卡

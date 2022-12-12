@@ -245,9 +245,6 @@ func (c *Card) CostHp(num int) int {
 
 	if c.Hp <= 0 {
 
-		// logs
-		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡")
-
 		h := c.GetOwner()
 		var tc iface.ICard
 		if c.GetCardInCardsPos() == define.InCardsTypeBody {

@@ -1300,3 +1300,117 @@ func (c *Card58) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 
 	push.PushAutoLog(h, push.GetHeroLogString(h)+"获得了2点护盾")
 }
+
+// 山岭巨人
+type Card59 struct {
+	bcard.Card
+}
+
+func (c *Card59) NewPoint() iface.ICard {
+	return &Card59{}
+}
+
+func (c *Card59) OnGetMona(m int) int {
+
+	h := c.GetOwner()
+	if c.GetCardInCardsPos() == define.InCardsTypeHand {
+		if len(h.GetHandCards()) > 1 {
+			m = m - len(h.GetHandCards()) + 1
+		}
+	}
+
+	return m
+}
+
+// 海巨人
+type Card60 struct {
+	bcard.Card
+}
+
+func (c *Card60) NewPoint() iface.ICard {
+	return &Card60{}
+}
+
+func (c *Card60) OnGetMona(m int) int {
+
+	h := c.GetOwner()
+	if c.GetCardInCardsPos() == define.InCardsTypeHand {
+		m = m - len(h.GetBattleCards()) - len(h.GetEnemy().GetBattleCards())
+	}
+
+	return m
+}
+
+// 死亡之翼
+type Card61 struct {
+	bcard.Card
+}
+
+func (c *Card61) NewPoint() iface.ICard {
+	return &Card61{}
+}
+
+func (c *Card61) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+
+	for _, v := range h.GetBattleCards() {
+		h.DieCard(v, false)
+	}
+
+	for _, v := range h.GetEnemy().GetBattleCards() {
+		h.GetEnemy().DieCard(v, false)
+	}
+
+	hcs := h.GetHandCards()
+	for _, v := range hcs {
+		if v.GetId() != c.GetId() {
+			h.DiscardCard(v)
+		}
+	}
+
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"消灭了所有随从,丢弃了所有手牌")
+}
+
+// 炎爆术
+type Card62 struct {
+	bcard.Card
+}
+
+func (c *Card62) NewPoint() iface.ICard {
+	return &Card62{}
+}
+
+func (c *Card62) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	dmg := 10
+	dmg += h.GetApDamage()
+
+	if rc != nil {
+		push.PushAutoLog(h, push.GetCardLogString(c)+"对"+push.GetCardLogString(rc)+"造成了"+strconv.Itoa(dmg)+"点伤害")
+		rc.CostHp(dmg)
+	} else if rh != nil {
+		push.PushAutoLog(h, push.GetCardLogString(c)+"对"+push.GetHeroLogString(rh)+"造成了"+strconv.Itoa(dmg)+"点伤害")
+		rh.CostHp(dmg)
+	}
+}
+
+// 精神控制
+type Card63 struct {
+	bcard.Card
+}
+
+func (c *Card63) NewPoint() iface.ICard {
+	return &Card63{}
+}
+
+func (c *Card63) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+
+	if rc != nil {
+		h.CaptureCard(rc, -1)
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"夺取了"+push.GetCardLogString(rc))
+	}
+}

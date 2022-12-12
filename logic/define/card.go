@@ -58,6 +58,9 @@ const (
 	CardRaceNatural                   // 自然
 	CardRaceElement                   // 元素
 	CardRaceUndead                    // 亡灵
+	CardRaceDragon                    // 龙
+	CardRaceFire                      // 火焰
+	CardRaceShadow                    // 暗影
 )
 
 // 卡牌系列
@@ -78,4 +81,17 @@ const (
 	CardQualityBlue                      // 稀有
 	CardQualityPurple                    // 史诗
 	CardQualityOrange                    // 传说
+)
+
+// 目标筛选
+type CardReleaseFilter int
+
+const (
+	CardReleaseFilterAll         CardReleaseFilter = iota // 全体角色
+	CardReleaseFilterBothHero                             // 全体英雄
+	CardReleaseFilterMyAll                                // 我方全体
+	CardReleaseFilterEnemyAll                             // 敌方全体
+	CardReleaseFilterMyBattle                             // 我方战场
+	CardReleaseFilterEnemyBattle                          // 敌方战场
+	CardReleaseFilterBattle                               // 双方战场
 )

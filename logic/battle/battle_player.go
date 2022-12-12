@@ -4,7 +4,6 @@ import (
 	"errors"
 	"hs/logic/define"
 	"hs/logic/help"
-	"hs/logic/iface"
 	"hs/logic/push"
 	"strconv"
 	"strings"
@@ -60,37 +59,15 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 		return errors.New("法力不足")
 	}
 
-	rh := b.GetHeroByIncrId(rhid)
-	if rhid != 0 {
-		if rh == nil {
-			return errors.New("没有找到目标")
-		}
-
-		if rh.IsHaveTraits(define.CardTraitsSneak) {
-			return errors.New("目标在潜行")
-		}
-	}
-
-	h.CostMona(c.GetHaveEffectMona())
-
 	// 拼接
 	rc := h.GetBattleCardById(rcid)
 	if rc == nil {
 		rc = h.GetEnemy().GetBattleCardById(rcid)
 	}
+	rh := b.GetHeroByIncrId(rhid)
 
-	if rcid != 0 {
-		if rc == nil {
-			return errors.New("没有找到目标")
-		}
-
-		if rc.IsHaveTraits(define.CardTraitsSneak) {
-			return errors.New("目标在潜行")
-		}
-
-		if rc.IsHaveTraits(define.CardTraitsImmune) {
-			return errors.New("目标在潜行")
-		}
+	if err := b.checkCanRelease(c, rcid, rhid, rc, rh); err != nil {
+		return err
 	}
 
 	// 检查是否能释放奥秘
@@ -99,6 +76,8 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 		!h.CanReleaseSecret(c) {
 		return errors.New("不能释放此奥秘")
 	}
+
+	h.CostMona(c.GetHaveEffectMona())
 
 	// logs
 	push.PushAutoLog(h, "打出了"+push.GetCardLogString(c))
@@ -134,34 +113,17 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
 		return errors.New("法力不足")
 	}
 
-	rh := b.GetHeroByIncrId(rhid)
-	if rhid != 0 {
-		if rh == nil {
-			return errors.New("没有找到目标")
-		}
-
-		if rh.IsHaveTraits(define.CardTraitsSneak) {
-			return errors.New("目标在潜行")
-		}
-	}
-
-	h.CostMona(c.GetHaveEffectMona())
-
-	// 拼接
 	rc := h.GetBattleCardById(rcid)
 	if rc == nil {
 		rc = h.GetEnemy().GetBattleCardById(rcid)
 	}
+	rh := b.GetHeroByIncrId(rhid)
 
-	if rcid != 0 {
-		if rc == nil {
-			return errors.New("没有找到目标")
-		}
-
-		if rc.IsHaveTraits(define.CardTraitsSneak) {
-			return errors.New("目标在潜行")
-		}
+	if err := b.checkCanRelease(c, rcid, rhid, rc, rh); err != nil {
+		return err
 	}
+
+	h.CostMona(c.GetHaveEffectMona())
 
 	// logs
 	push.PushAutoLog(h, "使用了英雄技能")
@@ -213,28 +175,10 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 		}
 	}
 
-	var ec iface.ICard
-	if ecid != 0 {
-		ec = h.GetEnemy().GetBattleCardById(ecid)
-		if ec == nil {
-			return errors.New("没有找到此卡")
-		}
-
-		if ec.IsHaveTraits(define.CardTraitsSneak) {
-			return errors.New("目标在潜行")
-		}
-	}
-
-	var eh iface.IHero
-	if ehid != 0 {
-		eh = b.GetHeroByIncrId(ehid)
-		if eh == nil {
-			return errors.New("没有找到此英雄")
-		}
-
-		if eh.IsHaveTraits(define.CardTraitsSneak) {
-			return errors.New("目标在潜行")
-		}
+	ec := h.GetEnemy().GetBattleCardById(ecid)
+	eh := b.GetHeroByIncrId(ehid)
+	if err := b.checkCanAttack(ecid, ehid, ec, eh); err != nil {
+		return err
 	}
 
 	if eh != nil && eh.GetId() == h.GetId() {
@@ -273,28 +217,11 @@ func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
 		return errors.New("必须先攻击拥有嘲讽的卡牌")
 	}
 
-	var ec iface.ICard
-	if ecid != 0 {
-		ec = h.GetEnemy().GetBattleCardById(ecid)
-		if ec == nil {
-			return errors.New("没有找到此卡")
-		}
+	ec := h.GetEnemy().GetBattleCardById(ecid)
+	eh := b.GetHeroByIncrId(ehid)
 
-		if ec.IsHaveTraits(define.CardTraitsSneak) {
-			return errors.New("目标在潜行")
-		}
-	}
-
-	var eh iface.IHero
-	if ehid != 0 {
-		eh = b.GetHeroByIncrId(ehid)
-		if eh == nil {
-			return errors.New("没有找到此英雄")
-		}
-
-		if eh.IsHaveTraits(define.CardTraitsSneak) {
-			return errors.New("目标在潜行")
-		}
+	if err := b.checkCanAttack(ecid, ehid, ec, eh); err != nil {
+		return err
 	}
 
 	h.SetAttackTimes(ats + 1)

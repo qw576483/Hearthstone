@@ -256,7 +256,7 @@ func GetCardLogString(c iface.ICard) string {
 		if c.IsHaveTraits(define.CardTraitsSecret) {
 			return "奥秘"
 		}
-		return c.GetConfig().Name
+		return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")"
 	}
 
 	return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")" + strconv.Itoa(c.GetHaveEffectMona()) + "-" + strconv.Itoa(c.GetHaveEffectDamage()) + "-" + strconv.Itoa(c.GetHaveEffectHp())

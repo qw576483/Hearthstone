@@ -578,10 +578,14 @@ func (h *Hero) CaptureCard(c iface.ICard, bidx int) {
 func (h *Hero) DiscardCard(c iface.ICard) {
 	h.MoveOutHandOnlyHandCards(c)
 	c.OnAfterDisCard()
+
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"被丢弃")
 }
 
 // 卡牌死亡
 func (h *Hero) DieCard(c iface.ICard, immediatelyDie bool) {
+
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡")
 
 	// 如果在身上或者在场上触发死亡效果
 	if c.GetCardInCardsPos() == define.InCardsTypeBattle || c.GetCardInCardsPos() == define.InCardsTypeBody {
