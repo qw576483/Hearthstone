@@ -45,7 +45,7 @@ func (b *Battle) PlayerChangePreCards(hid int, putidxs []int /** 这个值是第
 }
 
 // 释放卡牌 - release
-func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) error {
+func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid int) error {
 
 	h := b.GetHeroByIncrId(hid)
 	c := h.GetHandCardByIncrId(cid)
@@ -60,13 +60,12 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 	}
 
 	// 拼接
-	rc := h.GetBattleCardById(rcid)
+	rc := h.GetCardById(rcid)
 	if rc == nil {
-		rc = h.GetEnemy().GetBattleCardById(rcid)
+		rc = h.GetEnemy().GetCardById(rcid)
 	}
-	rh := b.GetHeroByIncrId(rhid)
 
-	if err := b.checkCanRelease(c, rcid, rhid, rc, rh); err != nil {
+	if err := b.checkCanRelease(c, rcid, rc); err != nil {
 		return err
 	}
 
@@ -83,7 +82,7 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 	push.PushAutoLog(h, "打出了"+push.GetCardLogString(c))
 
 	h.SetReleaseCardTimes(h.GetReleaseCardTimes() + 1)
-	h.Release(c, choiceId, putidx, rc, rh, true)
+	h.Release(c, choiceId, putidx, rc, true)
 
 	// info
 	push.PushInfoMsg(b)
@@ -92,7 +91,7 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid, rhid int) e
 }
 
 // 使用英雄技能 - release
-func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
+func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid int) error {
 
 	h := b.GetHeroByIncrId(hid)
 	c := h.GetHeroSkill()
@@ -113,13 +112,12 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
 		return errors.New("法力不足")
 	}
 
-	rc := h.GetBattleCardById(rcid)
+	rc := h.GetCardById(rcid)
 	if rc == nil {
-		rc = h.GetEnemy().GetBattleCardById(rcid)
+		rc = h.GetEnemy().GetCardById(rcid)
 	}
-	rh := b.GetHeroByIncrId(rhid)
 
-	if err := b.checkCanRelease(c, rcid, rhid, rc, rh); err != nil {
+	if err := b.checkCanRelease(c, rcid, rc); err != nil {
 		return err
 	}
 
@@ -129,7 +127,7 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
 	push.PushAutoLog(h, "使用了英雄技能")
 
 	c.SetAttackTimes(ats + 1)
-	h.Release(c, choiceId, 0, rc, rh, true)
+	h.Release(c, choiceId, 0, rc, true)
 
 	// info
 	push.PushInfoMsg(b)
@@ -137,12 +135,20 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid, rhid int) error {
 }
 
 // 操作卡牌攻击 -  attack
-func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
+func (b *Battle) PlayerConCardAttack(hid, cid, ecid int) error {
+
+	if ecid == 0 {
+		return errors.New("请输入敌人")
+	}
 
 	h := b.GetHeroByIncrId(hid)
-	c := h.GetBattleCardById(cid)
+	c := h.GetCardById(cid)
 	if c == nil {
 		return errors.New("没有找到此卡牌")
+	}
+
+	if c.GetType() != define.CardTypeHero && c.GetType() != define.CardTypeEntourage {
+		return errors.New("进攻者无效")
 	}
 
 	if c.IsHaveTraits(define.CardTraitsUnableToAttack) {
@@ -162,6 +168,11 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 		return errors.New("必须先攻击拥有嘲讽的卡牌")
 	}
 
+	ec := h.GetEnemy().GetCardById(ecid)
+	if err := b.checkCanAttack(ecid, ec); err != nil {
+		return err
+	}
+
 	// 如果是本局攻击
 	if c.GetReleaseRound() == b.GetIncrRoundId() {
 		// 如果不是冲锋 ， 不是突袭
@@ -169,63 +180,13 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid, ehid int) error {
 			return errors.New("卡牌在睡眠中")
 		}
 
-		// 突袭只能打英雄
-		if c.IsHaveTraits(define.CardTraitsSuddenStrike) && ehid != 0 {
-			return errors.New("突袭只能打英雄")
+		if c.IsHaveTraits(define.CardTraitsSuddenStrike) && ec.GetCardInCardsPos() == define.InCardsTypeHead {
+			return errors.New("突袭不能进攻英雄")
 		}
 	}
 
-	ec := h.GetEnemy().GetBattleCardById(ecid)
-	eh := b.GetHeroByIncrId(ehid)
-	if err := b.checkCanAttack(ecid, ehid, ec, eh); err != nil {
-		return err
-	}
-
-	if eh != nil && eh.GetId() == h.GetId() {
-		return errors.New("无效的敌人")
-	}
-
 	c.SetAttackTimes(ats + 1)
-	h.Attack(c, ec, eh)
-
-	push.PushInfoMsg(b)
-
-	return nil
-}
-
-// 英雄攻击 - attack
-func (b *Battle) PlayerAttack(hid, ecid, ehid int) error {
-
-	h := b.GetHeroByIncrId(hid)
-
-	// 检查次数和伤害
-	ats := h.GetAttackTimes()
-	mats := h.GetMaxAttackTimes()
-	if ats >= mats {
-		return errors.New("最大攻击次数了")
-	}
-
-	// fmt.Println(ats, mats)
-
-	if h.GetDamage() <= 0 {
-		return errors.New("无伤害，无法攻击")
-	}
-
-	// 检查是否有嘲讽
-	tids := h.GetEnemy().GetBattleCardsTraitsTauntCardIds()
-	if len(tids) > 0 && (ecid == 0 || !help.InArray(ecid, tids)) {
-		return errors.New("必须先攻击拥有嘲讽的卡牌")
-	}
-
-	ec := h.GetEnemy().GetBattleCardById(ecid)
-	eh := b.GetHeroByIncrId(ehid)
-
-	if err := b.checkCanAttack(ecid, ehid, ec, eh); err != nil {
-		return err
-	}
-
-	h.SetAttackTimes(ats + 1)
-	h.HAttack(ec, eh)
+	h.Attack(c, ec)
 
 	push.PushInfoMsg(b)
 

@@ -3,7 +3,8 @@ package room
 import (
 	"errors"
 	"hs/logic/battle"
-	"hs/logic/heros"
+	"hs/logic/battle/bhero"
+	"hs/logic/config"
 	"hs/logic/iface"
 )
 
@@ -50,9 +51,11 @@ func (r *Room) Begin() {
 	p1 := r.players[0]
 	p2 := r.players[1]
 
-	h1 := heros.GetHero(p1.GetHeroId())
-	h2 := heros.GetHero(p2.GetHeroId())
+	h1 := &bhero.Hero{}
+	h2 := &bhero.Hero{}
+	h1.SetConfig(config.GetHeroConfig(p1.GetHeroId()))
 	h1.SetGateAgent(p1.GetGateAgent())
+	h2.SetConfig(config.GetHeroConfig(p2.GetHeroId()))
 	h2.SetGateAgent(p2.GetGateAgent())
 
 	cards1 := iface.GetCardFact().GetCards(p1.GetCardIds())

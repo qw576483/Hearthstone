@@ -1,7 +1,7 @@
 package bhero
 
 import (
-	"hs/logic/battle/bchcommon"
+	"errors"
 	"hs/logic/config"
 	"hs/logic/define"
 	"hs/logic/help"
@@ -16,11 +16,12 @@ import (
 )
 
 type Hero struct {
-	bchcommon.CHCommon
 	gateAgnet        gate.Agent         // 连接
 	battle           iface.IBattle      // 战斗句柄
 	config           *config.HeroConfig // 配置数据
 	skill            iface.ICard        // 英雄技能
+	head             iface.ICard        // 我的实体卡牌
+	weapon           iface.ICard        // 武器
 	enemy            iface.IHero        // 敌人
 	preCards         []iface.ICard      // 预存卡牌
 	handCards        []iface.ICard      // 手牌
@@ -29,16 +30,11 @@ type Hero struct {
 	battleCards      []iface.ICard      // 战场
 	allCards         []iface.ICard      // 全部卡牌
 	secretCards      []iface.ICard      // 奥秘
-	damage           int                // 攻击力
-	attackTimes      int                // 攻击次数
-	hp               int                // 血量
-	hpMax            int                // 最大血量
 	mona             int                // 法力值
 	monaMax          int                // 最大法力
 	lockMona         int                // 锁定法力值
 	lockMonaCache    int                // 下回合锁定的法力值
 	shield           int                // 护盾
-	weapon           iface.ICard        // 武器
 	maxHandCardsNum  int                // 手牌上限数量
 	fatigue          int                // 疲劳伤害
 	releaseCardTimes int                // 本回合出牌次数
@@ -47,6 +43,10 @@ type Hero struct {
 
 func (h *Hero) NewPoint() iface.IHero {
 	return &Hero{}
+}
+
+func (h *Hero) GetId() int {
+	return h.GetHead().GetId()
 }
 
 // 设置链接
@@ -62,8 +62,13 @@ func (h *Hero) GetGateAgent() gate.Agent {
 // 初始化
 func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 
+	nc := iface.GetCardFact().GetCard(define.HeroId)
+	nc.Init(nc, define.InCardsTypeHead, h, b)
+	nc.SetHpMax(h.config.HpMax)
+	nc.SetHp(h.config.Hp)
+
 	h.battle = b
-	h.Id = b.GetIncrCardId()
+	h.head = nc
 	h.enemy = nil
 	h.preCards = make([]iface.ICard, 0)
 	h.handCards = make([]iface.ICard, 0)
@@ -71,8 +76,6 @@ func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 	h.graveCards = make([]iface.ICard, 0)
 	h.allCards = make([]iface.ICard, 0)
 	h.secretCards = make([]iface.ICard, 0)
-	h.hp = h.config.Hp
-	h.hpMax = h.config.HpMax
 	h.mona = h.config.Mona
 	h.monaMax = h.config.Mona
 	h.shield = h.config.Shield
@@ -91,6 +94,10 @@ func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 // 获得战斗句柄
 func (h *Hero) GetBattle() iface.IBattle {
 	return h.battle
+}
+
+func (h *Hero) GetHead() iface.ICard {
+	return h.head
 }
 
 // 是否是我的回合
@@ -233,6 +240,18 @@ func (h *Hero) GetBothAllCards() []iface.ICard {
 	return append(h.allCards, ecs...)
 }
 
+func (h *Hero) GetCardById(id int) iface.ICard {
+	if h.weapon != nil && h.weapon.GetId() == id {
+		return h.weapon
+	}
+
+	if h.head != nil && h.head.GetId() == id {
+		return h.head
+	}
+
+	return h.GetBattleCardById(id)
+}
+
 // 获得战场上的卡牌
 func (h *Hero) GetBattleCardById(id int) iface.ICard {
 
@@ -262,22 +281,6 @@ func (h *Hero) GetBattleCardsByIds(ids []int) []iface.ICard {
 	return cs
 }
 
-// 获得英雄攻击力
-func (h *Hero) GetDamage() int {
-
-	d := h.damage
-	w := h.GetWeapon()
-	if w != nil {
-		d += w.GetHaveEffectDamage()
-	}
-
-	for _, v := range h.GetSubCards() {
-		d += v.GetDamage()
-	}
-
-	return d
-}
-
 // 获得法术伤害
 func (h *Hero) GetApDamage() int {
 
@@ -291,76 +294,6 @@ func (h *Hero) GetApDamage() int {
 	}
 
 	return d
-}
-
-// 设置攻击次数
-func (h *Hero) SetAttackTimes(t int) {
-	h.attackTimes = t
-}
-
-// 获得攻击次数
-func (h *Hero) GetAttackTimes() int {
-	return h.attackTimes
-}
-
-// 获得最大攻击次数
-func (h *Hero) GetMaxAttackTimes() int {
-
-	w := h.GetWeapon()
-
-	if w != nil && help.InArray(define.CardTraitsWindfury, w.GetTraits()) {
-		return 2
-	}
-
-	return 1
-}
-
-// 获得血量
-func (h *Hero) GetHp() int {
-	return h.hp
-}
-
-// 治疗
-func (h *Hero) TreatmentHp(th int) {
-	h.AddHp(th)
-}
-
-// 加血
-func (h *Hero) AddHp(num int) {
-	h.hp += num
-	if h.hp > h.GetHpMax() {
-		h.hp = h.GetHpMax()
-	}
-}
-
-// 消耗血量
-func (h *Hero) CostHp(num int) int {
-
-	if num > 0 && h.IsHaveTraits(define.CardTraitsImmune) {
-		num = 0
-		push.PushAutoLog(h, push.GetHeroLogString(h)+"具有免疫，伤害无效")
-	}
-
-	if num > 0 {
-		if h.shield >= num {
-			h.shield -= num
-		} else {
-			num = num - h.shield
-			h.shield = 0
-			h.hp -= num
-		}
-	}
-
-	if h.hp <= 0 {
-		h.Die()
-	}
-
-	return num
-}
-
-// 获得最大血量
-func (h *Hero) GetHpMax() int {
-	return h.hpMax
 }
 
 // 添加法力值
@@ -428,16 +361,6 @@ func (h *Hero) GetLockMonaCache() int {
 // 设置锁定法力值缓存
 func (h *Hero) SetLockMonaCache(lmc int) {
 	h.lockMonaCache = lmc
-}
-
-// 获得护盾
-func (h *Hero) GetShield() int {
-	return h.shield
-}
-
-// 设置护盾
-func (h *Hero) SetShield(s int) {
-	h.shield += s
 }
 
 // 设置武器
@@ -685,7 +608,7 @@ func (h *Hero) DrawByTimes(t int) {
 			h.SetFatigue(f + 1)
 
 			// 扣血
-			h.CostHp(f + 1)
+			h.GetHead().CostHp(f + 1)
 
 			push.PushAutoLog(h, "牌库没有牌了！受到了疲劳伤害"+strconv.Itoa(f+1))
 			return
@@ -711,7 +634,7 @@ func (h *Hero) SetFatigue(f int) {
 }
 
 // 出牌
-func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh iface.IHero, trickRelease bool) error {
+func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, trickRelease bool) error {
 
 	cType := c.GetType()
 
@@ -723,7 +646,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 
 	// 其他卡牌释放前
 	for _, v := range h.GetBattle().GetEventCards("OnNROtherBeforeRelease") {
-		rc, rh, valid = v.OnNROtherBeforeRelease(c, rc, rh)
+		rc, valid = v.OnNROtherBeforeRelease(c, rc)
 		if !valid {
 			break
 		}
@@ -738,7 +661,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 
 		} else {
 			// 战吼不拦截
-			h.TrickRelease(c, choiceId, putidx, rc, rh)
+			h.TrickRelease(c, choiceId, putidx, rc)
 		}
 	}
 
@@ -747,7 +670,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 			h.MoveToBattle(c, putidx)
 		} else if cType == define.CardTypeWeapon { // 武器
 			h.OnlyReleaseWeapon(c)
-		} else if cType == define.CardTypeSorcery || cType == define.CardTypeHero { // 法术 , 英雄卡
+		} else if cType == define.CardTypeSorcery || cType == define.CardTypeHeroCanRelease { // 法术 , 英雄卡
 
 			// 如果法术不在身上，强制置为战场上
 			if c.GetCardInCardsPos() != define.InCardsTypeBody {
@@ -765,7 +688,7 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 
 		} else {
 			// 战吼不拦截
-			h.TrickRelease2(c, choiceId, putidx, rc, rh)
+			h.TrickRelease2(c, choiceId, putidx, rc)
 		}
 	}
 
@@ -798,76 +721,44 @@ func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
 }
 
 // 进攻 ， 这里不减次数， 放在battle那边
-func (h *Hero) Attack(c, ec iface.ICard, eh iface.IHero) error {
+func (h *Hero) Attack(c, ec iface.ICard) error {
+
+	if ec == nil {
+		return errors.New("未找到敌人")
+	}
 
 	// 攻击前
 	for _, v := range h.GetBattle().GetEventCards("OnNROtherBeforeAttack") {
-		ec, eh = v.OnNROtherBeforeAttack(c, ec, eh)
+		ec = v.OnNROtherBeforeAttack(c, ec)
 	}
+
+	if ec == nil {
+		return nil
+	}
+
 	h.GetBattle().WhileTrickCardDie()
 
+	// 伤害可能和血量挂钩，所以先取
 	dmg := c.GetHaveEffectDamage()
-	if ec != nil { // 如果对手是卡牌
+	dmg2 := ec.GetHaveEffectDamage()
 
-		// 伤害可能和血量挂钩，所以先取
-		dmg2 := ec.GetHaveEffectDamage()
+	// logs
+	push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
+	dmg = ec.CostHp(dmg)
 
-		// logs
-		push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
-		dmg = ec.CostHp(dmg)
-
+	if dmg2 > 0 && ec.GetType() != define.CardTypeHero {
 		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+" 对"+push.GetCardLogString(c)+"反击"+strconv.Itoa(dmg2)+"点伤害")
 		c.CostHp(dmg2)
+	}
 
-	} else if eh != nil { // 如果对手是英雄
-
-		// logs
-		push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetHeroLogString(eh)+"造成了"+strconv.Itoa(dmg)+"伤害")
-		dmg = eh.CostHp(dmg)
+	if c.GetType() == define.CardTypeHero {
+		if h.GetWeapon() != nil {
+			h.GetWeapon().CostHp(1)
+		}
 	}
 
 	// 攻击后
-	if ec != nil && eh != nil {
-		h.TrickAfterAttackEvent(c, ec, eh, dmg)
-	}
-
-	h.GetBattle().WhileTrickCardDie()
-
-	return nil
-}
-
-func (h *Hero) HAttack(ec iface.ICard, eh iface.IHero) error {
-
-	dmg := h.GetDamage()
-
-	if ec != nil { // 如果对手是卡牌
-
-		// 伤害可能和血量挂钩，所以先取
-		dmg2 := ec.GetHaveEffectDamage()
-
-		// logs
-		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
-		dmg = ec.CostHp(dmg)
-
-		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+"对"+push.GetHeroLogString(h)+"反击"+strconv.Itoa(dmg2)+"点伤害")
-		h.CostHp(dmg2)
-
-	} else if eh != nil { // 如果对手是英雄
-
-		// logs
-		push.PushAutoLog(h, push.GetHeroLogString(h)+"对"+push.GetHeroLogString(eh)+"造成了"+strconv.Itoa(dmg)+"伤害")
-
-		dmg = eh.CostHp(dmg)
-	}
-
-	if h.GetWeapon() != nil {
-		c := h.GetWeapon()
-		h.TrickAfterAttackEvent(c, ec, eh, dmg)
-	}
-
-	if h.GetWeapon() != nil {
-		h.GetWeapon().CostHp(1)
-	}
+	h.TrickAfterAttackEvent(c, ec, dmg)
 
 	h.GetBattle().WhileTrickCardDie()
 
@@ -893,21 +784,21 @@ func (h *Hero) Push(data interface{}) {
 }
 
 // 随机战场上的卡牌或者英雄
-func (h *Hero) RandBattleCardOrHero() (iface.ICard, iface.IHero) {
+func (h *Hero) RandBattleCardOrHero() iface.ICard {
 
 	r := h.GetBattle().GetRand()
 	bs := h.GetBattleCards()
 	rn := r.Intn(len(bs) + 1)
 
 	if rn >= len(bs) {
-		return nil, h
+		return h.GetHead()
 	}
 
-	return bs[rn], nil
+	return bs[rn]
 }
 
 // 随机战场上的卡牌或者英雄
-func (h *Hero) RandBothBattleCardOrHero() (iface.ICard, iface.IHero) {
+func (h *Hero) RandBothBattleCardOrHero() iface.ICard {
 
 	r := h.GetBattle().GetRand()
 
@@ -917,14 +808,14 @@ func (h *Hero) RandBothBattleCardOrHero() (iface.ICard, iface.IHero) {
 	rn := r.Intn(len(bs) + 2)
 
 	if rn > len(bs) {
-		return nil, h.GetEnemy()
+		return h.GetEnemy().GetHead()
 	}
 
 	if rn >= len(bs) {
-		return nil, h
+		return h.GetHead()
 	}
 
-	return bs[rn], nil
+	return bs[rn]
 }
 
 // 随机卡牌
@@ -1010,37 +901,6 @@ func (h *Hero) DeleteSecret(ic iface.ICard, istTigger bool) {
 	}
 }
 
-// 获得特质
-func (h *Hero) GetTraits() []define.CardTraits {
-
-	// 获得子卡牌的特质
-	ts := make([]define.CardTraits, 0)
-	for _, v := range h.GetSubCards() {
-		for _, ct := range v.GetTraits() {
-
-			if !help.InArray(ct, ts) {
-				ts = append(ts, ct)
-			}
-		}
-	}
-
-	// 获得光环影响
-	for _, v := range h.GetBattle().GetEventCards("OnNROtherHeroGetTraits") {
-		for _, v2 := range v.OnNROtherHeroGetTraits(h) {
-			if !help.InArray(v2, ts) {
-				ts = append(ts, v2)
-			}
-		}
-	}
-
-	return ts
-}
-
-// 是否拥有某种特质
-func (h *Hero) IsHaveTraits(ct define.CardTraits) bool {
-	return help.InArray(ct, h.GetTraits())
-}
-
 // 一个新的倒计时
 func (h *Hero) NewCountDown(second int) {
 
@@ -1079,7 +939,7 @@ func (h *Hero) Henshin(c iface.ICard) {
 	h.config = config.GetHeroConfig(heroId)
 
 	// 加护盾
-	h.SetShield(h.GetShield() + c.GetHp())
+	h.GetHead().SetShield(h.GetHead().GetShield() + c.GetHp())
 
 	// 替换英雄技能
 	skill := iface.GetCardFact().GetCard(h.config.HeroSkillId)

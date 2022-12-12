@@ -16,3 +16,5 @@ const (
 )
 
 var MaxBattleNum = 8
+
+var HeroId = 71

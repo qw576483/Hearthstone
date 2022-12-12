@@ -10,18 +10,20 @@ const (
 	InCardsTypeGrave                     // 坟场
 	InCardsTypeBattle                    // 战场（如果从战场上移动到战场上，战场已满情况下会触发死亡）（如果从战场上移动到手牌，满牌情况下会触发死亡）
 	InCardsTypeBody                      // 身上
+	InCardsTypeHead                      // 头上
 )
 
 // 卡牌类型
 type CardType int
 
 const (
-	CardTypeEntourage CardType = iota // 随从
-	CardTypeWeapon                    // 武器
-	CardTypeSorcery                   // 法术
-	CardTypeBuff                      // buff - 不能直接使用
-	CardTypeHeroSkill                 // 英雄技能
-	CardTypeHero                      // 英雄
+	CardTypeEntourage      CardType = iota // 随从
+	CardTypeWeapon                         // 武器
+	CardTypeSorcery                        // 法术
+	CardTypeBuff                           // buff - 不能直接使用
+	CardTypeHeroSkill                      // 英雄技能
+	CardTypeHero                           // 英雄
+	CardTypeHeroCanRelease                 // 英雄卡
 )
 
 // 卡牌特质

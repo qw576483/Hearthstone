@@ -23,10 +23,9 @@ type IBattle interface {
 	GetHeroByGateAgent(gate.Agent) IHero  // 根据连接获得英雄
 
 	PlayerChangePreCards(int, []int /** 这个值是第几张卡*/) error // 修改预留卡牌
-	PlayerReleaseCard(int, int, int, int, int, int) error // 施放卡牌
-	PlayerUseHeroSkill(int, int, int, int) error          // 释放角色技能
-	PlayerConCardAttack(int, int, int, int) error         // 卡牌进攻
-	PlayerAttack(int, int, int) error                     // 玩家进攻
+	PlayerReleaseCard(int, int, int, int, int) error      // 施放卡牌
+	PlayerUseHeroSkill(int, int, int) error               // 释放角色技能
+	PlayerConCardAttack(int, int, int) error              // 卡牌进攻
 	PlayerRoundEnd(int) error                             // 结束回合
 
 	// 流程

@@ -23,7 +23,7 @@ func (h *Hero) RoundBegin() {
 		v.SetAttackTimes(0)
 	}
 	h.GetHeroSkill().SetAttackTimes(0)
-	h.SetAttackTimes(0)
+	h.GetHead().SetAttackTimes(0)
 
 	// 重置卡牌次数
 	h.SetReleaseCardTimes(0)

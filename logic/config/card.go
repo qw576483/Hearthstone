@@ -859,7 +859,7 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Damage:   0,
 		Hp:       5,
 		Quality:  define.CardQualityOrange,
-		Ctype:    define.CardTypeHero,
+		Ctype:    define.CardTypeHeroCanRelease,
 		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
 		Vocation: MakeCardVocation(define.VocationWarlock),
 		Series:   define.CardSeriseClassic,
@@ -914,5 +914,10 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		Vocation: MakeCardVocation(define.VocationHunter),
 		CanCarry: true,
+	},
+	71: &CardConfig{
+		Id:    71,
+		Name:  "英雄",
+		Ctype: define.CardTypeHero,
 	},
 }

@@ -23,15 +23,15 @@ func (h *Hero) TrickGetCardEvent(c iface.ICard) {
 }
 
 // 触发战吼
-func (h *Hero) TrickRelease(c iface.ICard, choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
-	c.OnRelease(choiceId, bidx, rc, rh)
+func (h *Hero) TrickRelease(c iface.ICard, choiceId, bidx int, rc iface.ICard) {
+	c.OnRelease(choiceId, bidx, rc)
 
 	h.GetBattle().WhileTrickCardDie()
 }
 
 // 触发战吼2
-func (h *Hero) TrickRelease2(c iface.ICard, choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
-	c.OnRelease2(choiceId, bidx, rc, rh)
+func (h *Hero) TrickRelease2(c iface.ICard, choiceId, bidx int, rc iface.ICard) {
+	c.OnRelease2(choiceId, bidx, rc)
 
 	h.GetBattle().WhileTrickCardDie()
 }
@@ -79,25 +79,17 @@ func (h *Hero) TrickOutBattleEvent(c iface.ICard) {
 }
 
 // 触发攻击后事件
-func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, eh iface.IHero, trueCostHp int) {
+func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, trueCostHp int) {
 
 	// 攻击者事件
 	if trueCostHp > 0 {
-		if ec != nil {
-			if ec.GetHaveEffectHp() == 0 && trueCostHp > 0 && !c.IsSilent() {
-				c.OnHonorAnnihilate()
-			} else if ec.GetHaveEffectHp() < 0 && !c.IsSilent() {
-				c.OnOverflowAnnihilate()
-			} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) {
-				push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
-				ec.GetOwner().DieCard(ec, false)
-			}
-		} else if eh != nil {
-			if eh.GetHp() == 0 && !c.IsSilent() {
-				c.OnHonorAnnihilate()
-			} else if eh.GetHp() < 0 && !c.IsSilent() {
-				c.OnOverflowAnnihilate()
-			}
+		if ec.GetHaveEffectHp() == 0 && trueCostHp > 0 && !c.IsSilent() {
+			c.OnHonorAnnihilate()
+		} else if ec.GetHaveEffectHp() < 0 && !c.IsSilent() {
+			c.OnOverflowAnnihilate()
+		} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) && ec.GetType() != define.CardTypeHero {
+			push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
+			ec.GetOwner().DieCard(ec, false)
 		}
 	}
 

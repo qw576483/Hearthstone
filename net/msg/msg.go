@@ -19,7 +19,6 @@ func init() {
 	Processor.Register(&BUseSkill{})
 	Processor.Register(&BRelease{})
 	Processor.Register(&BAttack{})
-	Processor.Register(&BHAttack{})
 
 	// push
 	Processor.Register(&push.CardsConfigMsg{})

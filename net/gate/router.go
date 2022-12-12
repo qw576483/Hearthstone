@@ -16,5 +16,4 @@ func init() {
 	msg.Processor.SetRouter(&msg.BUseSkill{}, game.ChanRPC)
 	msg.Processor.SetRouter(&msg.BRelease{}, game.ChanRPC)
 	msg.Processor.SetRouter(&msg.BAttack{}, game.ChanRPC)
-	msg.Processor.SetRouter(&msg.BHAttack{}, game.ChanRPC)
 }

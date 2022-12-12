@@ -27,7 +27,6 @@ type BEndRound struct {
 type BUseSkill struct {
 	ChoiceId int
 	RCardId  int
-	RHeroId  int
 }
 
 // 释放卡牌
@@ -36,18 +35,10 @@ type BRelease struct {
 	ChoiceId int
 	PutIdx   int
 	RCardId  int
-	RHeroId  int
 }
 
 // 卡牌进攻
 type BAttack struct {
 	CardId  int
 	ECardId int
-	EHeroId int
-}
-
-// 英雄进攻
-type BHAttack struct {
-	ECardId int
-	EHeroId int
 }

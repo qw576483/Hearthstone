@@ -7,12 +7,11 @@ import (
 
 // 接口
 type ICard interface {
-	ICHCommon
-
 	NewPoint() ICard                                // 新指针
 	Init(ICard, define.InCardsType, IHero, IBattle) // 初始化
 
 	SetId(int)                                // 设置id
+	GetId() int                               // 获得id
 	GetReleaseId() int                        // 获得releaseid
 	SetConfig(*config.CardConfig)             // 设置配置
 	GetConfig() *config.CardConfig            // 获得配置
@@ -24,6 +23,8 @@ type ICard interface {
 	IsHaveTraits(define.CardTraits) bool      // 是否拥有卡牌特质
 	AddTraits(define.CardTraits)              // 添加特质
 	RemoveTraits(define.CardTraits)           // 删除特质
+	GetShield() int                           // 获得护盾
+	SetShield(int)                            // 设置护盾
 	TreatmentHp(int)                          // 治疗血量
 	AddHp(int)                                // 加血
 	AddHpMaxAndHp(int)                        // 加血上限和血
@@ -61,39 +62,43 @@ type ICard interface {
 	IsSilent() bool                           // 是否被沉默
 	SetReleaseRound(int)                      // 设置出牌回合
 	GetReleaseRound() int                     // 获得出牌回合
+	SetFatherCard(ICard)                      // 设置父卡牌
+	GetFatherCard() ICard                     // 获得父卡牌
+	GetSubCards() []ICard                     // 获得子卡牌
+	SetSubCards([]ICard)                      // 设置子卡牌
+	AddSubCards(ICard)                        // 添加子卡牌
+	RemoveSubCards(ICard)                     // 删除子卡牌
 
 	// 事件 - 只需要实现接口
-	OnInit()                           // 初始化时
-	OnBattleBegin()                    // 战斗开始
-	OnGet()                            // 获得时
-	OnRelease(int, int, ICard, IHero)  // 释放时 ， 输入抉择id(0,1)，站位，战吼卡牌目标，战吼敌人目标
-	OnRelease2(int, int, ICard, IHero) // 释放时 ， 输入抉择id(0,1)，站位，战吼卡牌目标，战吼敌人目标
-	OnPutToBattle(int)                 // 步入战场时 ， 输入站位
-	OnOutBattle()                      // 离开战场时
-	OnHonorAnnihilate()                // 荣誉消灭
-	OnOverflowAnnihilate()             // 超杀
-	OnBeforeCostHp(int) int            // 受伤前，输入damage，输出新damage
-	OnAfterCostHp()                    // 受伤后
-	OnAfterHpChange()                  // 生命值改变后
-	OnDie()                            // 卡牌死亡时
-	OnAfterDisCard()                   // 卡牌丢弃后
-	OnGetMona(int) int                 // 获取自己的费用时，输入mona ,输出新mona
-	OnGetDamage(int) int               // 获取自己的攻击力时，输入damage ,输出新damage
+	OnInit()                    // 初始化时
+	OnBattleBegin()             // 战斗开始
+	OnGet()                     // 获得时
+	OnRelease(int, int, ICard)  // 释放时 ， 输入抉择id(0,1)，站位，战吼目标
+	OnRelease2(int, int, ICard) // 释放时 ， 输入抉择id(0,1)，站位，战吼目标
+	OnPutToBattle(int)          // 步入战场时 ， 输入站位
+	OnOutBattle()               // 离开战场时
+	OnHonorAnnihilate()         // 荣誉消灭
+	OnOverflowAnnihilate()      // 超杀
+	OnBeforeCostHp(int) int     // 受伤前，输入damage，输出新damage
+	OnAfterCostHp()             // 受伤后
+	OnAfterHpChange()           // 生命值改变后
+	OnDie()                     // 卡牌死亡时
+	OnAfterDisCard()            // 卡牌丢弃后
+	OnGetMona(int) int          // 获取自己的费用时，输入mona ,输出新mona
+	OnGetDamage(int) int        // 获取自己的攻击力时，输入damage ,输出新damage
 
 	// 注册事件 - 实现前需要注册
-	OnNRGetBattleTime(int) int                                       // 获得战斗时间 ， 输入战斗时间，返回新的战斗时间
-	OnNRRoundBegin()                                                 // 回合开始时
-	OnNRRoundEnd()                                                   // 回合结束时
-	OnNROtherBeforeRelease(ICard, ICard, IHero) (ICard, IHero, bool) // 其他卡牌释放前，输入其他卡牌，攻击卡牌目标，攻击英雄目标。输出攻击卡牌目标，攻击英雄目标，是否生效。
-	OnNROtherAfterRelease(ICard)                                     // 其他卡牌释放前，输入其他卡牌
-	OnNROtherBeforeAttack(ICard, ICard, IHero) (ICard, IHero)        // 其他卡牌攻击前，输入其他卡牌，攻击卡牌目标，攻击英雄目标。输出攻击卡牌目标，攻击英雄目标。
-	OnNRPutToBattle(ICard)                                           // 其他卡牌步入战场时，输入其他卡牌
-	OnNROtherDie(ICard)                                              // 其他卡牌死亡时，输入其他卡牌
-	OnNROtherGetMona(ICard) int                                      // 其他卡牌获取自己的费用时，输入其他卡牌， 输出费用加成
-	OnNROtherGetDamage(ICard) int                                    // 其他卡牌获取自己的攻击力时 ，输入其他卡牌， 输出攻击加成
-	OnNROtherGetApDamage(IHero) int                                  // 英雄获取自己的法术伤害时 ，输入其他卡牌， 输出的法术伤害加成
-	OnNROtherGetHp(ICard) int                                        // 其他卡牌获取自己的血量时 ，输入其他卡牌， 输出血量加成
-	OnNROtherGetTraits(ICard) []define.CardTraits                    // 其他卡牌获取自己的特质时 ，输入其他卡牌， 输出特质加成
-	OnNROtherHeroGetTraits(IHero) []define.CardTraits                // 英雄获得自己的特质时，输入英雄，输出特质加成
-
+	OnNRGetBattleTime(int) int                         // 获得战斗时间 ， 输入战斗时间，返回新的战斗时间
+	OnNRRoundBegin()                                   // 回合开始时
+	OnNRRoundEnd()                                     // 回合结束时
+	OnNROtherBeforeRelease(ICard, ICard) (ICard, bool) // 其他卡牌释放前，输入其他卡牌，攻击目标。输出攻击目标，是否生效。
+	OnNROtherAfterRelease(ICard)                       // 其他卡牌释放前，输入其他卡牌
+	OnNROtherBeforeAttack(ICard, ICard) ICard          // 其他卡牌攻击前，输入其他卡牌，攻击目标。输出攻击目标。
+	OnNRPutToBattle(ICard)                             // 其他卡牌步入战场时，输入其他卡牌
+	OnNROtherDie(ICard)                                // 其他卡牌死亡时，输入其他卡牌
+	OnNROtherGetMona(ICard) int                        // 其他卡牌获取自己的费用时，输入其他卡牌， 输出费用加成
+	OnNROtherGetDamage(ICard) int                      // 其他卡牌获取自己的攻击力时 ，输入其他卡牌， 输出攻击加成
+	OnNROtherGetApDamage(IHero) int                    // 英雄获取自己的法术伤害时 ，输入其他卡牌， 输出的法术伤害加成
+	OnNROtherGetHp(ICard) int                          // 其他卡牌获取自己的血量时 ，输入其他卡牌， 输出血量加成
+	OnNROtherGetTraits(ICard) []define.CardTraits      // 其他卡牌获取自己的特质时 ，输入其他卡牌， 输出特质加成
 }

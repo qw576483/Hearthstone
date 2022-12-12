@@ -146,25 +146,20 @@
             e // 回合结束
 
             r // 释放卡牌
-            参数1    参数2           参数3            参数4                 参数5
-            卡牌id   战吼目标卡牌id  战吼目标英雄id   战场站位（默认最右）  抉择idx
-            例如:`r 10 35` 代表释放卡牌id为10 , 战吼目标为对方卡牌id为35
+            参数1    参数2         参数3               参数4       
+            卡牌id   战吼目标id    战场站位（默认最右）  抉择idx
+            例如:`r 10 35` 代表释放id为10 , 战吼目标为对方id为35
             抉择idx 0代表第一个抉择,1代表第二个,以此类推
 
-            a // 卡牌攻击
-            参数1    参数2        参数3
-            卡牌id   目标卡牌id   目标英雄id
-            例如:`a 10 31 0` 代表id为10的卡牌,进攻对方场上id为31的卡牌
-
-            ha // 英雄攻击
-            参数1        参数2
-            目标卡牌id   目标英雄id
-            例如:`ha 10 0` 代表英雄攻击场上id为10的卡牌
+            a // 攻击
+            参数1    参数2
+            卡牌id   目标id   
+            例如:`a 10 31` 代表id为10的单位,进攻对方id为31的单位
             
             s // 英雄技能
-            参数1        参数2         参数3
-            目标卡牌id   目标英雄id    抉择idx
-            例如:`s 10` 选择目标为10的卡牌
+            参数1    参数2  
+            目标id   抉择idx
+            例如:`s 10` 选择目标为10的单位
         </pre>
     </div>
 </body>
@@ -229,13 +224,11 @@
         }else if (cmdArr[0] == "e"){
             ws.send(encodeMsg("BEndRound" , {End:1}))
         }else if (cmdArr[0] == "r"){
-            ws.send(encodeMsg("BRelease" , {CardId:parseInt(cmdArr[1]) ,RCardId:parseInt(cmdArr[2]) , RHeroId:parseInt(cmdArr[3]) ,PutIdx:parseInt(cmdArr[4]) , ChoiceId:parseInt(cmdArr[5]) }))
+            ws.send(encodeMsg("BRelease" , {CardId:parseInt(cmdArr[1]) ,RCardId:parseInt(cmdArr[2]) ,PutIdx:parseInt(cmdArr[3]) , ChoiceId:parseInt(cmdArr[4]) }))
         }else if (cmdArr[0] == "a"){
-            ws.send(encodeMsg("BAttack" , {CardId:parseInt(cmdArr[1]) , ECardId:parseInt(cmdArr[2]) , EHeroId:parseInt(cmdArr[3])}))
-        }else if (cmdArr[0] == "ha"){
-            ws.send(encodeMsg("BHAttack" , {ECardId:parseInt(cmdArr[1]) , EHeroId:parseInt(cmdArr[2])}))
+            ws.send(encodeMsg("BAttack" , {CardId:parseInt(cmdArr[1]) , ECardId:parseInt(cmdArr[2]) }))
         }else if (cmdArr[0] == "s"){
-            ws.send(encodeMsg("BUseSkill" , {RCardId:parseInt(cmdArr[1]) , RHeroId:parseInt(cmdArr[2]) , ChoiceId:parseInt(cmdArr[3])}))
+            ws.send(encodeMsg("BUseSkill" , {RCardId:parseInt(cmdArr[1])  , ChoiceId:parseInt(cmdArr[2])}))
         }
         $("#cmd").val("")
     }
@@ -260,7 +253,7 @@
 
     CTraits = ["战吼" , "亡语", "冲锋", "突袭", "风怒", "连击" , "无法攻击", "嘲讽" , "圣盾" ,"潜行" , "剧毒" , "奥秘" ,"抉择" ,"免疫" , "过载"]
     CRace = ["野兽" , "恶魔" , "鱼人" , "机械" , "图腾" , "神圣" ,"全部" , "自然" , "元素" , "亡灵" , "龙" , "火焰" , "暗影"]
-    CType = ["随从" , "武器" , "法术"  , "Buff" , "英雄技能" , "英雄"]
+    CType = ["随从" , "武器" , "法术"  , "Buff" , "英雄技能" , "英雄" , "英雄卡"]
     CSeries = ["基础" , "经典" , "暗月马戏团"]
     CQuality = ["基础" , "普通" , "稀有" , "史诗" , "传说"]
     HVocation = ["盗贼" , "术士" , "猎人" , "萨满" , "圣骑士" , "德鲁伊" , "法师" , "牧师" , "战士"]

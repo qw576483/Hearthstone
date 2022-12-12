@@ -26,7 +26,6 @@ func init() {
 	handler(&msg.BUseSkill{}, handleBUseSkill)
 	handler(&msg.BRelease{}, handleBRelease)
 	handler(&msg.BAttack{}, handleBAttack)
-	handler(&msg.BHAttack{}, handleBHAttack)
 }
 
 func handler(m interface{}, h interface{}) {
@@ -204,7 +203,7 @@ func handleBUseSkill(args []interface{}) {
 		return
 	}
 
-	err := b.PlayerUseHeroSkill(b.GetRoundHero().GetId(), m.ChoiceId, m.RCardId, m.RHeroId)
+	err := b.PlayerUseHeroSkill(b.GetRoundHero().GetId(), m.ChoiceId, m.RCardId)
 
 	if err != nil {
 		a.WriteMsg(&push.ErrorMsg{
@@ -243,7 +242,7 @@ func handleBRelease(args []interface{}) {
 	}
 
 	m.PutIdx -= 1
-	err := b.PlayerReleaseCard(b.GetRoundHero().GetId(), m.CardId, m.ChoiceId, m.PutIdx, m.RCardId, m.RHeroId)
+	err := b.PlayerReleaseCard(b.GetRoundHero().GetId(), m.CardId, m.ChoiceId, m.PutIdx, m.RCardId)
 
 	if err != nil {
 		a.WriteMsg(&push.ErrorMsg{
@@ -282,45 +281,7 @@ func handleBAttack(args []interface{}) {
 		return
 	}
 
-	err := b.PlayerConCardAttack(b.GetRoundHero().GetId(), m.CardId, m.ECardId, m.EHeroId)
-
-	if err != nil {
-		a.WriteMsg(&push.ErrorMsg{
-			Error: err.Error(),
-		})
-	}
-}
-
-func handleBHAttack(args []interface{}) {
-	m := args[0].(*msg.BHAttack)
-	a := args[1].(gate.Agent)
-
-	p := player.GetPlayerList().GetPlayer(a)
-	r := room.GetRoomList().GetRoom(p.GetRoomId())
-	b := r.GetBattle()
-
-	if b == nil {
-		a.WriteMsg(&push.ErrorMsg{
-			Error: "战斗无效",
-		})
-		return
-	}
-
-	if b.GetBattleStatus() != define.BattleStatusRun {
-		a.WriteMsg(&push.ErrorMsg{
-			Error: "当前不是战斗环节",
-		})
-		return
-	}
-
-	if b.GetHeroByGateAgent(a) != b.GetRoundHero() {
-		a.WriteMsg(&push.ErrorMsg{
-			Error: "不是我的出手回合",
-		})
-		return
-	}
-
-	err := b.PlayerAttack(b.GetRoundHero().GetId(), m.ECardId, m.EHeroId)
+	err := b.PlayerConCardAttack(b.GetRoundHero().GetId(), m.CardId, m.ECardId)
 
 	if err != nil {
 		a.WriteMsg(&push.ErrorMsg{

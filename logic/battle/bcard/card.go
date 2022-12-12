@@ -3,7 +3,6 @@ package bcard
 import (
 	"bytes"
 	"encoding/gob"
-	"hs/logic/battle/bchcommon"
 	"hs/logic/config"
 	"hs/logic/define"
 	"hs/logic/help"
@@ -13,13 +12,14 @@ import (
 
 // 卡牌
 type Card struct {
-	bchcommon.CHCommon
+	Id           int                 // id
 	ReleaseId    int                 // battle中的释放id
 	realization  iface.ICard         // 我的实现
 	Config       *config.CardConfig  // 配置
 	Ctype        define.CardType     // 卡牌类型
 	Race         []define.CardRace   // 卡牌种族
 	Traits       []define.CardTraits // 卡牌特质
+	Shield       int                 // 盾
 	Hp           int                 // 卡牌血量
 	HpEffect     map[int]int         // 卡牌影响的血量
 	HpMax        int                 // 卡牌血上限
@@ -33,7 +33,8 @@ type Card struct {
 	SilentSign   bool                // 是否被沉默
 	ApDamage     int                 // 法术伤害
 	DbIdx        int                 // 死亡后的idx
-
+	FatherCard   iface.ICard         // 父卡牌
+	SubCards     []iface.ICard       // 子卡牌
 }
 
 // 返回新指针
@@ -64,6 +65,10 @@ func (c *Card) Init(ic iface.ICard, ict define.InCardsType, h iface.IHero, b ifa
 // 设置id
 func (c *Card) SetId(id int) {
 	c.Id = id
+}
+
+func (c *Card) GetId() int {
+	return c.Id
 }
 
 // 获得实现
@@ -165,6 +170,16 @@ func (c *Card) RemoveTraits(ct define.CardTraits) {
 	}
 }
 
+// 获得护盾
+func (c *Card) GetShield() int {
+	return c.Shield
+}
+
+// 设置护盾
+func (c *Card) SetShield(s int) {
+	c.Shield += s
+}
+
 // 治疗血量
 func (c *Card) TreatmentHp(num int) {
 
@@ -219,6 +234,14 @@ func (c *Card) CostHp(num int) int {
 		num = ic.OnBeforeCostHp(num)
 	}
 
+	if c.Shield >= num {
+		c.Shield -= num
+		num = 0
+	} else {
+		num = num - c.Shield
+		c.Shield = 0
+	}
+
 	tcNum := num
 	// 扣一下光环加成的血
 	if num > 0 {
@@ -249,6 +272,10 @@ func (c *Card) CostHp(num int) int {
 		var tc iface.ICard
 		if c.GetCardInCardsPos() == define.InCardsTypeBody {
 			tc = h.GetWeapon()
+		} else if c.GetType() == define.CardTypeHero {
+			// 弹出
+			h.Die()
+			return num
 		} else {
 			tc = h.GetBattleCardById(c.GetId())
 		}
@@ -363,6 +390,13 @@ func (c *Card) GetHaveEffectDamage() int {
 
 	ic := c.GetRealization()
 	d := ic.GetDamage()
+
+	if ic.GetType() == define.CardTypeHero {
+		w := c.GetOwner().GetWeapon()
+		if w != nil {
+			d += w.GetHaveEffectDamage()
+		}
+	}
 
 	if !ic.IsSilent() {
 		d = ic.OnGetDamage(d)
@@ -494,10 +528,6 @@ func (c *Card) SetOwner(h iface.IHero) {
 // 获得此卡拥有人
 func (c *Card) GetOwner() iface.IHero {
 
-	if c.GetFatherHero() != nil {
-		return c.GetFatherHero()
-	}
-
 	if c.GetFatherCard() != nil {
 		return c.GetFatherCard().GetOwner()
 	}
@@ -521,6 +551,20 @@ func (c *Card) GetAttackTimes() int {
 
 // 获得最大攻击次数
 func (c *Card) GetMaxAttackTimes() int {
+
+	ic := c.GetRealization()
+
+	// 如果是英雄卡
+	if ic.GetConfig().Ctype == define.CardTypeHero {
+
+		// 需要获得到武器属性
+		w := c.GetOwner().GetWeapon()
+		if w != nil && help.InArray(define.CardTraitsWindfury, w.GetTraits()) {
+			return 2
+		}
+		return 1
+	}
+
 	if help.InArray(define.CardTraitsWindfury, c.GetTraits()) {
 		return 2
 	}
@@ -629,4 +673,47 @@ func (c *Card) GetReleaseRound() int {
 // 获得释放id
 func (c *Card) GetReleaseId() int {
 	return c.ReleaseId
+}
+
+// 设置父卡牌
+func (c *Card) SetFatherCard(fc iface.ICard) {
+	c.FatherCard = fc
+}
+
+// 获得父卡牌
+func (c *Card) GetFatherCard() iface.ICard {
+	return c.FatherCard
+}
+
+// 获得子卡牌
+func (c *Card) GetSubCards() []iface.ICard {
+	return c.SubCards
+}
+
+// 设置子卡牌
+func (c *Card) SetSubCards(scs []iface.ICard) {
+	c.SubCards = scs
+}
+
+// 添加子卡牌
+func (c *Card) AddSubCards(sc iface.ICard) {
+
+	sc.SetFatherCard(c.GetRealization())
+	c.SubCards = append(c.SubCards, sc)
+}
+
+// 删除子卡牌
+func (c *Card) RemoveSubCards(sc iface.ICard) {
+
+	idx := -1
+	for k, v := range c.SubCards {
+		if v.GetId() == sc.GetId() {
+			idx = k
+			break
+		}
+	}
+
+	if idx != -1 {
+		_, c.SubCards = help.DeleteCardFromCardsByIdx(c.SubCards, idx)
+	}
 }

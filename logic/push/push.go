@@ -78,9 +78,9 @@ func BuildEnemyMsg(h iface.IHero) *EnemyMsg {
 	return &EnemyMsg{
 		Id:           h.GetId(),
 		Name:         h.GetConfig().Name,
-		Hp:           h.GetHp(),
-		HpMax:        h.GetHpMax(),
-		Shield:       h.GetShield(),
+		Hp:           h.GetHead().GetHaveEffectHp(),
+		HpMax:        h.GetHead().GetHaveEffectHpMax(),
+		Shield:       h.GetHead().GetShield(),
 		Mona:         h.GetMona(),
 		MonaMax:      h.GetMonaMax(),
 		HandCardsNum: len(h.GetHandCards()),
@@ -93,9 +93,9 @@ func BuildMyMsg(h iface.IHero) *MyMsg {
 	return &MyMsg{
 		Id:          h.GetId(),
 		Name:        h.GetConfig().Name,
-		Hp:          h.GetHp(),
-		HpMax:       h.GetHpMax(),
-		Shield:      h.GetShield(),
+		Hp:          h.GetHead().GetHaveEffectHp(),
+		HpMax:       h.GetHead().GetHaveEffectHpMax(),
+		Shield:      h.GetHead().GetShield(),
 		Mona:        h.GetMona(),
 		MonaMax:     h.GetMonaMax(),
 		HandCards:   BuildCardsMsg(h.GetHandCards()),
@@ -257,6 +257,10 @@ func GetCardLogString(c iface.ICard) string {
 			return "奥秘"
 		}
 		return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")"
+	}
+
+	if c.GetType() == define.CardTypeHero {
+		return c.GetOwner().GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")"
 	}
 
 	return c.GetConfig().Name + "(" + strconv.Itoa(c.GetId()) + ")" + strconv.Itoa(c.GetHaveEffectMona()) + "-" + strconv.Itoa(c.GetHaveEffectDamage()) + "-" + strconv.Itoa(c.GetHaveEffectHp())
