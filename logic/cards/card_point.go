@@ -69,4 +69,9 @@ var cardPoints []iface.ICard = []iface.ICard{
 	63: &Card63{},
 	64: &Card64{},
 	65: &Card65{},
+	66: &Card66{},
+	67: &Card67{},
+	68: &Card68{},
+	69: &Card69{},
+	70: &Card70{},
 }

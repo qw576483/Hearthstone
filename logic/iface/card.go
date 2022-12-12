@@ -63,21 +63,22 @@ type ICard interface {
 	GetReleaseRound() int                     // 获得出牌回合
 
 	// 事件 - 只需要实现接口
-	OnInit()                          // 初始化时
-	OnBattleBegin()                   // 战斗开始
-	OnGet()                           // 获得时
-	OnRelease(int, int, ICard, IHero) // 释放时 ， 输入抉择id(0,1)，站位，战吼卡牌目标，战吼敌人目标
-	OnPutToBattle(int)                // 步入战场时 ， 输入站位
-	OnOutBattle()                     // 离开战场时
-	OnHonorAnnihilate()               // 荣誉消灭
-	OnOverflowAnnihilate()            // 超杀
-	OnBeforeCostHp(int) int           // 受伤前，输入damage，输出新damage
-	OnAfterCostHp()                   // 受伤后
-	OnAfterHpChange()                 // 生命值改变后
-	OnDie()                           // 卡牌死亡时
-	OnAfterDisCard()                  // 卡牌丢弃后
-	OnGetMona(int) int                // 获取自己的费用时，输入mona ,输出新mona
-	OnGetDamage(int) int              // 获取自己的攻击力时，输入damage ,输出新damage
+	OnInit()                           // 初始化时
+	OnBattleBegin()                    // 战斗开始
+	OnGet()                            // 获得时
+	OnRelease(int, int, ICard, IHero)  // 释放时 ， 输入抉择id(0,1)，站位，战吼卡牌目标，战吼敌人目标
+	OnRelease2(int, int, ICard, IHero) // 释放时 ， 输入抉择id(0,1)，站位，战吼卡牌目标，战吼敌人目标
+	OnPutToBattle(int)                 // 步入战场时 ， 输入站位
+	OnOutBattle()                      // 离开战场时
+	OnHonorAnnihilate()                // 荣誉消灭
+	OnOverflowAnnihilate()             // 超杀
+	OnBeforeCostHp(int) int            // 受伤前，输入damage，输出新damage
+	OnAfterCostHp()                    // 受伤后
+	OnAfterHpChange()                  // 生命值改变后
+	OnDie()                            // 卡牌死亡时
+	OnAfterDisCard()                   // 卡牌丢弃后
+	OnGetMona(int) int                 // 获取自己的费用时，输入mona ,输出新mona
+	OnGetDamage(int) int               // 获取自己的攻击力时，输入damage ,输出新damage
 
 	// 注册事件 - 实现前需要注册
 	OnNRGetBattleTime(int) int                                       // 获得战斗时间 ， 输入战斗时间，返回新的战斗时间

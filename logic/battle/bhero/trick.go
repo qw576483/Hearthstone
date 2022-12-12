@@ -29,6 +29,13 @@ func (h *Hero) TrickRelease(c iface.ICard, choiceId, bidx int, rc iface.ICard, r
 	h.GetBattle().WhileTrickCardDie()
 }
 
+// 触发战吼2
+func (h *Hero) TrickRelease2(c iface.ICard, choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+	c.OnRelease2(choiceId, bidx, rc, rh)
+
+	h.GetBattle().WhileTrickCardDie()
+}
+
 // 触发回合开始
 func (h *Hero) TrickRoundBegin() {
 	for _, v := range h.GetBattle().GetEventCards("OnNRRoundBegin") {

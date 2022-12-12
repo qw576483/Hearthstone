@@ -21,6 +21,7 @@ const (
 	CardTypeSorcery                   // 法术
 	CardTypeBuff                      // buff - 不能直接使用
 	CardTypeHeroSkill                 // 英雄技能
+	CardTypeHero                      // 英雄
 )
 
 // 卡牌特质

@@ -747,13 +747,25 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, rh i
 			h.MoveToBattle(c, putidx)
 		} else if cType == define.CardTypeWeapon { // 武器
 			h.OnlyReleaseWeapon(c)
-		} else if cType == define.CardTypeSorcery { // 法术
+		} else if cType == define.CardTypeSorcery || cType == define.CardTypeHero { // 法术 , 英雄卡
 
 			// 如果法术不在身上，强制置为战场上
 			if c.GetCardInCardsPos() != define.InCardsTypeBody {
 				c.SetCardInCardsPos(define.InCardsTypeBattle)
 			}
 			h.MoveOutHandOnlyHandCards(c)
+		}
+	}
+
+	// 如果触发效果
+	if trickRelease {
+
+		// 如果法术被拦截
+		if cType == define.CardTypeSorcery && !valid {
+
+		} else {
+			// 战吼不拦截
+			h.TrickRelease2(c, choiceId, putidx, rc, rh)
 		}
 	}
 
@@ -1073,11 +1085,4 @@ func (h *Hero) Henshin(c iface.ICard) {
 	skill := iface.GetCardFact().GetCard(h.config.HeroSkillId)
 	skill.Init(skill, define.InCardsTypeNone, h, h.GetBattle())
 	h.skill = skill
-
-	// 设置最大血量
-	h.hpMax = h.config.HpMax
-	h.monaMax = h.config.Mona
-
-	h.AddHp(0)
-	h.AddMona(0)
 }

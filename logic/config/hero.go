@@ -119,4 +119,15 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		Shield:      0,
 		HeroSkillId: 58,
 	},
+	9: &HeroConfig{
+		Id:          9,
+		Vocation:    define.VocationWarlock,
+		Name:        "加拉克苏斯大王",
+		Hp:          30,
+		HpMax:       30,
+		Mona:        0,
+		MonaMax:     10,
+		Shield:      0,
+		HeroSkillId: 67,
+	},
 }

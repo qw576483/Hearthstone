@@ -629,7 +629,7 @@ func (c *Card26) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
 	c.GetOwner().Release(nc, 0, 0, nil, nil, false)
 
-	push.PushAutoLog(c.GetOwner(), "装备了匕首")
+	push.PushAutoLog(c.GetOwner(), "装备了"+nc.GetConfig().Name)
 }
 
 // 邪恶短刀
@@ -1208,7 +1208,7 @@ func (c *Card53) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	nc.GetOwner().MoveToBattle(nc, -1)
 	nc.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
 
-	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"召唤了"+push.GetCardLogString(nc))
+	push.PushAutoLog(c.GetOwner(), "召唤了"+push.GetCardLogString(nc))
 }
 
 // 白银之手新兵
@@ -1512,4 +1512,82 @@ func (c *Card65) ClearBuff() {
 		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundBegin")
 		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherDie")
 	}
+}
+
+// 加拉克苏斯大王
+type Card66 struct {
+	bcard.Card
+}
+
+func (c *Card66) NewPoint() iface.ICard {
+	return &Card66{}
+}
+
+func (c *Card66) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+	if len(h.GetBattleCards()) >= define.MaxBattleNum {
+		return
+	}
+
+	h.Henshin(c)
+
+	nc := iface.GetCardFact().GetCard(69)
+	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+	h.Release(nc, 0, 0, nil, nil, false)
+
+	push.PushAutoLog(h, "装备了"+nc.GetConfig().Name)
+}
+
+// 地狱火！
+type Card67 struct {
+	bcard.Card
+}
+
+func (c *Card67) NewPoint() iface.ICard {
+	return &Card67{}
+}
+
+func (c *Card67) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
+
+	h := c.GetOwner()
+
+	if len(h.GetBattleCards()) >= define.MaxBattleNum {
+		return
+	}
+
+	nc := iface.GetCardFact().GetCard(68)
+
+	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+	h.MoveToBattle(nc, -1)
+	nc.SetReleaseRound(h.GetBattle().GetIncrRoundId())
+
+	push.PushAutoLog(h, "召唤了"+push.GetCardLogString(nc))
+}
+
+// 地狱火
+type Card68 struct {
+	bcard.Card
+}
+
+func (c *Card68) NewPoint() iface.ICard {
+	return &Card68{}
+}
+
+// 血怒
+type Card69 struct {
+	bcard.Card
+}
+
+func (c *Card69) NewPoint() iface.ICard {
+	return &Card69{}
+}
+
+// 暴龙王克鲁什
+type Card70 struct {
+	bcard.Card
+}
+
+func (c *Card70) NewPoint() iface.ICard {
+	return &Card70{}
 }

@@ -96,6 +96,7 @@ type IHero interface {
 	IsHaveTraits(define.CardTraits) bool               // 是否有某种特质
 	NewCountDown(int)                                  // 一个新的倒计时
 	CloseCountDown()                                   // 关闭我的倒计时
+	Henshin(ICard)                                     // 变身
 
 	PreBegin()    // 预备阶段
 	RoundBegin()  // 回合开始
@@ -105,6 +106,7 @@ type IHero interface {
 	TrickBattleBegin()                              // 触发战斗开始事件
 	TrickGetCardEvent(ICard)                        // 触发抽卡事件
 	TrickRelease(ICard, int, int, ICard, IHero)     // 触发战吼
+	TrickRelease2(ICard, int, int, ICard, IHero)    // 触发战吼
 	TrickRoundBegin()                               // 触发回合开始事件
 	TrickRoundEnd()                                 // 触发回合结束事件
 	TrickPutToBattleEvent(ICard, int)               // 触发步入战场事件
