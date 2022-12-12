@@ -34,7 +34,6 @@ type Hero struct {
 	monaMax          int                // 最大法力
 	lockMona         int                // 锁定法力值
 	lockMonaCache    int                // 下回合锁定的法力值
-	shield           int                // 护盾
 	maxHandCardsNum  int                // 手牌上限数量
 	fatigue          int                // 疲劳伤害
 	releaseCardTimes int                // 本回合出牌次数
@@ -78,7 +77,6 @@ func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 	h.secretCards = make([]iface.ICard, 0)
 	h.mona = h.config.Mona
 	h.monaMax = h.config.Mona
-	h.shield = h.config.Shield
 	h.weapon = nil
 	h.maxHandCardsNum = 10
 
