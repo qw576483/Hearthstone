@@ -18,6 +18,8 @@ type CardConfig struct {
 	Vocation      []define.Vocation        // 职业
 	ReleaseFilter define.CardReleaseFilter // 释放筛选
 	CanCarry      bool                     // 是否可携带
+
+	IntParam1 int // int参数1
 }
 
 // 创建种族

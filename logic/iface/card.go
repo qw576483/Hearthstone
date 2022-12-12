@@ -14,7 +14,6 @@ type ICard interface {
 
 	SetId(int)                                // 设置id
 	GetReleaseId() int                        // 获得releaseid
-	GetRealization() ICard                    // 获得实现
 	SetConfig(*config.CardConfig)             // 设置配置
 	GetConfig() *config.CardConfig            // 获得配置
 	GetType() define.CardType                 // 获得卡牌类型
@@ -81,6 +80,7 @@ type ICard interface {
 	OnGetDamage(int) int              // 获取自己的攻击力时，输入damage ,输出新damage
 
 	// 注册事件 - 实现前需要注册
+	OnNRGetBattleTime(int) int                                       // 获得战斗时间 ， 输入战斗时间，返回新的战斗时间
 	OnNRRoundBegin()                                                 // 回合开始时
 	OnNRRoundEnd()                                                   // 回合结束时
 	OnNROtherBeforeRelease(ICard, ICard, IHero) (ICard, IHero, bool) // 其他卡牌释放前，输入其他卡牌，攻击卡牌目标，攻击英雄目标。输出攻击卡牌目标，攻击英雄目标，是否生效。

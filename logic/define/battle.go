@@ -7,3 +7,6 @@ const (
 	BattleStatusRun                     // 战斗
 	BattleStatusEnd                     // 结束
 )
+
+// 战斗时间
+const BattleTime = 120

@@ -22,8 +22,9 @@ func (c *Card) OnAfterDisCard()                                              {}
 func (c *Card) OnGetMona(m int) int                                          { return m }
 func (c *Card) OnGetDamage(d int) int                                        { return d }
 
-func (c *Card) OnNRRoundBegin() {}
-func (c *Card) OnNRRoundEnd()   {}
+func (C *Card) OnNRGetBattleTime(bt int) int { return bt }
+func (c *Card) OnNRRoundBegin()              {}
+func (c *Card) OnNRRoundEnd()                {}
 func (c *Card) OnNROtherBeforeRelease(oc iface.ICard, rc iface.ICard, rh iface.IHero) (iface.ICard, iface.IHero, bool) {
 	return rc, rh, true
 }

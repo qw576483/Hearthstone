@@ -19,7 +19,6 @@ type Hero struct {
 	bchcommon.CHCommon
 	gateAgnet        gate.Agent         // 连接
 	battle           iface.IBattle      // 战斗句柄
-	realization      iface.IHero        // 实现
 	config           *config.HeroConfig // 配置数据
 	skill            iface.ICard        // 英雄技能
 	enemy            iface.IHero        // 敌人
@@ -79,7 +78,6 @@ func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 	h.shield = h.config.Shield
 	h.weapon = nil
 	h.maxHandCardsNum = 10
-	h.realization = ih
 
 	skill := iface.GetCardFact().GetCard(h.config.HeroSkillId)
 	skill.Init(skill, define.InCardsTypeNone, h, b)
@@ -88,11 +86,6 @@ func (h *Hero) Init(ih iface.IHero, cards []iface.ICard, b iface.IBattle) {
 	for _, v := range h.libCards {
 		v.Init(v, define.InCardsTypeLib, h, b)
 	}
-}
-
-// 获得实现
-func (h *Hero) GetRealization() iface.IHero {
-	return h.realization
 }
 
 // 获得战斗句柄
@@ -1061,4 +1054,30 @@ func (h *Hero) CloseCountDown() {
 
 	h.timer.Stop()
 	h.timer = nil
+}
+
+// 变身到卡牌
+func (h *Hero) Henshin(c iface.ICard) {
+
+	push.PushAutoLog(h, "变身成了"+c.GetConfig().Name)
+
+	heroId := c.GetConfig().IntParam1
+
+	// 替换config
+	h.config = config.GetHeroConfig(heroId)
+
+	// 加护盾
+	h.SetShield(h.GetShield() + c.GetHp())
+
+	// 替换英雄技能
+	skill := iface.GetCardFact().GetCard(h.config.HeroSkillId)
+	skill.Init(skill, define.InCardsTypeNone, h, h.GetBattle())
+	h.skill = skill
+
+	// 设置最大血量
+	h.hpMax = h.config.HpMax
+	h.monaMax = h.config.Mona
+
+	h.AddHp(0)
+	h.AddMona(0)
 }

@@ -7,7 +7,7 @@ import (
 
 // 预备阶段
 func (h *Hero) PreBegin() {
-	h.NewCountDown(120)
+	h.NewCountDown(define.BattleTime)
 	h.DrawForPreBegin(4)
 }
 
@@ -37,7 +37,11 @@ func (h *Hero) RoundBegin() {
 	h.TrickRoundBegin()
 
 	// 设置时间
-	h.NewCountDown(120)
+	bt := define.BattleTime
+	for _, v := range h.GetBattle().GetEventCards("OnNRGetBattleTime") {
+		bt = v.OnNRGetBattleTime(bt)
+	}
+	h.NewCountDown(bt)
 }
 
 // 回合结束
