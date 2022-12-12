@@ -825,4 +825,18 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		ReleaseFilter: define.CardReleaseFilterEnemyBattle,
 		CanCarry:      true,
 	},
+	64: &CardConfig{
+		Id:       64,
+		Name:     "Buff",
+		Desc:     "我的回合结束时消散和消灭宿主（挂载英雄上就会消灭英雄！）",
+		Ctype:    define.CardTypeBuff,
+		CanCarry: false,
+	},
+	65: &CardConfig{
+		Id:       65,
+		Name:     "Buff",
+		Desc:     "我的回合开始时消散和消灭宿主（挂载英雄上就会消灭英雄！）",
+		Ctype:    define.CardTypeBuff,
+		CanCarry: false,
+	},
 }

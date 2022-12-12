@@ -94,10 +94,13 @@ type IHero interface {
 	DeleteSecret(ICard, bool)                          // 删除奥秘
 	GetTraits() []define.CardTraits                    // 获得特质
 	IsHaveTraits(define.CardTraits) bool               // 是否有某种特质
+	NewCountDown(int)                                  // 一个新的倒计时
+	CloseCountDown()                                   // 关闭我的倒计时
 
-	PreBegin()   // 预备阶段
-	RoundBegin() // 回合开始
-	RoundEnd()   // 回合结束
+	PreBegin()    // 预备阶段
+	RoundBegin()  // 回合开始
+	RoundEnd()    // 回合结束
+	FixRoundEnd() // 强制回合结束
 
 	TrickBattleBegin()                              // 触发战斗开始事件
 	TrickGetCardEvent(ICard)                        // 触发抽卡事件

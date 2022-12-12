@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/name5566/leaf/gate"
 )
@@ -42,6 +43,7 @@ type Hero struct {
 	maxHandCardsNum  int                // 手牌上限数量
 	fatigue          int                // 疲劳伤害
 	releaseCardTimes int                // 本回合出牌次数
+	timer            *time.Timer        // 定时
 }
 
 func (h *Hero) NewPoint() iface.IHero {
@@ -270,7 +272,7 @@ func (h *Hero) GetBattleCardsByIds(ids []int) []iface.ICard {
 // 获得英雄攻击力
 func (h *Hero) GetDamage() int {
 
-	d := 0
+	d := h.damage
 	w := h.GetWeapon()
 	if w != nil {
 		d += w.GetHaveEffectDamage()
@@ -1032,4 +1034,31 @@ func (h *Hero) GetTraits() []define.CardTraits {
 // 是否拥有某种特质
 func (h *Hero) IsHaveTraits(ct define.CardTraits) bool {
 	return help.InArray(ct, h.GetTraits())
+}
+
+// 一个新的倒计时
+func (h *Hero) NewCountDown(second int) {
+
+	oldTimer := h.timer
+	if oldTimer != nil {
+		oldTimer.Stop()
+	}
+
+	nTimer := time.NewTimer(time.Duration(second) * time.Second)
+	h.timer = nTimer
+
+	go func(h *Hero) {
+		<-nTimer.C
+		h.FixRoundEnd()
+	}(h)
+}
+
+// 关闭倒计时
+func (h *Hero) CloseCountDown() {
+	if h.timer == nil {
+		return
+	}
+
+	h.timer.Stop()
+	h.timer = nil
 }

@@ -475,7 +475,7 @@ func (c *Card20) NewPoint() iface.ICard {
 	return &Card20{}
 }
 
-// buff - 你的回合结束时消散
+// buff - 我的回合结束时消散
 type Card21 struct {
 	bcard.Card
 }
@@ -520,7 +520,7 @@ func (c *Card21) ClearBuff() {
 	}
 }
 
-// buff - 你的回合开始时消散
+// buff - 我的回合开始时消散
 type Card22 struct {
 	bcard.Card
 }
@@ -1412,5 +1412,104 @@ func (c *Card63) OnRelease(choiceId, bidx int, rc iface.ICard, rh iface.IHero) {
 	if rc != nil {
 		h.CaptureCard(rc, -1)
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"夺取了"+push.GetCardLogString(rc))
+	}
+}
+
+// buff - 我的回合结束时消灭宿主和自己
+type Card64 struct {
+	bcard.Card
+}
+
+func (c *Card64) NewPoint() iface.ICard {
+	return &Card64{}
+}
+
+func (c *Card64) OnInit() {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundEnd")
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherDie")
+}
+
+func (c *Card64) OnNROtherDie(oc iface.ICard) {
+	if c.GetFatherCard() != nil && oc.GetId() == c.GetFatherCard().GetId() {
+		c.ClearBuff()
+	}
+}
+
+func (c *Card64) OnNRRoundEnd() {
+
+	fc := c.GetFatherCard()
+	if fc != nil && fc.GetNoLoopOwner().GetId() == fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+		c.ClearBuff()
+
+		if fc.GetCardInCardsPos() == define.InCardsTypeBattle {
+			fc.GetOwner().DieCard(fc, false)
+		}
+		return
+	}
+
+	fh := c.GetFatherHero()
+	if fh != nil && fh.GetId() == fh.GetBattle().GetRoundHero().GetId() {
+		c.ClearBuff()
+		fh.Die()
+		return
+	}
+}
+
+func (c *Card64) ClearBuff() {
+
+	f := c.GetFather()
+	if f != nil {
+		f.RemoveSubCards(c)
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherDie")
+	}
+}
+
+// buff - 我的回合开始时消灭宿主和自己
+type Card65 struct {
+	bcard.Card
+}
+
+func (c *Card65) NewPoint() iface.ICard {
+	return &Card65{}
+}
+
+func (c *Card65) OnInit() {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundBegin")
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherDie")
+}
+
+func (c *Card65) OnNROtherDie(oc iface.ICard) {
+	if c.GetFatherCard() != nil && oc.GetId() == c.GetFatherCard().GetId() {
+		c.ClearBuff()
+	}
+}
+
+func (c *Card65) OnNRRoundBegin() {
+
+	fc := c.GetFatherCard()
+	if fc != nil && fc.GetNoLoopOwner().GetId() == fc.GetOwner().GetBattle().GetRoundHero().GetId() {
+		c.ClearBuff()
+
+		if fc.GetCardInCardsPos() == define.InCardsTypeBattle {
+			fc.GetOwner().DieCard(fc, false)
+		}
+		return
+	}
+
+	fh := c.GetFatherHero()
+	if fh != nil && fh.GetId() == fh.GetBattle().GetRoundHero().GetId() {
+		c.ClearBuff()
+		fh.Die()
+		return
+	}
+}
+
+func (c *Card65) ClearBuff() {
+	f := c.GetFather()
+	if f != nil {
+		f.RemoveSubCards(c)
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundBegin")
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherDie")
 	}
 }

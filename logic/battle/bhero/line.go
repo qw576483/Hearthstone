@@ -1,7 +1,13 @@
 package bhero
 
+import (
+	"hs/logic/define"
+	"hs/logic/push"
+)
+
 // 预备阶段
 func (h *Hero) PreBegin() {
+	h.NewCountDown(120)
 	h.DrawForPreBegin(4)
 }
 
@@ -29,10 +35,26 @@ func (h *Hero) RoundBegin() {
 	// 抽卡
 	h.DrawByTimes(1)
 	h.TrickRoundBegin()
+
+	// 设置时间
+	h.NewCountDown(120)
 }
 
 // 回合结束
 func (h *Hero) RoundEnd() {
-
+	h.CloseCountDown()
 	h.TrickRoundEnd()
+}
+
+// 立即结束回合
+func (h *Hero) FixRoundEnd() {
+
+	push.PushAutoLog(h, "超时！强制结束回合！")
+	b := h.GetBattle()
+
+	if b.GetBattleStatus() == define.BattleStatusPre {
+		b.PlayerChangePreCards(h.GetId(), make([]int, 0))
+	} else if b.GetBattleStatus() == define.BattleStatusRun {
+		b.PlayerRoundEnd(h.GetId())
+	}
 }
