@@ -60,9 +60,9 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid int) error {
 	}
 
 	// 拼接
-	rc := h.GetCardById(rcid)
+	rc := h.GetCanSelectCardId(rcid)
 	if rc == nil {
-		rc = h.GetEnemy().GetCardById(rcid)
+		rc = h.GetEnemy().GetCanSelectCardId(rcid)
 	}
 
 	if err := b.checkCanRelease(c, rcid, rc); err != nil {
@@ -112,9 +112,9 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid int) error {
 		return errors.New("法力不足")
 	}
 
-	rc := h.GetCardById(rcid)
+	rc := h.GetCanSelectCardId(rcid)
 	if rc == nil {
-		rc = h.GetEnemy().GetCardById(rcid)
+		rc = h.GetEnemy().GetCanSelectCardId(rcid)
 	}
 
 	if err := b.checkCanRelease(c, rcid, rc); err != nil {
@@ -142,7 +142,7 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid int) error {
 	}
 
 	h := b.GetHeroByIncrId(hid)
-	c := h.GetCardById(cid)
+	c := h.GetCanSelectCardId(cid)
 	if c == nil {
 		return errors.New("没有找到此卡牌")
 	}
@@ -168,7 +168,7 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid int) error {
 		return errors.New("必须先攻击拥有嘲讽的卡牌")
 	}
 
-	ec := h.GetEnemy().GetCardById(ecid)
+	ec := h.GetEnemy().GetCanSelectCardId(ecid)
 	if err := b.checkCanAttack(ecid, ec); err != nil {
 		return err
 	}

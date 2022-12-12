@@ -240,10 +240,7 @@ func (h *Hero) GetBothAllCards() []iface.ICard {
 	return append(h.allCards, ecs...)
 }
 
-func (h *Hero) GetCardById(id int) iface.ICard {
-	if h.weapon != nil && h.weapon.GetId() == id {
-		return h.weapon
-	}
+func (h *Hero) GetCanSelectCardId(id int) iface.ICard {
 
 	if h.head != nil && h.head.GetId() == id {
 		return h.head
@@ -503,7 +500,12 @@ func (h *Hero) DiscardCard(c iface.ICard) {
 // 卡牌死亡
 func (h *Hero) DieCard(c iface.ICard, immediatelyDie bool) {
 
-	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡")
+	if c.GetType() == define.CardTypeEntourage {
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡")
+	} else if c.GetType() == define.CardTypeHero {
+		h.Die()
+		return
+	}
 
 	// 如果在身上或者在场上触发死亡效果
 	if c.GetCardInCardsPos() == define.InCardsTypeBattle || c.GetCardInCardsPos() == define.InCardsTypeBody {
