@@ -5,9 +5,12 @@ Hearthstone by golang
 
 ## 使用
 
-server:`go run main.go`
+server：
+- 根目录运行`go run main.go`
+- (或者)clone代码，启动`hs.exe`
 
-client:打开2个`client/client.html`
+client
+- 打开2个`client/client.html`
 
 ## 概览
 
