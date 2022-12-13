@@ -14,7 +14,7 @@
         <form onsubmit="return false;" id="JoinRoom">
             房间号：<input type="text" id="JoinRoom_RoomId">
             <br />
-            英雄：<input type="text" id="JoinRoom_HeroId" value="0"> 0贼,1术,2猎,3萨,4骑,5德,6法,7牧,8战
+            英雄：<input type="text" id="JoinRoom_HeroId" value="0"> 0贼,1术,2猎,3萨,4骑,5德,6法,7牧,8战 (目前英雄可带全职业卡牌，方便测试)
             <br />
             牌组：<textarea id="JoinRoom_CardIds" cols="100" rows="1">1,1,2,2,3,3,4,4,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15</textarea>
             <!-- 2,2,23,23 -->
@@ -327,17 +327,21 @@
             CardIds:JoinRoom_CardIds
         }))
     
-        $("#JoinRoomDiv").hide()
-        $("#waitEnemy").show()
     }
 
     function lineChange(msg){
+        if(msg.Line == 999){
+            $("#JoinRoomDiv").hide()
+            $("#waitEnemy").show()
+        }
+
         if(msg.Line == 0){
             $("#waitEnemy").hide()
             $("#battleField").show()
         }
 
         if(msg.Line == 1){
+            $("#waitEnemy").hide()
             $("#tField").html("");
         }
     }

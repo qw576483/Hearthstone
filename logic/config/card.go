@@ -42,6 +42,9 @@ func MakeCardVocation(vocations ...define.Vocation) []define.Vocation {
 
 // 获得配置
 func GetCardConfig(configId int) *CardConfig {
+	if configId >= len(defineCardConfig) {
+		return nil
+	}
 	return defineCardConfig[configId]
 }
 

@@ -6,6 +6,7 @@ import (
 	"hs/logic/battle/bhero"
 	"hs/logic/config"
 	"hs/logic/iface"
+	"hs/logic/push"
 )
 
 type Room struct {
@@ -31,6 +32,10 @@ func (r *Room) AddToRoom(p iface.IPlayer) error {
 
 	p.SetRoomId(r.id)
 	r.players = append(r.players, p)
+
+	p.GetGateAgent().WriteMsg(&push.LineMsg{
+		Line: 999,
+	})
 
 	r.Begin()
 

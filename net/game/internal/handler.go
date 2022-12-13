@@ -62,20 +62,32 @@ func handleJoinRoom(args []interface{}) {
 	var cardIds []int = make([]int, 0)
 	cardIdsString := strings.Split(m.CardIds, ",")
 
+	// 检查携带是否有效
 	for _, v := range cardIdsString {
 		id, err := strconv.Atoi(v)
 		if err == nil {
 			cardIds = append(cardIds, id)
 
-			// cc := config.GetCardConfig(id)
-			// if !cc.CanCarry {
-			// 	a.WriteMsg(&push.ErrorMsg{
-			// 		Error: "存在不能携带的卡牌:" + strconv.Itoa(id),
-			// 	})
-			// 	return
-			// }
+			cc := config.GetCardConfig(id)
+			if cc == nil || !cc.CanCarry {
+				a.WriteMsg(&push.ErrorMsg{
+					Error: "存在不能携带的卡牌:" + strconv.Itoa(id),
+				})
+				return
+			}
+
 		}
 	}
+
+	hc := config.GetHeroConfig(m.HeroId)
+	if hc == nil || !hc.CanCarry {
+		a.WriteMsg(&push.ErrorMsg{
+			Error: "英雄不存在:" + strconv.Itoa(m.HeroId),
+		})
+		return
+	}
+
+	// =========
 
 	p := player.GetPlayerList().GetPlayer(a)
 	p.SetHc(m.HeroId, cardIds)

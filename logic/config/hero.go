@@ -12,10 +12,14 @@ type HeroConfig struct {
 	MonaMax     int             // 最大能量
 	Shield      int             // 护盾
 	HeroSkillId int             // 技能
+	CanCarry    bool            // 是否能携带
 }
 
 // 获得配置
 func GetHeroConfig(configId int) *HeroConfig {
+	if configId >= len(defineCardConfig) {
+		return nil
+	}
 	return defineHeroConfig[configId]
 }
 
@@ -30,6 +34,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 26,
+		CanCarry:    true,
 	},
 	1: &HeroConfig{
 		Id:          1,
@@ -41,6 +46,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 45,
+		CanCarry:    true,
 	},
 	2: &HeroConfig{
 		Id:          2,
@@ -52,6 +58,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 46,
+		CanCarry:    true,
 	},
 	3: &HeroConfig{
 		Id:          3,
@@ -63,6 +70,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 47,
+		CanCarry:    true,
 	},
 	4: &HeroConfig{
 		Id:          4,
@@ -74,6 +82,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 53,
+		CanCarry:    true,
 	},
 	5: &HeroConfig{
 		Id:          5,
@@ -85,6 +94,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 55,
+		CanCarry:    true,
 	},
 	6: &HeroConfig{
 		Id:          6,
@@ -96,6 +106,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 56,
+		CanCarry:    true,
 	},
 	7: &HeroConfig{
 		Id:          7,
@@ -107,6 +118,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 57,
+		CanCarry:    true,
 	},
 	8: &HeroConfig{
 		Id:          8,
@@ -118,6 +130,7 @@ var defineHeroConfig []*HeroConfig = []*HeroConfig{
 		MonaMax:     10,
 		Shield:      0,
 		HeroSkillId: 58,
+		CanCarry:    true,
 	},
 	9: &HeroConfig{
 		Id:          9,
