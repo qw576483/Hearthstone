@@ -708,17 +708,19 @@ func (c *Card32) NewPoint() iface.ICard {
 
 func (c *Card32) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
+	if rc == nil {
+		return
+	}
 	if choiceId == 0 {
 		rc.CostHp(2)
 		push.PushAutoLog(c.GetOwner(), "[抉择1]"+push.GetCardLogString(c)+"对"+push.GetCardLogString(rc)+"造成了2点伤害")
 	} else {
-		if rc != nil {
-			if rc.GetCardInCardsPos() == define.InCardsTypeHead {
-				return
-			}
-			rc.Silent()
-			push.PushAutoLog(c.GetOwner(), "[抉择2]"+push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(rc))
+
+		if rc.GetCardInCardsPos() == define.InCardsTypeHead {
+			return
 		}
+		rc.Silent()
+		push.PushAutoLog(c.GetOwner(), "[抉择2]"+push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(rc))
 	}
 }
 
@@ -733,8 +735,11 @@ func (c *Card33) NewPoint() iface.ICard {
 
 func (c *Card33) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
+	if rc == nil {
+		return
+	}
 	h := c.GetOwner()
-	if rc != nil && rc.GetOwner().GetId() == h.GetId() {
+	if rc.GetOwner().GetId() == h.GetId() {
 		h.MoveToHand(rc)
 		push.PushAutoLog(h, push.GetCardLogString(c)+"将"+push.GetCardLogString(rc)+"移动回手牌")
 	}
