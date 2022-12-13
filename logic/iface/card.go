@@ -86,6 +86,7 @@ type ICard interface {
 	OnAfterDisCard()            // 卡牌丢弃后
 	OnGetMona(int) int          // 获取自己的费用时，输入mona ,输出新mona
 	OnGetDamage(int) int        // 获取自己的攻击力时，输入damage ,输出新damage
+	OnSilent()                  // 被沉默后
 
 	// 注册事件 - 实现前需要注册
 	OnNRGetBattleTime(int) int                         // 获得战斗时间 ， 输入战斗时间，返回新的战斗时间

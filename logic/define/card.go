@@ -45,6 +45,7 @@ const (
 	CardTraitsChoice                           // 抉择
 	CardTraitsImmune                           // 免疫
 	CardTraitsLockMona                         // 过载
+	CardTraitsMagicImmunity                    // 魔法免疫
 )
 
 // 卡牌种族

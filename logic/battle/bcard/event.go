@@ -22,6 +22,7 @@ func (c *Card) OnDie()                                        {}
 func (c *Card) OnAfterDisCard()                               {}
 func (c *Card) OnGetMona(m int) int                           { return m }
 func (c *Card) OnGetDamage(d int) int                         { return d }
+func (c *Card) OnSilent()                                     {}
 
 func (C *Card) OnNRGetBattleTime(bt int) int { return bt }
 func (c *Card) OnNRRoundBegin()              {}

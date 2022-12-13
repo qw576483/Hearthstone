@@ -52,7 +52,7 @@ type IHero interface {
 	SetWeapon(ICard)                            // 设置武器
 	GetWeapon() ICard                           // 获得当前武器
 	GiveNewCardToHand(int) ICard                // 给一个新卡牌到手上
-	MoveToHand(ICard)                           // 添加到手牌
+	MoveToHand(ICard) bool                      // 添加到手牌
 	MoveOutHandOnlyHandCards(ICard)             // 撤出手牌
 	MoveToBattle(ICard, int)                    // 布入战场
 	MoveOutBattleOnlyBattleCards(ICard) int     // 移出战场

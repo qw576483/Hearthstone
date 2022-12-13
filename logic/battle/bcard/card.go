@@ -652,6 +652,8 @@ func (c *Card) Silent() {
 	c.ApDamage = 0
 
 	c.SilentSign = true
+
+	c.GetRealization().OnSilent()
 }
 
 // 是否被沉默

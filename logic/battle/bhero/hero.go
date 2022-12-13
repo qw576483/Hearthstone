@@ -379,12 +379,12 @@ func (h *Hero) GiveNewCardToHand(configId int) iface.ICard {
 }
 
 // 添加到手牌
-func (h *Hero) MoveToHand(c iface.ICard) {
+func (h *Hero) MoveToHand(c iface.ICard) bool {
 
 	if len(h.handCards) >= h.GetMaxHandCardsNum() {
 		push.PushAutoLog(h, "手牌满了")
 		h.DieCard(c, false)
-		return
+		return false
 	}
 
 	// 如果从战场中移回手牌，需要还原数据
@@ -399,6 +399,8 @@ func (h *Hero) MoveToHand(c iface.ICard) {
 
 	// 触发得到事件
 	h.TrickGetCardEvent(c)
+
+	return true
 }
 
 // 移除手牌

@@ -8,3 +8,8 @@ var BuffCardId_Forever = 23               // buffId ,永久生效
 
 var ShamanHeroSkillBaseTotemsIds = []int{48, 49, 50, 51, 52} // 图腾列表
 var PaladinHeroSkillSilverHandRecruit = 54                   // 白银新手id
+
+var LittleDragonId = 73
+
+var YseraId = 77
+var YseraDreamIds = []int{78, 79, 80, 81, 82}

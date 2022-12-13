@@ -16,6 +16,10 @@ func (b *Battle) checkCanRelease(c iface.ICard, rcid int, rc iface.ICard) error 
 		if c.GetOwner().GetId() != rc.GetOwner().GetId() && rc.IsHaveTraits(define.CardTraitsSneak) {
 			return errors.New("目标在潜行")
 		}
+
+		if (c.GetType() == define.CardTypeSorcery || c.GetType() == define.CardTypeHeroSkill) && rc.IsHaveTraits(define.CardTraitsMagicImmunity) {
+			return errors.New("目标魔法免疫")
+		}
 	}
 
 	conf := c.GetConfig()

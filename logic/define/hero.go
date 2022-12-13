@@ -15,6 +15,6 @@ const (
 	VocationWarrior                 // 战士
 )
 
-var MaxBattleNum = 8
+var MaxBattleNum = 7
 
 var HeroId = 71
