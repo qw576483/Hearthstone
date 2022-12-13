@@ -49,9 +49,26 @@ func handleHello(args []interface{}) {
 
 func handleGetCardsConfig(args []interface{}) {
 	a := args[1].(gate.Agent)
-	a.WriteMsg(&push.CardsConfigMsg{
-		Configs: config.GetAllCardConfig(),
-	})
+
+	// allConfig :=
+	cacheConfig := make([]*config.CardConfig, 0)
+
+	for _, v := range config.GetAllCardConfig() {
+		cacheConfig = append(cacheConfig, v)
+		if len(cacheConfig) >= 50 {
+			a.WriteMsg(&push.CardsConfigMsg{
+				Configs: cacheConfig,
+			})
+
+			cacheConfig = make([]*config.CardConfig, 0)
+		}
+	}
+
+	if len(cacheConfig) >= 1 {
+		a.WriteMsg(&push.CardsConfigMsg{
+			Configs: cacheConfig,
+		})
+	}
 }
 
 func handleJoinRoom(args []interface{}) {

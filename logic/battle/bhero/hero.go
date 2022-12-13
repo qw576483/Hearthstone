@@ -502,6 +502,8 @@ func (h *Hero) DieCard(c iface.ICard, immediatelyDie bool) {
 
 	if c.GetType() == define.CardTypeEntourage {
 		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡")
+	} else if c.GetType() == define.CardTypeWeapon {
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"破碎")
 	} else if c.GetType() == define.CardTypeHero {
 		h.Die()
 		return
@@ -613,7 +615,7 @@ func (h *Hero) DrawByTimes(t int) {
 			h.GetHead().CostHp(f + 1)
 
 			push.PushAutoLog(h, "牌库没有牌了！受到了疲劳伤害"+strconv.Itoa(f+1))
-			return
+			continue
 		}
 
 		// 随机一张卡

@@ -6,10 +6,13 @@ var BuffCardId_MyRoundBeginClear = 22     // buffId ,我的回合开始清除效
 var BuffCardId_MyRoundBeginFatherDie = 65 // buffId ,我的回合开始时消灭宿主和自己 , 如果挂载英雄即便是英雄也会死亡
 var BuffCardId_Forever = 23               // buffId ,永久生效
 
-var ShamanHeroSkillBaseTotemsIds = []int{48, 49, 50, 51, 52} // 图腾列表
-var PaladinHeroSkillSilverHandRecruit = 54                   // 白银新手id
+var ShamanBaseTotemsIds = []int{48, 49, 50, 51, 52} // 图腾列表
+var SilverHandRecruitId = 54                        // 白银新手id
 
-var LittleDragonId = 73
+var LittleDragonId = 73 // 雏龙id
 
-var YseraId = 77
-var YseraDreamIds = []int{78, 79, 80, 81, 82}
+var YseraId = 77                              // 伊瑟拉id
+var YseraDreamIds = []int{78, 79, 80, 81, 82} // 伊瑟拉梦境卡列表
+
+var TreantId = 89      // 树人id
+var TreantTauntId = 90 // 树人id（有嘲讽）
