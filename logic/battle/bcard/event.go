@@ -11,6 +11,8 @@ func (c *Card) OnBattleBegin()                                {}
 func (c *Card) OnGet()                                        {}
 func (c *Card) OnPutToBattle(pix int)                         {}
 func (c *Card) OnOutBattle()                                  {}
+func (c *Card) OnBeforeAttack(ec iface.ICard) iface.ICard     { return ec }
+func (c *Card) OnAfterAttack(ec iface.ICard)                  {}
 func (c *Card) OnRelease(choiceId, bidx int, rc iface.ICard)  {}
 func (c *Card) OnRelease2(choiceId, bidx int, rc iface.ICard) {}
 func (c *Card) OnHonorAnnihilate()                            {}

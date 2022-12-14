@@ -78,8 +78,34 @@ func (h *Hero) TrickOutBattleEvent(c iface.ICard) {
 	h.GetBattle().WhileTrickCardDie()
 }
 
+// 触发攻击前事件
+func (h *Hero) TrickBeforeAttackEvent(c, ec iface.ICard) iface.ICard {
+
+	if c.GetType() == define.CardTypeHero && h.GetWeapon() != nil && !h.GetWeapon().IsSilent() {
+		ec = c.OnBeforeAttack(ec)
+	}
+
+	if c.GetType() == define.CardTypeEntourage && !c.IsSilent() {
+		ec = c.OnBeforeAttack(ec)
+	}
+
+	for _, v := range h.GetBattle().GetEventCards("OnNROtherBeforeAttack") {
+		ec = v.OnNROtherBeforeAttack(c, ec)
+	}
+
+	return ec
+}
+
 // 触发攻击后事件
 func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, trueCostHp int) {
+
+	if c.GetType() == define.CardTypeHero && c.GetOwner().GetWeapon() != nil && !c.GetOwner().GetWeapon().IsSilent() {
+		c.OnAfterAttack(ec)
+	}
+
+	if c.GetType() == define.CardTypeEntourage && !c.IsSilent() {
+		c.OnAfterAttack(ec)
+	}
 
 	// 攻击者事件
 	if trueCostHp > 0 {

@@ -2,6 +2,7 @@ package cards
 
 import (
 	"hs/logic/config"
+	"hs/logic/define"
 	"hs/logic/help"
 	"hs/logic/iface"
 	"math/rand"
@@ -162,6 +163,23 @@ func (cf *CardFact) ScreenCards(op []iface.ICard, scp *iface.ScreenCardParam) []
 
 	endCardRaces:
 
+		if scp.CardVocations != nil {
+
+			for _, v2 := range v.GetConfig().Vocation {
+				if help.InArray(v2, scp.CardVocations) {
+					goto endCardVocations
+				}
+			}
+
+			if help.InArray(define.VocationNeutral, scp.CardVocations) && len(v.GetConfig().Vocation) <= 0 {
+				goto endCardVocations
+			}
+
+			continue
+		}
+
+	endCardVocations:
+
 		pool = append(pool, v)
 	}
 
@@ -188,6 +206,12 @@ func GetScpKey(scp *iface.ScreenCardParam) string {
 		str += "0_"
 	}
 
+	if scp.CardQuality != nil {
+		str += help.Implode(",", scp.CardQuality) + "_"
+	} else {
+		str += "0_"
+	}
+
 	if scp.CardTraits != nil {
 		str += help.Implode(",", scp.CardTraits) + "_"
 	} else {
@@ -200,8 +224,8 @@ func GetScpKey(scp *iface.ScreenCardParam) string {
 		str += "0_"
 	}
 
-	if scp.CardQuality != nil {
-		str += help.Implode(",", scp.CardQuality) + "_"
+	if scp.CardVocations != nil {
+		str += help.Implode(",", scp.CardVocations) + "_"
 	} else {
 		str += "0_"
 	}

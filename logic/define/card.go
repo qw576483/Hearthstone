@@ -46,6 +46,7 @@ const (
 	CardTraitsImmune                           // 免疫
 	CardTraitsLockMona                         // 过载
 	CardTraitsMagicImmunity                    // 魔法免疫
+	CardTraitsBattlefury                       // 狂战斧
 )
 
 // 卡牌种族

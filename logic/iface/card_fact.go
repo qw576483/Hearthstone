@@ -23,12 +23,13 @@ func GetCardFact() ICardFact {
 
 // 随机卡牌参数
 type ScreenCardParam struct {
-	Mona        int
-	CardSerices []define.CardSeries
-	CardTypes   []define.CardType
-	CardTraits  []define.CardTraits
-	CardRaces   []define.CardRace
-	CardQuality []define.CardQuality
+	Mona          int
+	CardSerices   []define.CardSeries
+	CardTypes     []define.CardType
+	CardTraits    []define.CardTraits
+	CardRaces     []define.CardRace
+	CardQuality   []define.CardQuality
+	CardVocations []define.Vocation
 }
 
 type RandCardOption func(*ScreenCardParam)
@@ -82,6 +83,13 @@ func SCPWithCardRace(cr []define.CardRace) RandCardOption {
 func SCPWithCardQuality(cr []define.CardQuality) RandCardOption {
 	return func(q *ScreenCardParam) {
 		q.CardQuality = cr
+	}
+}
+
+// 筛选卡牌职业
+func SCPWithCardVocations(cr []define.Vocation) RandCardOption {
+	return func(q *ScreenCardParam) {
+		q.CardVocations = cr
 	}
 }
 

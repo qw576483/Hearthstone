@@ -34,7 +34,6 @@ type IHero interface {
 	GetBattleCardsByIds([]int) []ICard          // 获得战场上的卡牌
 	GetBattleCardsTraitsTauntCardIds() []int    // 获得战场上有嘲讽的卡牌ids
 	GetCanSelectCardId(int) ICard               // 获得卡牌根据id
-	GetCardIdx(ICard, []ICard) int              // 获得卡牌的位置
 	AppendToAllCards(ICard)                     // 添加到全部卡牌
 	GetAllCards() []ICard                       // 获得全部卡牌
 	GetBothAllCards() []ICard                   // 获得全部卡牌
@@ -89,14 +88,15 @@ type IHero interface {
 	RoundEnd()    // 回合结束
 	FixRoundEnd() // 强制回合结束
 
-	TrickBattleBegin()                       // 触发战斗开始事件
-	TrickGetCardEvent(ICard)                 // 触发抽卡事件
-	TrickRelease(ICard, int, int, ICard)     // 触发战吼
-	TrickRelease2(ICard, int, int, ICard)    // 触发战吼
-	TrickRoundBegin()                        // 触发回合开始事件
-	TrickRoundEnd()                          // 触发回合结束事件
-	TrickPutToBattleEvent(ICard, int)        // 触发步入战场事件
-	TrickOutBattleEvent(ICard)               // 触发离开战场事件
-	TrickAfterAttackEvent(ICard, ICard, int) // 触发攻击后事件
-	TrickDieCardEvent(ICard)                 // 触发死亡事件
+	TrickBattleBegin()                         // 触发战斗开始事件
+	TrickGetCardEvent(ICard)                   // 触发抽卡事件
+	TrickRelease(ICard, int, int, ICard)       // 触发战吼
+	TrickRelease2(ICard, int, int, ICard)      // 触发战吼
+	TrickRoundBegin()                          // 触发回合开始事件
+	TrickRoundEnd()                            // 触发回合结束事件
+	TrickPutToBattleEvent(ICard, int)          // 触发步入战场事件
+	TrickOutBattleEvent(ICard)                 // 触发离开战场事件
+	TrickBeforeAttackEvent(ICard, ICard) ICard // 触发攻击前事件
+	TrickAfterAttackEvent(ICard, ICard, int)   // 触发攻击后事件
+	TrickDieCardEvent(ICard)                   // 触发死亡事件
 }

@@ -367,8 +367,8 @@ func (c *Card17) OnNROtherGetDamage(oc iface.ICard) int {
 		return 0
 	}
 
-	cIdx := h.GetCardIdx(c, h.GetBattleCards())
-	ocIdx := h.GetCardIdx(oc, h.GetBattleCards())
+	cIdx := h.GetIdxByCards(c, h.GetBattleCards())
+	ocIdx := h.GetIdxByCards(oc, h.GetBattleCards())
 
 	if cIdx != -1 && ocIdx != -1 && (math.Abs(float64(cIdx)-float64(ocIdx)) == 1) {
 		return 2
@@ -979,7 +979,7 @@ func (c *Card43) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	h := c.GetOwner()
 	rch := rc.GetOwner()
 
-	rcbidx := h.GetCardIdx(rc, rch.GetBattleCards())
+	rcbidx := h.GetIdxByCards(rc, rch.GetBattleCards())
 	rch.MoveOutBattleOnlyBattleCards(rc)
 
 	var nc iface.ICard
@@ -1592,7 +1592,7 @@ func (c *Card72) OnRelease2(choiceId, bidx int, rc iface.ICard) {
 			return
 		}
 
-		bidx = h.GetCardIdx(c, h.GetBattleCards())
+		bidx = h.GetIdxByCards(c, h.GetBattleCards())
 
 		nc := iface.GetCardFact().GetCard(define.LittleDragonId)
 		nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
@@ -1983,7 +1983,7 @@ func (c *Card88) OnRelease2(choiceId, bidx int, rc iface.ICard) {
 				return
 			}
 
-			bidx = h.GetCardIdx(c, h.GetBattleCards())
+			bidx = h.GetIdxByCards(c, h.GetBattleCards())
 
 			nc := iface.GetCardFact().GetCard(define.TreantTauntId)
 			nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
@@ -2166,4 +2166,50 @@ func (c *Card97) OnNRRoundEnd() {
 		ec.CostHp(8)
 		push.PushAutoLog(h, push.GetCardLogString(c)+"对"+push.GetCardLogString(ec)+"造成了8点伤害")
 	}
+}
+
+// 被奴役的邪能领主
+type Card98 struct {
+	bcard.Card
+}
+
+func (c *Card98) NewPoint() iface.ICard {
+	return &Card98{}
+}
+
+// 烈焰风暴
+type Card99 struct {
+	bcard.Card
+}
+
+func (c *Card99) NewPoint() iface.ICard {
+	return &Card99{}
+}
+
+func (c *Card99) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	d := h.GetApDamage()
+	d += 5
+
+	for _, v := range h.GetEnemy().GetBattleCards() {
+		v.CostHp(d)
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"对"+push.GetCardLogString(v)+"造成了"+strconv.Itoa(d)+"点伤害")
+	}
+}
+
+// 列王守卫
+type Card100 struct {
+	bcard.Card
+}
+
+func (c *Card100) NewPoint() iface.ICard {
+	return &Card100{}
+}
+
+func (c *Card100) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	h.GetHead().TreatmentHp(6)
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetHeroLogString(h)+"恢复了6点生命")
 }

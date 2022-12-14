@@ -13,6 +13,7 @@ const (
 	VocationMaster                  // 法师
 	VocationPastor                  // 牧师
 	VocationWarrior                 // 战士
+	VocationNeutral                 // 中立
 )
 
 var MaxBattleNum = 7

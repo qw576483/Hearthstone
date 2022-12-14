@@ -204,18 +204,6 @@ func (h *Hero) GetBattleCardsTraitsTauntCardIds() []int {
 	return tsid
 }
 
-// 获得卡牌的位置
-func (h *Hero) GetCardIdx(c iface.ICard, cs []iface.ICard) int {
-
-	for k, v := range cs {
-		if v.GetId() == c.GetId() {
-			return k
-		}
-	}
-
-	return -1
-}
-
 // 添加到全部卡牌
 func (h *Hero) AppendToAllCards(c iface.ICard) {
 	for _, v := range h.allCards {
@@ -732,10 +720,7 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 	}
 
 	// 攻击前
-	for _, v := range h.GetBattle().GetEventCards("OnNROtherBeforeAttack") {
-		ec = v.OnNROtherBeforeAttack(c, ec)
-	}
-
+	ec = h.TrickBeforeAttackEvent(c, ec)
 	if ec == nil {
 		return nil
 	}
@@ -746,12 +731,50 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 	dmg := c.GetHaveEffectDamage()
 	dmg2 := ec.GetHaveEffectDamage()
 
+	// 是否有狂战斧
+	var ec3 iface.ICard
+	var dmg3 int
+
+	var ec4 iface.ICard
+	var dmg4 int
+	if (c.GetType() == define.CardTypeEntourage && c.IsHaveTraits(define.CardTraitsBattlefury)) ||
+		(c.GetType() == define.CardTypeHero && h.GetWeapon() != nil && h.GetWeapon().IsHaveTraits(define.CardTraitsBattlefury)) {
+
+		// 对方不是英雄
+		if ec.GetType() != define.CardTypeHero {
+
+			eh := ec.GetOwner()
+			bcs := eh.GetBattleCards()
+
+			ecIdx := eh.GetIdxByCards(ec, bcs)
+
+			if (ecIdx - 1) >= 0 {
+				ec3 = bcs[ecIdx-1]
+			}
+			if (ecIdx + 1) < len(bcs) {
+				ec4 = bcs[ecIdx+1]
+			}
+		}
+	}
+
 	// logs
-	push.PushAutoLog(h, push.GetCardLogString(c)+" 对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
+	push.PushAutoLog(h, push.GetCardLogString(c)+"对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
 	dmg = ec.CostHp(dmg)
 
+	// 狂战斧效果
+	if ec3 != nil {
+		push.PushAutoLog(h, "[狂战斧]"+push.GetCardLogString(c)+"对"+push.GetCardLogString(ec3)+"造成了"+strconv.Itoa(dmg)+"点伤害")
+		dmg3 = ec3.CostHp(dmg)
+	}
+
+	if ec4 != nil {
+		push.PushAutoLog(h, "[狂战斧]"+push.GetCardLogString(c)+"对"+push.GetCardLogString(ec4)+"造成了"+strconv.Itoa(dmg)+"点伤害")
+		dmg4 = ec4.CostHp(dmg)
+	}
+
+	// 反击
 	if dmg2 > 0 && ec.GetType() != define.CardTypeHero {
-		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+" 对"+push.GetCardLogString(c)+"反击"+strconv.Itoa(dmg2)+"点伤害")
+		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+"对"+push.GetCardLogString(c)+"反击"+strconv.Itoa(dmg2)+"点伤害")
 		c.CostHp(dmg2)
 	}
 
@@ -763,6 +786,13 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 
 	// 攻击后
 	h.TrickAfterAttackEvent(c, ec, dmg)
+
+	if ec3 != nil {
+		h.TrickAfterAttackEvent(c, ec, dmg3)
+	}
+	if ec4 != nil {
+		h.TrickAfterAttackEvent(c, ec, dmg4)
+	}
 
 	h.GetBattle().WhileTrickCardDie()
 

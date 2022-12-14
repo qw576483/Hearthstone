@@ -77,6 +77,8 @@ type ICard interface {
 	OnRelease2(int, int, ICard) // 释放时 ， 输入抉择id(0,1)，站位，战吼目标
 	OnPutToBattle(int)          // 步入战场时 ， 输入站位
 	OnOutBattle()               // 离开战场时
+	OnBeforeAttack(ICard) ICard // 攻击前
+	OnAfterAttack(ICard)        // 攻击后
 	OnHonorAnnihilate()         // 荣誉消灭
 	OnOverflowAnnihilate()      // 超杀
 	OnBeforeCostHp(int) int     // 受伤前，输入damage，输出新damage
