@@ -25,11 +25,11 @@ type ICard interface {
 	RemoveTraits(define.CardTraits)           // 删除特质
 	GetShield() int                           // 获得护盾
 	SetShield(int)                            // 设置护盾
-	TreatmentHp(int)                          // 治疗血量
+	TreatmentHp(ICard, int)                   // 治疗血量
 	AddHp(int)                                // 加血
 	AddHpMaxAndHp(int)                        // 加血上限和血
 	SetHpMaxAndHp(int)                        // 设置血上限和血
-	CostHp(int) int                           // 扣除血量(返回值为实际消耗)
+	CostHp(ICard, int) int                    // 扣除血量(返回值为实际消耗)
 	SetHp(int)                                // 设置血量
 	GetHp() int                               // 获得卡牌血量
 	DeleteHpEffect()                          // 删除hp的影响数据
@@ -104,4 +104,8 @@ type ICard interface {
 	OnNROtherGetApDamage(IHero) int                    // 英雄获取自己的法术伤害时 ，输入其他卡牌， 输出的法术伤害加成
 	OnNROtherGetHp(ICard) int                          // 其他卡牌获取自己的血量时 ，输入其他卡牌， 输出血量加成
 	OnNROtherGetTraits(ICard) []define.CardTraits      // 其他卡牌获取自己的特质时 ，输入其他卡牌， 输出特质加成
+	OnNROtherBeforeCostHp(ICard, int) int              // 受伤前，输入攻击者,num，输出新num
+	OnNROtherAfterCostHp(ICard, int)                   // 受伤后，输入攻击者,num
+	OnNROtherBeforeTreatmentHp(ICard, int) int         // 治疗前，输入治疗者,num，输出新num
+	OnNROtherAfterTreatmentHp(ICard, int)              // 治疗后，输入治疗者,num
 }

@@ -411,6 +411,10 @@ func (h *Hero) MoveOutHandOnlyHandCards(card iface.ICard) {
 // 步入战场
 func (h *Hero) MoveToBattle(c iface.ICard, bidx int) {
 
+	if c.GetReleaseRound() == 0 {
+		c.SetReleaseRound(h.GetBattle().GetIncrRoundId())
+	}
+
 	h.MoveOutHandOnlyHandCards(c)
 
 	// 满员了
@@ -600,7 +604,7 @@ func (h *Hero) DrawByTimes(t int) {
 			h.SetFatigue(f + 1)
 
 			// 扣血
-			h.GetHead().CostHp(f + 1)
+			h.GetHead().CostHp(nil, f+1)
 
 			push.PushAutoLog(h, "牌库没有牌了！受到了疲劳伤害"+strconv.Itoa(f+1))
 			continue
@@ -722,6 +726,7 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 	// 攻击前
 	ec = h.TrickBeforeAttackEvent(c, ec)
 	if ec == nil {
+		h.TrickAfterAttackEvent(c, ec, 0)
 		return nil
 	}
 
@@ -758,30 +763,23 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 	}
 
 	// logs
-	push.PushAutoLog(h, push.GetCardLogString(c)+"对"+push.GetCardLogString(ec)+"造成了"+strconv.Itoa(dmg)+"点伤害")
-	dmg = ec.CostHp(dmg)
+	dmg = ec.CostHp(c, dmg)
 
 	// 狂战斧效果
 	if ec3 != nil {
-		push.PushAutoLog(h, "[狂战斧]"+push.GetCardLogString(c)+"对"+push.GetCardLogString(ec3)+"造成了"+strconv.Itoa(dmg)+"点伤害")
-		dmg3 = ec3.CostHp(dmg)
+		push.PushAutoLog(h, "触发狂战斧，分裂目标："+push.GetCardLogString(ec3))
+		dmg3 = ec3.CostHp(c, dmg)
 	}
 
 	if ec4 != nil {
-		push.PushAutoLog(h, "[狂战斧]"+push.GetCardLogString(c)+"对"+push.GetCardLogString(ec4)+"造成了"+strconv.Itoa(dmg)+"点伤害")
-		dmg4 = ec4.CostHp(dmg)
+		push.PushAutoLog(h, "触发狂战斧，分裂目标："+push.GetCardLogString(ec4))
+		dmg4 = ec4.CostHp(c, dmg)
 	}
 
 	// 反击
 	if dmg2 > 0 && ec.GetType() != define.CardTypeHero {
-		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+"对"+push.GetCardLogString(c)+"反击"+strconv.Itoa(dmg2)+"点伤害")
-		c.CostHp(dmg2)
-	}
-
-	if c.GetType() == define.CardTypeHero {
-		if h.GetWeapon() != nil {
-			h.GetWeapon().CostHp(1)
-		}
+		push.PushAutoLog(h.GetEnemy(), push.GetCardLogString(ec)+"反击")
+		c.CostHp(ec, dmg2)
 	}
 
 	// 攻击后
@@ -792,6 +790,12 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 	}
 	if ec4 != nil {
 		h.TrickAfterAttackEvent(c, ec, dmg4)
+	}
+
+	if c.GetType() == define.CardTypeHero {
+		if h.GetWeapon() != nil {
+			h.GetWeapon().CostHp(h.GetWeapon(), 1)
+		}
 	}
 
 	h.GetBattle().WhileTrickCardDie()

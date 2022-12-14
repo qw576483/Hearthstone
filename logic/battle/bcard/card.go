@@ -8,6 +8,7 @@ import (
 	"hs/logic/help"
 	"hs/logic/iface"
 	"hs/logic/push"
+	"strconv"
 )
 
 // 卡牌
@@ -181,7 +182,11 @@ func (c *Card) SetShield(s int) {
 }
 
 // 治疗血量
-func (c *Card) TreatmentHp(num int) {
+func (c *Card) TreatmentHp(who iface.ICard, num int) {
+
+	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherBeforeTreatmentHp") {
+		num = v.OnNROtherBeforeTreatmentHp(who, num)
+	}
 
 	ic := c.GetRealization()
 	oldHp := c.GetHaveEffectHp()
@@ -190,6 +195,10 @@ func (c *Card) TreatmentHp(num int) {
 
 	if c.GetHaveEffectHp() > oldHp && !c.IsSilent() {
 		ic.OnAfterHpChange()
+	}
+
+	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherAfterTreatmentHp") {
+		v.OnNROtherAfterTreatmentHp(who, num)
 	}
 }
 
@@ -214,7 +223,19 @@ func (c *Card) SetHpMaxAndHp(set int) {
 }
 
 // 扣除血量
-func (c *Card) CostHp(num int) int {
+func (c *Card) CostHp(who iface.ICard, num int) int {
+
+	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherBeforeCostHp") {
+		num = v.OnNROtherBeforeCostHp(who, num)
+	}
+
+	if who != nil {
+		if who.GetId() == c.GetId() && c.GetType() == define.CardTypeWeapon {
+			push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"损失了"+strconv.Itoa(num)+"点耐久")
+		} else {
+			push.PushAutoLog(who.GetOwner(), push.GetCardLogString(who)+"对"+push.GetCardLogString(c)+"造成了"+strconv.Itoa(num)+"点伤害")
+		}
+	}
 
 	ic := c.GetRealization()
 
@@ -264,6 +285,10 @@ func (c *Card) CostHp(num int) int {
 	if tcNum > 0 && !c.IsSilent() {
 		ic.OnAfterCostHp()
 		ic.OnAfterHpChange()
+	}
+
+	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherAfterCostHp") {
+		v.OnNROtherAfterCostHp(who, tcNum)
 	}
 
 	if c.Hp <= 0 {
@@ -624,6 +649,8 @@ func (c *Card) Silent() {
 	if c.GetCardInCardsPos() != define.InCardsTypeBattle {
 		return
 	}
+
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"被沉默")
 
 	// 属性，种族
 	c.Traits = make([]define.CardTraits, 0)
