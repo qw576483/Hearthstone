@@ -92,21 +92,21 @@ type ICard interface {
 	OnSilent()                  // 被沉默后
 
 	// 注册事件 - 实现前需要注册
-	OnNRGetBattleTime(int) int                         // 获得战斗时间 ， 输入战斗时间，返回新的战斗时间
-	OnNRRoundBegin()                                   // 回合开始时
-	OnNRRoundEnd()                                     // 回合结束时
-	OnNROtherBeforeRelease(ICard, ICard) (ICard, bool) // 其他卡牌释放前，输入其他卡牌，攻击目标。输出攻击目标，是否生效。
-	OnNROtherAfterRelease(ICard)                       // 其他卡牌释放前，输入其他卡牌
-	OnNROtherBeforeAttack(ICard, ICard) ICard          // 其他卡牌攻击前，输入其他卡牌，攻击目标。输出攻击目标。
-	OnNRPutToBattle(ICard)                             // 其他卡牌步入战场时，输入其他卡牌
-	OnNROtherDie(ICard)                                // 其他卡牌死亡时，输入其他卡牌
-	OnNROtherGetMona(ICard) int                        // 其他卡牌获取自己的费用时，输入其他卡牌， 输出费用加成
-	OnNROtherGetDamage(ICard) int                      // 其他卡牌获取自己的攻击力时 ，输入其他卡牌， 输出攻击加成
-	OnNROtherGetApDamage(IHero) int                    // 英雄获取自己的法术伤害时 ，输入其他卡牌， 输出的法术伤害加成
-	OnNROtherGetHp(ICard) int                          // 其他卡牌获取自己的血量时 ，输入其他卡牌， 输出血量加成
-	OnNROtherGetTraits(ICard) []define.CardTraits      // 其他卡牌获取自己的特质时 ，输入其他卡牌， 输出特质加成
-	OnNROtherBeforeCostHp(ICard, int) int              // 受伤前，输入攻击者,num，输出新num
-	OnNROtherAfterCostHp(ICard, int)                   // 受伤后，输入攻击者,num
-	OnNROtherBeforeTreatmentHp(ICard, int) int         // 治疗前，输入治疗者,num，输出新num
-	OnNROtherAfterTreatmentHp(ICard, int)              // 治疗后，输入治疗者,num
+	OnNRGetBattleTime(int) int                                         // 获得战斗时间 ， 输入战斗时间，返回新的战斗时间
+	OnNRRoundBegin()                                                   // 回合开始时
+	OnNRRoundEnd()                                                     // 回合结束时
+	OnNROtherBeforeRelease(ICard, ICard) (ICard, bool)                 // 其他卡牌释放前，输入其他卡牌，攻击目标。输出攻击目标，是否生效。
+	OnNROtherAfterRelease(ICard)                                       // 其他卡牌释放前，输入其他卡牌
+	OnNROtherBeforeAttack(ICard, ICard) ICard                          // 其他卡牌攻击前，输入其他卡牌，攻击目标。输出攻击目标。
+	OnNRPutToBattle(ICard)                                             // 其他卡牌步入战场时，输入其他卡牌
+	OnNROtherDie(ICard)                                                // 其他卡牌死亡时，输入其他卡牌
+	OnNROtherGetMona(ICard) int                                        // 其他卡牌获取自己的费用时，输入其他卡牌， 输出费用加成
+	OnNROtherGetDamage(ICard) int                                      // 其他卡牌获取自己的攻击力时 ，输入其他卡牌， 输出攻击加成
+	OnNROtherGetApDamage(IHero) int                                    // 英雄获取自己的法术伤害时 ，输入其他卡牌， 输出的法术伤害加成
+	OnNROtherGetHp(ICard) int                                          // 其他卡牌获取自己的血量时 ，输入其他卡牌， 输出血量加成
+	OnNROtherGetTraits(ICard, []define.CardTraits) []define.CardTraits // 其他卡牌获取自己的特质时 ，输入其他卡牌,特质， 输出新特质
+	OnNROtherBeforeCostHp(ICard, int) int                              // 受伤前，输入攻击者,num，输出新num
+	OnNROtherAfterCostHp(ICard, int)                                   // 受伤后，输入攻击者,num
+	OnNROtherBeforeTreatmentHp(ICard, int) int                         // 治疗前，输入治疗者,num，输出新num
+	OnNROtherAfterTreatmentHp(ICard, int)                              // 治疗后，输入治疗者,num
 }

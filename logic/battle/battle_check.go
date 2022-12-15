@@ -8,6 +8,10 @@ import (
 
 func (b *Battle) checkCanRelease(c iface.ICard, rcid int, rc iface.ICard) error {
 
+	if c.GetType() == define.CardTypeEntourage && len(c.GetOwner().GetBattleCards()) >= define.MaxBattleNum {
+		return errors.New("随从满了")
+	}
+
 	if rcid != 0 {
 		if rc == nil {
 			return errors.New("没有找到目标")

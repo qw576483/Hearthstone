@@ -69,6 +69,7 @@ const (
 	CardRaceShadow                      // 暗影
 	CardRaceArcaneSkill                 // 奥术
 	CardRaceIce                         // 冰霜
+	CardRaceNaga                        // 娜迦
 )
 
 // 卡牌系列

@@ -130,12 +130,7 @@ func (c *Card) GetHaveEffectTraits() []define.CardTraits {
 
 	// 获得光环影响
 	for _, v := range ic.GetOwner().GetBattle().GetEventCards("OnNROtherGetTraits") {
-
-		for _, v2 := range v.OnNROtherGetTraits(ic) {
-			if !help.InArray(v2, ts) {
-				ts = append(ts, v2)
-			}
-		}
+		ts = v.OnNROtherGetTraits(ic, ts)
 	}
 
 	return ts

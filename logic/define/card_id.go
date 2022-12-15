@@ -18,3 +18,6 @@ var TreantId = 89      // 树人id
 var TreantTauntId = 90 // 树人id（有嘲讽）
 
 var GelbinMekkatorqueInventionIds = []int{122, 123, 125, 126} // 格尔宾·梅卡托克的发明ids
+
+var EliteTaurenChieftainIds = []int{162, 164, 165}           // 精英牛头人酋长的随机卡牌
+var PowerOfTheHordeIds = []int{166, 167, 168, 169, 170, 137} // 部落的力量随机随从

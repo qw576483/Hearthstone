@@ -85,13 +85,13 @@ func handleJoinRoom(args []interface{}) {
 		if err == nil {
 			cardIds = append(cardIds, id)
 
-			cc := config.GetCardConfig(id)
-			if cc == nil || !cc.CanCarry {
-				a.WriteMsg(&push.ErrorMsg{
-					Error: "存在不能携带的卡牌:" + strconv.Itoa(id),
-				})
-				return
-			}
+			// cc := config.GetCardConfig(id)
+			// if cc == nil || !cc.CanCarry {
+			// 	a.WriteMsg(&push.ErrorMsg{
+			// 		Error: "存在不能携带的卡牌:" + strconv.Itoa(id),
+			// 	})
+			// 	return
+			// }
 
 		}
 	}
