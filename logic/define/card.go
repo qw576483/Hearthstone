@@ -53,19 +53,20 @@ const (
 type CardRace int
 
 const (
-	CardRaceBeast     CardRace = iota // 野兽
-	CardRaceDevil                     // 恶魔
-	CardRaceFish                      // 鱼人
-	CardRaceMechanics                 // 机械
-	CardRaceTotems                    // 图腾
-	CardRaceSacred                    // 神圣
-	CardRaceAll                       // 全部
-	CardRaceNatural                   // 自然
-	CardRaceElement                   // 元素
-	CardRaceUndead                    // 亡灵
-	CardRaceDragon                    // 龙
-	CardRaceFire                      // 火焰
-	CardRaceShadow                    // 暗影
+	CardRaceBeast       CardRace = iota // 野兽
+	CardRaceDevil                       // 恶魔
+	CardRaceFish                        // 鱼人
+	CardRaceMechanics                   // 机械
+	CardRaceTotems                      // 图腾
+	CardRaceSacred                      // 神圣
+	CardRaceAll                         // 全部
+	CardRaceNatural                     // 自然
+	CardRaceElement                     // 元素
+	CardRaceUndead                      // 亡灵
+	CardRaceDragon                      // 龙
+	CardRaceFire                        // 火焰
+	CardRaceShadow                      // 暗影
+	CardRaceArcaneSkill                 // 奥术
 )
 
 // 卡牌系列

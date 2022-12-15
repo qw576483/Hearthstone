@@ -16,3 +16,5 @@ var YseraDreamIds = []int{78, 79, 80, 81, 82} // 伊瑟拉梦境卡列表
 
 var TreantId = 89      // 树人id
 var TreantTauntId = 90 // 树人id（有嘲讽）
+
+var GelbinMekkatorqueInventionIds = []int{122, 123, 125, 126} // 格尔宾·梅卡托克的发明ids

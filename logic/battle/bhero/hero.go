@@ -821,39 +821,59 @@ func (h *Hero) Push(data interface{}) {
 	}
 }
 
+// 随机战场上的卡牌
+func (h *Hero) RandBothBattleCard() iface.ICard {
+
+	cs := h.GetBattleCards()
+	cs = append(cs, h.GetEnemy().GetBattleCards()...)
+
+	return h.RandCard(cs)
+}
+
 // 随机战场上的卡牌或者英雄
 func (h *Hero) RandBattleCardOrHero() iface.ICard {
 
-	r := h.GetBattle().GetRand()
-	bs := h.GetBattleCards()
-	rn := r.Intn(len(bs) + 1)
-
-	if rn >= len(bs) {
-		return h.GetHead()
-	}
-
-	return bs[rn]
+	cs := h.GetBattleCards()
+	cs = append(cs, h.GetHead())
+	return h.RandCard(cs)
 }
 
 // 随机战场上的卡牌或者英雄
 func (h *Hero) RandBothBattleCardOrHero() iface.ICard {
 
-	r := h.GetBattle().GetRand()
+	cs := h.GetBattleCards()
+	cs = append(cs, h.GetEnemy().GetBattleCards()...)
+	cs = append(cs, h.GetHead())
+	cs = append(cs, h.GetEnemy().GetHead())
 
-	bs := h.GetBattleCards()
-	bs = append(bs, h.GetEnemy().GetBattleCards()...)
+	return h.RandCard(cs)
+}
 
-	rn := r.Intn(len(bs) + 2)
+// 随机战场上的受伤的卡牌或者英雄
+func (h *Hero) RandBothInjuredBattleCardOrHero() iface.ICard {
+	var cs []iface.ICard
 
-	if rn > len(bs) {
-		return h.GetEnemy().GetHead()
+	for _, v := range h.GetBattleCards() {
+		if v.GetHaveEffectHp() < v.GetHaveEffectHpMax() {
+			cs = append(cs, v)
+		}
 	}
 
-	if rn >= len(bs) {
-		return h.GetHead()
+	for _, v := range h.GetEnemy().GetBattleCards() {
+		if v.GetHaveEffectHp() < v.GetHaveEffectHpMax() {
+			cs = append(cs, v)
+		}
 	}
 
-	return bs[rn]
+	if h.GetHead().GetHaveEffectHp() < h.GetHead().GetHaveEffectHpMax() {
+		cs = append(cs, h.GetHead())
+	}
+
+	if h.GetEnemy().GetHead().GetHaveEffectHp() < h.GetEnemy().GetHead().GetHaveEffectHpMax() {
+		cs = append(cs, h.GetEnemy().GetHead())
+	}
+
+	return h.RandCard(cs)
 }
 
 // 随机卡牌

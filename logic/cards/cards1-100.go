@@ -975,15 +975,14 @@ func (c *Card43) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	var nc iface.ICard
 	if h.GetBattle().GetRand().Intn(2) == 0 {
 		nc = iface.GetCardFact().GetCard(41)
-		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"变成了小松鼠...")
 	} else {
 		nc = iface.GetCardFact().GetCard(42)
-		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"变成了魔暴龙！")
 	}
 
 	nc.Init(nc, define.InCardsTypeNone, rch, rch.GetBattle())
 	rch.MoveToBattle(nc, rcbidx)
 
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"变成了"+push.GetCardLogString(nc))
 }
 
 // 希尔瓦娜斯·风行者
@@ -1252,7 +1251,7 @@ func (c *Card57) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 
-	push.PushAutoLog(h, push.GetHeroLogString(h)+"让"+push.GetCardLogString(rc)+"恢复了两点生命值")
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"恢复了两点生命值")
 	rc.TreatmentHp(c, 2)
 }
 
