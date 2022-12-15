@@ -37,6 +37,7 @@ type IHero interface {
 	AppendToAllCards(ICard)                     // 添加到全部卡牌
 	GetAllCards() []ICard                       // 获得全部卡牌
 	GetBothAllCards() []ICard                   // 获得全部卡牌
+	GetRoundDieCards() []ICard                  // 获得回合死亡卡牌
 	GetApDamage() int                           // 获得法术伤害
 	AddMona(int)                                // 添加法力值
 	CostMona(int) bool                          // 消耗法力值

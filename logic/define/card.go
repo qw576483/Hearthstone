@@ -47,6 +47,7 @@ const (
 	CardTraitsLockMona                         // 过载
 	CardTraitsMagicImmunity                    // 魔法免疫
 	CardTraitsBattlefury                       // 狂战斧
+	CardTraitsFrozen                           // 冻结
 )
 
 // 卡牌种族
@@ -67,6 +68,7 @@ const (
 	CardRaceFire                        // 火焰
 	CardRaceShadow                      // 暗影
 	CardRaceArcaneSkill                 // 奥术
+	CardRaceIce                         // 冰霜
 )
 
 // 卡牌系列

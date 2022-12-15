@@ -38,6 +38,8 @@ type Hero struct {
 	fatigue          int                // 疲劳伤害
 	releaseCardTimes int                // 本回合出牌次数
 	timer            *time.Timer        // 定时
+
+	roundDieCards []iface.ICard // 回合死亡卡牌
 }
 
 func (h *Hero) NewPoint() iface.IHero {
@@ -224,6 +226,11 @@ func (h *Hero) GetBothAllCards() []iface.ICard {
 
 	ecs := h.GetEnemy().GetAllCards()
 	return append(h.allCards, ecs...)
+}
+
+// 回合死亡卡牌
+func (h *Hero) GetRoundDieCards() []iface.ICard {
+	return h.roundDieCards
 }
 
 func (h *Hero) GetCanSelectCardId(id int) iface.ICard {
@@ -507,7 +514,7 @@ func (h *Hero) DieCard(c iface.ICard, immediatelyDie bool) {
 		// 如果在身上就卸下
 		if c.GetCardInCardsPos() == define.InCardsTypeBody {
 			c.GetOwner().SetWeapon(nil)
-		} else {
+		} else if c.GetCardInCardsPos() == define.InCardsTypeBattle {
 			// 如果在场上，则移出场
 			battleIdx := h.MoveOutBattleOnlyBattleCards(c)
 			c.SetAfterDieBidx(battleIdx)
@@ -519,6 +526,9 @@ func (h *Hero) DieCard(c iface.ICard, immediatelyDie bool) {
 		} else {
 			h.GetBattle().RecordCardDie(c)
 		}
+
+		// 回合结束卡牌
+		h.roundDieCards = append(h.roundDieCards, c)
 
 		// 进入坟场
 		// c.Reset()

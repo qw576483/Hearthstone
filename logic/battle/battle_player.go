@@ -185,6 +185,10 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid int) error {
 		}
 	}
 
+	if c.IsHaveTraits(define.CardTraitsFrozen) {
+		return errors.New("卡牌被冻结中")
+	}
+
 	c.SetAttackTimes(ats + 1)
 	h.Attack(c, ec)
 

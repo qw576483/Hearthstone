@@ -171,6 +171,20 @@ func (c *Card) RemoveTraits(ct define.CardTraits) {
 	}
 }
 
+// 检查冻结
+func (c *Card) CheckFrozen() {
+
+	if !c.IsHaveTraits(define.CardTraitsFrozen) {
+		return
+	}
+
+	if c.GetAttackTimes() < c.GetMaxAttackTimes() {
+
+		c.RemoveTraits(define.CardTraitsFrozen)
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"解除冻结")
+	}
+}
+
 // 获得护盾
 func (c *Card) GetShield() int {
 	return c.Shield

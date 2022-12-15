@@ -81,17 +81,18 @@ func (c *Card4) NewPoint() iface.ICard {
 
 func (c *Card4) OnDie() {
 
-	if len(c.GetOwner().GetBattleCards()) >= define.MaxBattleNum {
+	h := c.GetOwner()
+	if len(h.GetBattleCards()) >= define.MaxBattleNum {
 		return
 	}
 	dbidx := c.GetAfterDieBidx()
 
 	nc := iface.GetCardFact().GetCard(5)
-	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
 	nc.GetOwner().MoveToBattle(nc, dbidx)
 
 	// logs
-	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"死亡时，召唤了"+push.GetCardLogString(nc))
+	push.PushAutoLog(h, push.GetCardLogString(c)+"死亡时，召唤了"+push.GetCardLogString(nc))
 }
 
 // 损坏的傀儡（麦田傀儡衍生物）

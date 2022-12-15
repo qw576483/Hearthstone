@@ -2,6 +2,7 @@ package bhero
 
 import (
 	"hs/logic/define"
+	"hs/logic/iface"
 	"hs/logic/push"
 )
 
@@ -28,6 +29,9 @@ func (h *Hero) RoundBegin() {
 	// 重置卡牌次数
 	h.SetReleaseCardTimes(0)
 
+	// 重置回合死亡
+	h.roundDieCards = make([]iface.ICard, 0)
+
 	// 锁定法力值
 	h.SetLockMona(h.GetLockMonaCache())
 	h.SetLockMonaCache(0)
@@ -48,6 +52,16 @@ func (h *Hero) RoundBegin() {
 func (h *Hero) RoundEnd() {
 	h.CloseCountDown()
 	h.TrickRoundEnd()
+
+	// 检查冻结
+	bcs := h.GetBattleCards()
+	for _, v := range bcs {
+		v.CheckFrozen()
+	}
+	h.GetHead().CheckFrozen()
+
+	// 重置回合死亡
+	h.roundDieCards = make([]iface.ICard, 0)
 }
 
 // 立即结束回合

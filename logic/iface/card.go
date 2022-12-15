@@ -23,6 +23,7 @@ type ICard interface {
 	IsHaveTraits(define.CardTraits) bool      // 是否拥有卡牌特质
 	AddTraits(define.CardTraits)              // 添加特质
 	RemoveTraits(define.CardTraits)           // 删除特质
+	CheckFrozen()                             // 检查冻结
 	GetShield() int                           // 获得护盾
 	SetShield(int)                            // 设置护盾
 	TreatmentHp(ICard, int)                   // 治疗血量
