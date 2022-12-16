@@ -238,12 +238,10 @@ func (c *Card) CostHp(who iface.ICard, num int) int {
 		num = v.OnNROtherBeforeCostHp(who, c.GetRealization(), num)
 	}
 
-	if who != nil {
-		if who.GetId() == c.GetId() && c.GetType() == define.CardTypeWeapon {
-			push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"损失了"+strconv.Itoa(num)+"点耐久")
-		} else {
-			push.PushAutoLog(who.GetOwner(), push.GetCardLogString(who)+"对"+push.GetCardLogString(c)+"造成了"+strconv.Itoa(num)+"点伤害")
-		}
+	if who.GetId() == c.GetId() && c.GetType() == define.CardTypeWeapon {
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"损失了"+strconv.Itoa(num)+"点耐久")
+	} else {
+		push.PushAutoLog(who.GetOwner(), push.GetCardLogString(who)+"对"+push.GetCardLogString(c)+"造成了"+strconv.Itoa(num)+"点伤害")
 	}
 
 	ic := c.GetRealization()

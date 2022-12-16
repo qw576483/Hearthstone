@@ -615,7 +615,7 @@ func (h *Hero) DrawByTimes(t int) []iface.ICard {
 			h.SetFatigue(f + 1)
 
 			// 扣血
-			h.GetHead().CostHp(nil, f+1)
+			h.GetHead().CostHp(h.GetHead(), f+1)
 
 			push.PushAutoLog(h, "牌库没有牌了！受到了疲劳伤害"+strconv.Itoa(f+1))
 			continue
