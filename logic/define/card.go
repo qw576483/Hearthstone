@@ -70,6 +70,7 @@ const (
 	CardRaceArcaneSkill                 // 奥术
 	CardRaceIce                         // 冰霜
 	CardRaceNaga                        // 娜迦
+	CardRacePirate                      // 海盗
 )
 
 // 卡牌系列
