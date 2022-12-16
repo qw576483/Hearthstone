@@ -62,7 +62,7 @@ type IHero interface {
 	GetMaxHandCardsNum() int                    // 获得手牌上限数量
 	DrawForPreBegin(int)                        // 预备开始时的抽卡
 	ChangePreCrards([]int)                      // 修改预备抽卡
-	DrawByTimes(int)                            // 抽卡
+	DrawByTimes(int) []ICard                    // 抽卡
 	SetFatigue(int)                             // 设置疲劳伤害
 	GetFatigue() int                            // 获得当前疲劳伤害
 	Release(ICard, int, int, ICard, bool) error // 出牌

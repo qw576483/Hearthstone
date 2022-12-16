@@ -105,8 +105,8 @@ type ICard interface {
 	OnNROtherGetApDamage(IHero) int                                    // 英雄获取自己的法术伤害时 ，输入其他卡牌， 输出的法术伤害加成
 	OnNROtherGetHp(ICard) int                                          // 其他卡牌获取自己的血量时 ，输入其他卡牌， 输出血量加成
 	OnNROtherGetTraits(ICard, []define.CardTraits) []define.CardTraits // 其他卡牌获取自己的特质时 ，输入其他卡牌,特质， 输出新特质
-	OnNROtherBeforeCostHp(ICard, int) int                              // 受伤前，输入攻击者,num，输出新num
-	OnNROtherAfterCostHp(ICard, int)                                   // 受伤后，输入攻击者,num
-	OnNROtherBeforeTreatmentHp(ICard, int) int                         // 治疗前，输入治疗者,num，输出新num
-	OnNROtherAfterTreatmentHp(ICard, int)                              // 治疗后，输入治疗者,num
+	OnNROtherBeforeCostHp(ICard, ICard, int) int                       // 受伤前，输入攻击者,被攻击者,num，输出新num
+	OnNROtherAfterCostHp(ICard, ICard, int)                            // 其他卡牌受伤后，输入攻击者,被攻击者,num
+	OnNROtherBeforeTreatmentHp(ICard, ICard, int) int                  // 治疗前，输入治疗者,被治疗者,num，输出新num
+	OnNROtherAfterTreatmentHp(ICard, ICard, int)                       // 治疗后，输入治疗者,被治疗者,num
 }

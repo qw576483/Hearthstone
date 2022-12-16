@@ -194,7 +194,7 @@ func (c *Card) SetShield(s int) {
 func (c *Card) TreatmentHp(who iface.ICard, num int) {
 
 	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherBeforeTreatmentHp") {
-		num = v.OnNROtherBeforeTreatmentHp(who, num)
+		num = v.OnNROtherBeforeTreatmentHp(who, c.GetRealization(), num)
 	}
 
 	ic := c.GetRealization()
@@ -207,7 +207,7 @@ func (c *Card) TreatmentHp(who iface.ICard, num int) {
 	}
 
 	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherAfterTreatmentHp") {
-		v.OnNROtherAfterTreatmentHp(who, num)
+		v.OnNROtherAfterTreatmentHp(who, c.GetRealization(), num)
 	}
 }
 
@@ -235,7 +235,7 @@ func (c *Card) SetHpMaxAndHp(set int) {
 func (c *Card) CostHp(who iface.ICard, num int) int {
 
 	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherBeforeCostHp") {
-		num = v.OnNROtherBeforeCostHp(who, num)
+		num = v.OnNROtherBeforeCostHp(who, c.GetRealization(), num)
 	}
 
 	if who != nil {
@@ -297,7 +297,7 @@ func (c *Card) CostHp(who iface.ICard, num int) int {
 	}
 
 	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherAfterCostHp") {
-		v.OnNROtherAfterCostHp(who, tcNum)
+		v.OnNROtherAfterCostHp(who, c.GetRealization(), tcNum)
 	}
 
 	if c.Hp <= 0 {

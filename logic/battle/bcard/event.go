@@ -45,7 +45,9 @@ func (c *Card) OnNROtherGetHp(oc iface.ICard) int       { return 0 }
 func (c *Card) OnNROtherGetTraits(oc iface.ICard, cts []define.CardTraits) []define.CardTraits {
 	return cts
 }
-func (c *Card) OnNROtherBeforeCostHp(who iface.ICard, num int) int      { return num }
-func (c *Card) OnNROtherAfterCostHp(who iface.ICard, num int)           {}
-func (c *Card) OnNROtherBeforeTreatmentHp(who iface.ICard, num int) int { return num }
-func (c *Card) OnNROtherAfterTreatmentHp(who iface.ICard, num int)      {}
+func (c *Card) OnNROtherBeforeCostHp(who, target iface.ICard, num int) int { return num }
+func (c *Card) OnNROtherAfterCostHp(who, target iface.ICard, num int)      {}
+func (c *Card) OnNROtherBeforeTreatmentHp(who, target iface.ICard, num int) int {
+	return num
+}
+func (c *Card) OnNROtherAfterTreatmentHp(who, target iface.ICard, num int) {}

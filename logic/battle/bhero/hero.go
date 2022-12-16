@@ -603,8 +603,9 @@ func (h *Hero) ChangePreCrards(putidxs []int) {
 }
 
 // 抽卡根据次数
-func (h *Hero) DrawByTimes(t int) {
+func (h *Hero) DrawByTimes(t int) []iface.ICard {
 
+	dcs := make([]iface.ICard, 0)
 	for i := 1; i <= t; i++ {
 		lcn := len(h.libCards)
 		if lcn <= 0 {
@@ -626,7 +627,11 @@ func (h *Hero) DrawByTimes(t int) {
 		card, h.libCards = help.DeleteCardFromCardsByIdx(h.GetLibCards(), idx)
 
 		h.MoveToHand(card)
+
+		dcs = append(dcs, card)
 	}
+
+	return dcs
 }
 
 // 获得当前疲劳伤害
@@ -747,11 +752,11 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 	dmg2 := ec.GetHaveEffectDamage()
 
 	// 是否有狂战斧
-	var ec3 iface.ICard
-	var dmg3 int
+	var cLeft iface.ICard
+	var dmgLeft int
 
-	var ec4 iface.ICard
-	var dmg4 int
+	var cRight iface.ICard
+	var dmgRight int
 	if (c.GetType() == define.CardTypeEntourage && c.IsHaveTraits(define.CardTraitsBattlefury)) ||
 		(c.GetType() == define.CardTypeHero && h.GetWeapon() != nil && h.GetWeapon().IsHaveTraits(define.CardTraitsBattlefury)) {
 
@@ -764,10 +769,10 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 			ecIdx := eh.GetIdxByCards(ec, bcs)
 
 			if (ecIdx - 1) >= 0 {
-				ec3 = bcs[ecIdx-1]
+				cLeft = bcs[ecIdx-1]
 			}
 			if (ecIdx + 1) < len(bcs) {
-				ec4 = bcs[ecIdx+1]
+				cRight = bcs[ecIdx+1]
 			}
 		}
 	}
@@ -776,14 +781,14 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 	dmg = ec.CostHp(c, dmg)
 
 	// 狂战斧效果
-	if ec3 != nil {
-		push.PushAutoLog(h, "触发狂战斧，分裂目标："+push.GetCardLogString(ec3))
-		dmg3 = ec3.CostHp(c, dmg)
+	if cLeft != nil {
+		push.PushAutoLog(h, "触发狂战斧，分裂目标："+push.GetCardLogString(cLeft))
+		dmgLeft = cLeft.CostHp(c, dmg)
 	}
 
-	if ec4 != nil {
-		push.PushAutoLog(h, "触发狂战斧，分裂目标："+push.GetCardLogString(ec4))
-		dmg4 = ec4.CostHp(c, dmg)
+	if cRight != nil {
+		push.PushAutoLog(h, "触发狂战斧，分裂目标："+push.GetCardLogString(cRight))
+		dmgRight = cRight.CostHp(c, dmg)
 	}
 
 	// 反击
@@ -795,11 +800,11 @@ func (h *Hero) Attack(c, ec iface.ICard) error {
 	// 攻击后
 	h.TrickAfterAttackEvent(c, ec, dmg)
 
-	if ec3 != nil {
-		h.TrickAfterAttackEvent(c, ec, dmg3)
+	if cLeft != nil {
+		h.TrickAfterAttackEvent(c, ec, dmgLeft)
 	}
-	if ec4 != nil {
-		h.TrickAfterAttackEvent(c, ec, dmg4)
+	if cRight != nil {
+		h.TrickAfterAttackEvent(c, ec, dmgRight)
 	}
 
 	if c.GetType() == define.CardTypeHero {
