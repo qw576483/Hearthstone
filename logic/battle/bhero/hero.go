@@ -392,9 +392,6 @@ func (h *Hero) MoveToHand(c iface.ICard) bool {
 	h.handCards = append(h.handCards, c)
 	c.SetCardInCardsPos(define.InCardsTypeHand)
 
-	// 触发得到事件
-	h.TrickGetCardEvent(c)
-
 	return true
 }
 
@@ -605,6 +602,7 @@ func (h *Hero) ChangePreCrards(putidxs []int) {
 // 抽卡根据次数
 func (h *Hero) DrawByTimes(t int) []iface.ICard {
 
+	push.PushAutoLog(h, "抽了"+strconv.Itoa(t)+"张牌")
 	dcs := make([]iface.ICard, 0)
 	for i := 1; i <= t; i++ {
 		lcn := len(h.libCards)
@@ -965,13 +963,16 @@ func (h *Hero) OnlyReleaseSecret(ic iface.ICard) bool {
 	return true
 }
 
-// 删除奥秘
+// 删除奥秘 , 是否是触发奥秘的删除
 func (h *Hero) DeleteSecret(ic iface.ICard, istTigger bool) {
+
 	for idx, v := range h.secretCards {
 		if v.GetId() == ic.GetId() {
 			_, h.secretCards = help.DeleteCardFromCardsByIdx(h.secretCards, idx)
 		}
 	}
+
+	h.GetBattle().RemoveCardFromAllEvent(ic)
 }
 
 // 一个新的倒计时

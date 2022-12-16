@@ -81,7 +81,7 @@ type IHero interface {
 	GetSecrets() []ICard                        // 获得奥秘
 	CanReleaseSecret(ICard) bool                // 是否能释放奥秘
 	OnlyReleaseSecret(ICard) bool               // 仅仅释放奥秘，返回是否释放成功
-	DeleteSecret(ICard, bool)                   // 删除奥秘
+	DeleteSecret(ICard, bool)                   // 删除奥秘， 是否是触发奥秘的删除
 	NewCountDown(int)                           // 一个新的倒计时
 	CloseCountDown()                            // 关闭我的倒计时
 	Henshin(ICard)                              // 变身
@@ -92,7 +92,6 @@ type IHero interface {
 	FixRoundEnd() // 强制回合结束
 
 	TrickBattleBegin()                         // 触发战斗开始事件
-	TrickGetCardEvent(ICard)                   // 触发抽卡事件
 	TrickRelease(ICard, int, int, ICard)       // 触发战吼
 	TrickRelease2(ICard, int, int, ICard)      // 触发战吼
 	TrickRoundBegin()                          // 触发回合开始事件

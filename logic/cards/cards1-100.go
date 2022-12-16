@@ -65,9 +65,6 @@ func (c *Card3) NewPoint() iface.ICard {
 func (c *Card3) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	c.GetOwner().DrawByTimes(2)
 	c.GetOwner().GetEnemy().DrawByTimes(2)
-
-	// logs
-	push.PushAllLog(c.GetOwner().GetBattle(), "你和你的对手都抽了两张牌")
 }
 
 // 麦田傀儡
@@ -770,7 +767,6 @@ func (c *Card34) OnNROtherAfterRelease(oc iface.ICard) {
 
 		oc.SetHpMaxAndHp(1)
 		h.DeleteSecret(c, true)
-		h.GetBattle().RemoveCardFromAllEvent(c)
 
 		push.PushAutoLog(h, c.GetConfig().Name+"(奥秘)让"+push.GetCardLogString(oc)+"生命值变为1点")
 	}
@@ -923,7 +919,6 @@ func (c *Card40) OnNROtherBeforeAttack(oc, rc iface.ICard) iface.ICard {
 		rc = nil
 
 		h.DeleteSecret(c, true)
-		h.GetBattle().RemoveCardFromAllEvent(c)
 
 		h.MoveToHand(oc)
 		oc.SetMona(oc.GetMona() + 2)
@@ -1024,7 +1019,6 @@ func (c *Card45) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	c.GetOwner().GetHead().CostHp(c, 2)
 	c.GetOwner().DrawByTimes(1)
-	push.PushAutoLog(c.GetOwner(), "抽了一张牌")
 }
 
 // 稳固射击
@@ -1117,7 +1111,6 @@ func (c *Card50) OnNRRoundEnd() {
 	for _, v := range h.GetBattleCards() {
 		v.TreatmentHp(c, 1)
 	}
-	push.PushAutoLog(h, push.GetCardLogString(c)+"让所有随从恢复1点生命值")
 }
 
 // 石爪图腾
@@ -1250,9 +1243,6 @@ func (c *Card57) OnRelease(choiceId, bidx int, rc iface.ICard) {
 		return
 	}
 
-	h := c.GetOwner()
-
-	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"恢复了两点生命值")
 	rc.TreatmentHp(c, 2)
 }
 
@@ -2042,8 +2032,6 @@ func (c *Card93) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	rc.TreatmentHp(c, 8)
 	h.DrawByTimes(3)
-
-	push.PushAutoLog(h, push.GetHeroLogString(h)+"抽了3张卡,并让"+push.GetCardLogString(rc)+"恢复了8点生命")
 }
 
 // 风领主奥拉基尔
@@ -2187,5 +2175,4 @@ func (c *Card100) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 	h.GetHead().TreatmentHp(c, 6)
-	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetHeroLogString(h)+"恢复了6点生命")
 }

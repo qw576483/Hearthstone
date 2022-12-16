@@ -36,6 +36,8 @@ type Card struct {
 	DbIdx        int                 // 死亡后的idx
 	FatherCard   iface.ICard         // 父卡牌
 	SubCards     []iface.ICard       // 子卡牌
+
+	OnDieEvents []iface.AddOnDie // 子事件，死亡
 }
 
 // 返回新指针
@@ -192,6 +194,8 @@ func (c *Card) SetShield(s int) {
 
 // 治疗血量
 func (c *Card) TreatmentHp(who iface.ICard, num int) {
+
+	push.PushAutoLog(who.GetOwner(), push.GetCardLogString(who)+"让"+push.GetCardLogString(c)+"恢复了"+strconv.Itoa(num)+"点生命")
 
 	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherBeforeTreatmentHp") {
 		num = v.OnNROtherBeforeTreatmentHp(who, c.GetRealization(), num)
@@ -648,6 +652,8 @@ func (c *Card) Reset() {
 	c.ReleaseId = 0                   // 释放id
 	c.DbIdx = 0                       // 死亡后的bidx
 	c.SetSubCards(make([]iface.ICard, 0))
+
+	c.OnDieEvents = make([]iface.AddOnDie, 0)
 }
 
 // 沉默此卡
@@ -669,6 +675,8 @@ func (c *Card) Silent() {
 	}
 	c.SetSubCards(make([]iface.ICard, 0))
 	c.GetOwner().GetBattle().RemoveCardFromAllEvent(c)
+
+	c.OnDieEvents = make([]iface.AddOnDie, 0)
 
 	// 血量修正
 	c.HpMax = c.Config.Hp

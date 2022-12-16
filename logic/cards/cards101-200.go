@@ -110,14 +110,14 @@ func (c *Card105) NewPoint() iface.ICard {
 func (c *Card105) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	if choiceId == 0 {
-		push.PushAutoLog(c.GetOwner(), "[抉择1]抽了2张牌")
+		push.PushAutoLog(c.GetOwner(), "[抉择1]")
 		c.GetOwner().DrawByTimes(2)
 	} else {
 		if rc == nil {
 			return
 		}
 
-		push.PushAutoLog(c.GetOwner(), "[抉择2]"+push.GetCardLogString(rc)+"恢复5点生命")
+		push.PushAutoLog(c.GetOwner(), "[抉择2]")
 		rc.TreatmentHp(c, 5)
 	}
 }
@@ -382,7 +382,6 @@ func (c *Card114) OnRelease(choiceId, bidx int, rc iface.ICard) {
 		rc.CostHp(c, dmg)
 	}
 
-	push.PushAutoLog(h, "抽了一张牌")
 	h.DrawByTimes(1)
 }
 
@@ -622,8 +621,6 @@ func (c *Card125) OnNRRoundBegin() {
 	h := c.GetOwner()
 	h.DieCard(c, false)
 	h.DrawByTimes(3)
-
-	push.PushAutoLog(h, "抽了三张牌")
 }
 
 // 修理机器人
@@ -656,7 +653,6 @@ func (c *Card126) OnNRRoundEnd() {
 		return
 	}
 
-	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"恢复了六点生命值")
 	rc.TreatmentHp(c, 6)
 }
 
@@ -753,12 +749,8 @@ func (c *Card131) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	for _, v := range h.GetEnemy().GetBattleCards() {
 
-		buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
-		buff.Init(buff, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
-		buff.AddTraits(define.CardTraitsFrozen)
-
 		v.CostHp(c, dmg)
-		v.AddSubCards(buff)
+		v.AddTraits(define.CardTraitsFrozen)
 
 		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(v)+"获得了冻结")
 	}
@@ -824,7 +816,8 @@ func (c *Card134) NewPoint() iface.ICard {
 func (c *Card134) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
-	dmg := 5
+
+	dmg := c.GetConfig().Damage
 	dmg += h.GetApDamage()
 
 	if rc != nil {
@@ -832,7 +825,6 @@ func (c *Card134) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	}
 
 	h.GetHead().TreatmentHp(c, 5)
-	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(h.GetHead())+"恢复5点生命")
 }
 
 // 劫持者
@@ -915,7 +907,6 @@ func (c *Card139) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	h := c.GetOwner()
 
 	h.GetHead().TreatmentHp(c, 4)
-	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(h.GetHead())+"恢复4点生命")
 }
 
 // 冰霜元素
@@ -933,11 +924,7 @@ func (c *Card140) OnRelease(choiceId, bidx int, rc iface.ICard) {
 		return
 	}
 
-	buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
-	buff.Init(buff, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
-	buff.AddTraits(define.CardTraitsFrozen)
-
-	rc.AddSubCards(buff)
+	rc.AddTraits(define.CardTraitsFrozen)
 
 	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"冻结")
 }
@@ -1085,7 +1072,6 @@ func (c *Card147) OnNROtherBeforeRelease(oc, rc iface.ICard) (iface.ICard, bool)
 	}
 
 	h.DrawByTimes(1)
-	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(h.GetHead())+"抽一张牌")
 
 	return rc, true
 }
@@ -1200,8 +1186,6 @@ func (c *Card153) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 	h.DrawByTimes(4)
-
-	push.PushAutoLog(h, "抽了4张牌")
 }
 
 // 嗜血
@@ -1295,11 +1279,9 @@ func (c *Card158) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	h := c.GetOwner()
 	for _, v := range h.GetBattleCards() {
 		v.TreatmentHp(c, 2)
-		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(v)+"恢复了2点生命值")
 	}
 
 	h.GetHead().TreatmentHp(c, 2)
-	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(h.GetHead())+"恢复了2点生命值")
 }
 
 // 夜刃刺客
@@ -1406,14 +1388,13 @@ func (c *Card164) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 
-	dmg := 4
+	dmg := c.GetConfig().Damage
 	dmg += h.GetApDamage()
 
 	if rc != nil {
 		rc.CostHp(c, dmg)
 	}
 
-	push.PushAutoLog(h, "抽了一张牌")
 	h.DrawByTimes(1)
 }
 
@@ -1612,7 +1593,7 @@ func (c *Card175) OnRelease(choiceId, bidx int, rc iface.ICard) {
 		h.AddMonaMax(2)
 		h.AddMona(2)
 	} else {
-		push.PushAutoLog(c.GetOwner(), "[抉择2]抽三张牌")
+		push.PushAutoLog(c.GetOwner(), "[抉择2]")
 		h.DrawByTimes(3)
 	}
 }
@@ -1700,8 +1681,6 @@ func (c *Card178) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	if rc == nil {
 		return
 	}
-
-	push.PushAutoLog(h, "抽了一张牌")
 
 	dcs := h.DrawByTimes(1)
 
@@ -1826,44 +1805,32 @@ func (c *Card184) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	if rc == nil {
 		return
 	}
-	h.GetBattle().AddCardToEvent(c, "OnNROtherAfterCostHp")
 
-	dmg := 2
+	dmg := c.GetConfig().Damage
 	dmg += h.GetApDamage()
 
 	rc.CostHp(c, 2)
-}
 
-func (c *Card184) OnNROtherAfterCostHp(who, target iface.ICard, num int) {
-	if who.GetId() != c.GetId() {
-		return
+	if rc.GetHaveEffectHp() <= 0 {
+
+		races := []define.CardRace{define.CardRaceDevil}
+		vocations := []define.Vocation{h.GetConfig().Vocation, define.VocationNeutral}
+		types := []define.CardType{define.CardTypeEntourage}
+		ncCache := iface.GetCardFact().RandByAllCards(h.GetBattle().GetRand(), iface.NewScreenCardParam(
+			iface.SCPWithCardRace(races), iface.SCPWithCardVocations(vocations), iface.SCPWithCardTypes(types),
+		))
+
+		if ncCache == nil {
+			return
+		}
+
+		// 召唤
+		nc := iface.GetCardFact().GetCard(ncCache.GetConfig().Id)
+		nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+		h.MoveToBattle(nc, -1)
+
+		push.PushAutoLog(c.GetOwner(), "由于"+push.GetCardLogString(c)+"杀死了"+push.GetCardLogString(rc)+",召唤了"+push.GetCardLogString(nc))
 	}
-	h := c.GetOwner()
-	h.GetBattle().RemoveCardFromEvent(c, "OnNROtherAfterCostHp")
-
-	hp := target.GetHaveEffectHp()
-	if hp > 0 {
-		return
-	}
-
-	// 随机
-	races := []define.CardRace{define.CardRaceDevil}
-	vocations := []define.Vocation{h.GetConfig().Vocation, define.VocationNeutral}
-	types := []define.CardType{define.CardTypeEntourage}
-	ncCache := iface.GetCardFact().RandByAllCards(h.GetBattle().GetRand(), iface.NewScreenCardParam(
-		iface.SCPWithCardRace(races), iface.SCPWithCardVocations(vocations), iface.SCPWithCardTypes(types),
-	))
-
-	if ncCache == nil {
-		return
-	}
-
-	// 召唤
-	nc := iface.GetCardFact().GetCard(ncCache.GetConfig().Id)
-	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
-	h.MoveToBattle(nc, -1)
-
-	push.PushAutoLog(c.GetOwner(), "由于"+push.GetCardLogString(c)+"杀死了"+push.GetCardLogString(target)+",召唤了"+push.GetCardLogString(nc))
 }
 
 // 灵魂虹吸
@@ -1885,7 +1852,7 @@ func (c *Card185) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	rc.GetOwner().DieCard(rc, false)
 	h.GetHead().TreatmentHp(c, 3)
 
-	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"杀死了"+push.GetCardLogString(rc)+",并让英雄恢复3点生命")
+	push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"杀死了"+push.GetCardLogString(rc))
 }
 
 // 绝命乱斗
@@ -2123,7 +2090,6 @@ func (c *Card196) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 
-	push.PushAutoLog(h, "抽了一张牌")
 	h.DrawByTimes(1)
 }
 
@@ -2151,7 +2117,7 @@ func (c *Card197) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	he.DieCard(w, false)
 	h.DrawByTimes(dtimes)
 
-	push.PushAutoLog(h, push.GetCardLogString(c)+"消灭了"+push.GetCardLogString(w)+"，抽了"+strconv.Itoa(dtimes)+"张牌")
+	push.PushAutoLog(h, push.GetCardLogString(c)+"消灭了"+push.GetCardLogString(w))
 }
 
 // 风险投资公司雇佣兵

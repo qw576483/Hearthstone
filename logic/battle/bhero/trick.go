@@ -15,13 +15,6 @@ func (h *Hero) TrickBattleBegin() {
 	h.GetBattle().WhileTrickCardDie()
 }
 
-// 触发得到事件
-func (h *Hero) TrickGetCardEvent(c iface.ICard) {
-	c.OnGet()
-
-	h.GetBattle().WhileTrickCardDie()
-}
-
 // 触发战吼
 func (h *Hero) TrickRelease(c iface.ICard, choiceId, bidx int, rc iface.ICard) {
 	c.OnRelease(choiceId, bidx, rc)
@@ -105,11 +98,7 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, trueCostHp int) {
 
 	// 攻击者事件
 	if trueCostHp > 0 {
-		if ec.GetHaveEffectHp() == 0 && trueCostHp > 0 && !c.IsSilent() {
-			c.OnHonorAnnihilate()
-		} else if ec.GetHaveEffectHp() < 0 && !c.IsSilent() {
-			c.OnOverflowAnnihilate()
-		} else if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) && ec.GetType() != define.CardTypeHero {
+		if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) && ec.GetType() != define.CardTypeHero {
 			push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
 			ec.GetOwner().DieCard(ec, false)
 		}
@@ -122,6 +111,16 @@ func (h *Hero) TrickDieCardEvent(c iface.ICard) {
 
 	if !c.IsSilent() {
 		c.OnDie()
+	}
+
+	for _, v := range c.GetAddOnDie() {
+		v()
+	}
+
+	for _, v := range c.GetSubCards() {
+		for _, v2 := range v.GetAddOnDie() {
+			v2()
+		}
 	}
 
 	for _, v := range h.GetBattle().GetEventCards("OnNROtherDie") {

@@ -73,15 +73,12 @@ type ICard interface {
 	// 事件 - 只需要实现接口
 	OnInit()                    // 初始化时
 	OnBattleBegin()             // 战斗开始
-	OnGet()                     // 获得时
 	OnRelease(int, int, ICard)  // 释放时 ， 输入抉择id(0,1)，站位，战吼目标
 	OnRelease2(int, int, ICard) // 释放时 ， 输入抉择id(0,1)，站位，战吼目标
 	OnPutToBattle(int)          // 步入战场时 ， 输入站位
 	OnOutBattle()               // 离开战场时
 	OnBeforeAttack(ICard) ICard // 攻击前
 	OnAfterAttack(ICard)        // 攻击后
-	OnHonorAnnihilate()         // 荣誉消灭
-	OnOverflowAnnihilate()      // 超杀
 	OnBeforeCostHp(int) int     // 受伤前，输入damage，输出新damage
 	OnAfterCostHp()             // 受伤后
 	OnAfterHpChange()           // 生命值改变后
@@ -109,4 +106,10 @@ type ICard interface {
 	OnNROtherAfterCostHp(ICard, ICard, int)                            // 其他卡牌受伤后，输入攻击者,被攻击者,num
 	OnNROtherBeforeTreatmentHp(ICard, ICard, int) int                  // 治疗前，输入治疗者,被治疗者,num，输出新num
 	OnNROtherAfterTreatmentHp(ICard, ICard, int)                       // 治疗后，输入治疗者,被治疗者,num
+
+	// 挂载事件
+	AddOnDie(AddOnDie)       // 添加死亡时
+	GetAddOnDie() []AddOnDie // 获得添加死亡时
 }
+
+type AddOnDie func()
