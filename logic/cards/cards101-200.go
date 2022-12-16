@@ -1838,12 +1838,13 @@ func (c *Card184) OnNROtherAfterCostHp(who, target iface.ICard, num int) {
 	if who.GetId() != c.GetId() {
 		return
 	}
+	h := c.GetOwner()
+	h.GetBattle().RemoveCardFromEvent(c, "OnNROtherAfterCostHp")
 
 	hp := target.GetHaveEffectHp()
 	if hp > 0 {
 		return
 	}
-	h := c.GetOwner()
 
 	// 随机
 	races := []define.CardRace{define.CardRaceDevil}
@@ -1926,6 +1927,10 @@ type Card187 struct {
 
 func (c *Card187) NewPoint() iface.ICard {
 	return &Card187{}
+}
+
+func (c *Card187) OnOutBattle() {
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherGetDamage")
 }
 
 func (c *Card187) OnAfterHpChange() {
@@ -2206,4 +2211,57 @@ func (c *Card199) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	dc := h.RandCard(bs)
 	dc.GetOwner().DieCard(dc, false)
 	push.PushAutoLog(h, push.GetCardLogString(c)+"杀死了"+push.GetCardLogString(dc))
+}
+
+// 诺达希尔德鲁伊
+type Card200 struct {
+	bcard.Card
+}
+
+func (c *Card200) NewPoint() iface.ICard {
+	return &Card200{}
+}
+
+func (c *Card200) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	h.GetBattle().AddCardToEvent(c, "OnNROtherGetMona")
+	h.GetBattle().AddCardToEvent(c, "OnNROtherAfterRelease")
+}
+
+func (c *Card200) deleteEvent() {
+	h := c.GetOwner()
+	h.GetBattle().RemoveCardFromEvent(c, "OnNROtherGetMona")
+	h.GetBattle().RemoveCardFromEvent(c, "OnNROtherAfterRelease")
+}
+
+func (c *Card200) OnNROtherAfterRelease(oc iface.ICard) {
+	h := c.GetOwner()
+	if oc.GetType() != define.CardTypeSorcery || oc.GetOwner().GetId() != h.GetId() {
+		return
+	}
+
+	if c.GetReleaseRound() != h.GetBattle().GetIncrRoundId() {
+		c.deleteEvent()
+		return
+	}
+	c.deleteEvent()
+}
+
+func (c *Card200) OnNROtherGetMona(oc iface.ICard) int {
+
+	h := c.GetOwner()
+	if oc.GetCardInCardsPos() != define.InCardsTypeHand ||
+		oc.GetType() != define.CardTypeSorcery ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return 0
+	}
+
+	if c.GetReleaseRound() != h.GetBattle().GetIncrRoundId() {
+		c.deleteEvent()
+		return 0
+	}
+
+	return -3
 }

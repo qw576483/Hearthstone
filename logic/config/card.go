@@ -2518,4 +2518,18 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 		Series:   define.CardSeriseClassic,
 		CanCarry: true,
 	},
+	200: &CardConfig{
+		Id:       200,
+		Name:     "诺达希尔德鲁伊",
+		Desc:     "战吼：在本回合中，你施放的下一个法术的法力值消耗减少（3）点。",
+		Mona:     4,
+		Damage:   3,
+		Hp:       5,
+		Quality:  define.CardQualityBlue,
+		Ctype:    define.CardTypeEntourage,
+		Traits:   MakeCardTraits(define.CardTraitsOnRelease),
+		Vocation: MakeCardVocation(define.VocationDruid),
+		Series:   define.CardSeriseClassic,
+		CanCarry: true,
+	},
 }
