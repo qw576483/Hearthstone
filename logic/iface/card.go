@@ -44,6 +44,7 @@ type ICard interface {
 	SetDamage(int)                            // 设置攻击
 	ExchangeHpDamage()                        // 交换攻击和血
 	GetApDamage() int                         // 获得法术伤害
+	AddApDamage(int)                          // 添加法术伤害
 	GetMona() int                             // 获得费用
 	SetMona(int)                              // 设置费用
 	GetHaveEffectMona() int                   // 计算有效果加成的卡牌费用
@@ -98,6 +99,7 @@ type ICard interface {
 	OnNRPutToBattle(ICard)                                             // 其他卡牌步入战场时，输入其他卡牌
 	OnNROtherDie(ICard)                                                // 其他卡牌死亡时，输入其他卡牌
 	OnNROtherGetMona(ICard) int                                        // 其他卡牌获取自己的费用时，输入其他卡牌， 输出费用加成
+	OnNROtherGetFinalMona(ICard, int) int                              // 其他卡牌获取自己的费用时，输入其他卡牌， 输出费用 ，输出费用
 	OnNROtherGetDamage(ICard) int                                      // 其他卡牌获取自己的攻击力时 ，输入其他卡牌， 输出攻击加成
 	OnNROtherGetApDamage(IHero) int                                    // 英雄获取自己的法术伤害时 ，输入其他卡牌， 输出的法术伤害加成
 	OnNROtherGetHp(ICard) int                                          // 其他卡牌获取自己的血量时 ，输入其他卡牌， 输出血量加成
@@ -106,6 +108,7 @@ type ICard interface {
 	OnNROtherAfterCostHp(ICard, ICard, int)                            // 其他卡牌受伤后，输入攻击者,被攻击者,num
 	OnNROtherBeforeTreatmentHp(ICard, ICard, int) int                  // 治疗前，输入治疗者,被治疗者,num，输出新num
 	OnNROtherAfterTreatmentHp(ICard, ICard, int)                       // 治疗后，输入治疗者,被治疗者,num
+	OnNROtherChangeTreatToCost(ICard) bool                             // 注册，输入治疗者，是否把治疗转换成伤害
 
 	// 挂载事件
 	AddOnDie(AddOnDie)       // 添加死亡时

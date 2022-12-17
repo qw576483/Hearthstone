@@ -201,6 +201,20 @@ func (c *Card) TreatmentHp(who iface.ICard, num int) {
 		num = v.OnNROtherBeforeTreatmentHp(who, c.GetRealization(), num)
 	}
 
+	// 转换治疗到伤害
+	changeTreatToCost := false
+	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherChangeTreatToCost") {
+		changeTreatToCost = v.OnNROtherChangeTreatToCost(who)
+		if changeTreatToCost {
+			break
+		}
+	}
+
+	if changeTreatToCost {
+		c.CostHp(who, num)
+		return
+	}
+
 	ic := c.GetRealization()
 	oldHp := c.GetHaveEffectHp()
 
@@ -491,6 +505,11 @@ func (c *Card) GetApDamage() int {
 	return c.ApDamage
 }
 
+// 添加法术伤害
+func (c *Card) AddApDamage(apd int) {
+	c.ApDamage += apd
+}
+
 // 计算ic有效果加成的卡牌法术伤害
 func (c *Card) GetHaveEffectApDamage(ic iface.ICard) int {
 	d := ic.GetApDamage()
@@ -527,6 +546,10 @@ func (c *Card) GetHaveEffectMona() int {
 
 	for _, v := range ic.GetOwner().GetBattle().GetEventCards("OnNROtherGetMona") {
 		m += v.OnNROtherGetMona(ic)
+	}
+
+	for _, v := range ic.GetOwner().GetBattle().GetEventCards("OnNROtherGetFinalMona") {
+		m = v.OnNROtherGetFinalMona(ic, m)
 	}
 
 	if m < 0 {

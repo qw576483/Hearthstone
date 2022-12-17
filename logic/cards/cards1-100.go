@@ -597,8 +597,6 @@ func (c *Card26) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	nc := iface.GetCardFact().GetCard(27)
 	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
 	c.GetOwner().OnlyReleaseWeapon(nc)
-
-	push.PushAutoLog(c.GetOwner(), "装备了"+nc.GetConfig().Name)
 }
 
 // 邪恶短刀
@@ -621,10 +619,13 @@ func (c *Card28) NewPoint() iface.ICard {
 
 func (c *Card28) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
-	if rc != nil {
-		rc.Silent()
-		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(rc))
+	h := c.GetOwner()
+	if rc == nil {
+		return
 	}
+
+	rc.Silent()
+	push.PushAutoLog(h, push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(rc))
 }
 
 // 奉献
@@ -1481,8 +1482,6 @@ func (c *Card66) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	nc := iface.GetCardFact().GetCard(69)
 	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
 	h.OnlyReleaseWeapon(nc)
-
-	push.PushAutoLog(h, "装备了"+nc.GetConfig().Name)
 }
 
 // 地狱火！
@@ -1998,11 +1997,11 @@ func (c *Card91) NewPoint() iface.ICard {
 
 func (c *Card91) OnDie() {
 
-	nc := iface.GetCardFact().GetCard(92)
-	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
-	c.GetOwner().OnlyReleaseWeapon(nc)
+	h := c.GetOwner()
 
-	push.PushAutoLog(c.GetOwner(), "装备了"+nc.GetConfig().Name)
+	nc := iface.GetCardFact().GetCard(92)
+	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+	h.OnlyReleaseWeapon(nc)
 }
 
 // 灰烬使者

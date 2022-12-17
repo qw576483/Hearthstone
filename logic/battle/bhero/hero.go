@@ -720,6 +720,9 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, tric
 
 // 仅仅是装备武器
 func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
+
+	push.PushAutoLog(h, "装备了"+push.GetCardLogString(c))
+
 	w := h.GetWeapon()
 	if w != nil {
 		h.DieCard(w, false)
