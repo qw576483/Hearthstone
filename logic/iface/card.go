@@ -76,6 +76,7 @@ type ICard interface {
 	OnBattleBegin()             // 战斗开始
 	OnRelease(int, int, ICard)  // 释放时 ， 输入抉择id(0,1)，站位，战吼目标
 	OnRelease2(int, int, ICard) // 释放时 ， 输入抉择id(0,1)，站位，战吼目标
+	OnWear()                    // 穿在身上时
 	OnPutToBattle(int)          // 步入战场时 ， 输入站位
 	OnOutBattle()               // 离开战场时
 	OnBeforeAttack(ICard) ICard // 攻击前
@@ -83,6 +84,7 @@ type ICard interface {
 	OnBeforeCostHp(int) int     // 受伤前，输入damage，输出新damage
 	OnAfterCostHp()             // 受伤后
 	OnAfterHpChange()           // 生命值改变后
+	OnAfterCostOtherHp(ICard)   // 造成他人伤害时，输入其他人
 	OnDie()                     // 卡牌死亡时
 	OnAfterDisCard()            // 卡牌丢弃后
 	OnGetMona(int) int          // 获取自己的费用时，输入mona ,输出新mona
@@ -97,6 +99,7 @@ type ICard interface {
 	OnNROtherAfterRelease(ICard)                                       // 其他卡牌释放前，输入其他卡牌
 	OnNROtherBeforeAttack(ICard, ICard) ICard                          // 其他卡牌攻击前，输入其他卡牌，攻击目标。输出攻击目标。
 	OnNRPutToBattle(ICard)                                             // 其他卡牌步入战场时，输入其他卡牌
+	OnNROtherBeforeCostHpDie(ICard)                                    // 其他卡牌受到伤害死亡前
 	OnNROtherDie(ICard)                                                // 其他卡牌死亡时，输入其他卡牌
 	OnNROtherGetMona(ICard) int                                        // 其他卡牌获取自己的费用时，输入其他卡牌， 输出费用加成
 	OnNROtherGetFinalMona(ICard, int) int                              // 其他卡牌获取自己的费用时，输入其他卡牌， 输出费用 ，输出费用
@@ -109,10 +112,14 @@ type ICard interface {
 	OnNROtherBeforeTreatmentHp(ICard, ICard, int) int                  // 治疗前，输入治疗者,被治疗者,num，输出新num
 	OnNROtherAfterTreatmentHp(ICard, ICard, int)                       // 治疗后，输入治疗者,被治疗者,num
 	OnNROtherChangeTreatToCost(ICard) bool                             // 注册，输入治疗者，是否把治疗转换成伤害
+	OnNROtherSecretTigger(ICard)                                       // 奥秘触发时，输入触发的奥秘
 
 	// 挂载事件
-	AddOnDie(AddOnDie)       // 添加死亡时
-	GetAddOnDie() []AddOnDie // 获得添加死亡时
+	AddOnDie(AddOnDie)                     // 添加死亡时
+	GetAddOnDie() []AddOnDie               // 获得添加死亡时
+	AddOnEventClear(AddOnEventClear)       // 添加事件清除时
+	GetAddOnEventClear() []AddOnEventClear // 获得事件清清除时
 }
 
 type AddOnDie func()
+type AddOnEventClear func(ICard, string)

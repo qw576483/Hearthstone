@@ -104,7 +104,7 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid int) error {
 	ats := c.GetAttackTimes()
 	mats := c.GetMaxAttackTimes()
 	if ats >= mats {
-		return errors.New("最大攻击次数了")
+		return errors.New("最大释放次数了")
 	}
 
 	// 费用

@@ -41,7 +41,7 @@ func (b *Battle) checkCanRelease(c iface.ICard, rcid int, rc iface.ICard) error 
 			return errors.New("必须以我方随从为目标")
 		}
 
-		if rc.GetCardInCardsPos() != define.InCardsTypeBattle {
+		if rc != nil && rc.GetCardInCardsPos() != define.InCardsTypeBattle {
 			return errors.New("目标不在战场")
 		}
 	} else if conf.ReleaseFilter == define.CardReleaseFilterEnemyBattle {
@@ -49,7 +49,12 @@ func (b *Battle) checkCanRelease(c iface.ICard, rcid int, rc iface.ICard) error 
 			return errors.New("必须以敌方随从为目标")
 		}
 
-		if rc.GetCardInCardsPos() != define.InCardsTypeBattle {
+		if rc != nil && rc.GetCardInCardsPos() != define.InCardsTypeBattle {
+			return errors.New("目标不在战场")
+		}
+	} else if conf.ReleaseFilter == define.CardReleaseFilterBattle {
+
+		if rc != nil && rc.GetCardInCardsPos() != define.InCardsTypeBattle {
 			return errors.New("目标不在战场")
 		}
 	}

@@ -1683,7 +1683,7 @@ func (c *Card77) OnNRRoundEnd() {
 
 	randIdx := h.GetBattle().GetRand().Intn(len(define.YseraDreamIds))
 	nc := iface.GetCardFact().GetCard(define.YseraDreamIds[randIdx])
-	nc.Init(nc, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
+	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
 
 	h.MoveToHand(nc)
 

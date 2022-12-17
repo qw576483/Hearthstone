@@ -309,6 +309,10 @@ func (h *Hero) SetMona(set int) {
 	if h.mona > h.config.MonaMax {
 		h.mona = h.config.MonaMax
 	}
+
+	if h.mona < 0 {
+		h.mona = 0
+	}
 }
 
 // 获得法力值
@@ -632,6 +636,18 @@ func (h *Hero) DrawByTimes(t int) []iface.ICard {
 	return dcs
 }
 
+// 抽卡，根据卡牌
+func (h *Hero) DrawByCard(dc iface.ICard) {
+
+	for idx, v := range h.libCards {
+		if v.GetId() == dc.GetId() {
+			_, h.libCards = help.DeleteCardFromCardsByIdx(h.GetLibCards(), idx)
+			h.MoveToHand(v)
+			return
+		}
+	}
+}
+
 // 获得当前疲劳伤害
 func (h *Hero) GetFatigue() int {
 	return h.fatigue
@@ -709,9 +725,15 @@ func (h *Hero) Release(c iface.ICard, choiceId, putidx int, rc iface.ICard, tric
 
 	c.SetReleaseRound(c.GetOwner().GetBattle().GetIncrRoundId())
 
+	// 如果是法术，没被拦截，则法术进入坟场
 	if cType == define.CardTypeSorcery || !valid {
 		h.DieCard(c, false)
 	}
+
+	// if !valid{
+	// 移出手牌
+	h.MoveOutHandOnlyHandCards(c)
+	// }
 
 	h.GetBattle().WhileTrickCardDie()
 
@@ -730,6 +752,7 @@ func (h *Hero) OnlyReleaseWeapon(c iface.ICard) {
 	h.SetWeapon(c)
 	h.MoveOutHandOnlyHandCards(c)
 	c.SetCardInCardsPos(define.InCardsTypeBody)
+	c.OnWear()
 }
 
 // 进攻 ， 这里不减次数， 放在battle那边
@@ -967,11 +990,19 @@ func (h *Hero) OnlyReleaseSecret(ic iface.ICard) bool {
 }
 
 // 删除奥秘 , 是否是触发奥秘的删除
-func (h *Hero) DeleteSecret(ic iface.ICard, istTigger bool) {
+func (h *Hero) DeleteSecret(ic iface.ICard, isTigger bool) {
 
 	for idx, v := range h.secretCards {
 		if v.GetId() == ic.GetId() {
 			_, h.secretCards = help.DeleteCardFromCardsByIdx(h.secretCards, idx)
+		}
+	}
+
+	if isTigger {
+
+		push.PushLog(h, "触发了奥秘"+ic.GetConfig().Name)
+		for _, v := range h.GetBattle().GetEventCards("OnNROtherSecretTigger") {
+			v.OnNROtherSecretTigger(ic)
 		}
 	}
 

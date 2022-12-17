@@ -40,6 +40,9 @@ func (b *Battle) RemoveCardFromEvent(c iface.ICard, e string) {
 
 	for idx, v := range es {
 		if v.GetId() == c.GetId() {
+			for _, v := range v.GetAddOnEventClear() {
+				v(c, e)
+			}
 			_, b.events[e] = help.DeleteCardFromCardsByIdx(es, idx)
 		}
 	}

@@ -21,3 +21,5 @@ var GelbinMekkatorqueInventionIds = []int{122, 123, 125, 126} // 格尔宾·梅�
 
 var EliteTaurenChieftainIds = []int{162, 164, 165}           // 精英牛头人酋长的随机卡牌
 var PowerOfTheHordeIds = []int{166, 167, 168, 169, 170, 137} // 部落的力量随机随从
+
+var AnimalCompanionIds = []int{260, 261, 262} // 动物伙伴ids

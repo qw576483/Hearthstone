@@ -108,7 +108,7 @@ func (c *Card204) NewPoint() iface.ICard {
 	return &Card204{}
 }
 
-func (c *Card204) OnAfterAttack(ec iface.ICard) {
+func (c *Card204) OnAfterCostOtherHp(ec iface.ICard) {
 	h := c.GetOwner()
 	ec.AddTraits(define.CardTraitsFrozen)
 	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(ec)+"获得了冻结")
@@ -530,6 +530,10 @@ func (c *Card227) NewPoint() iface.ICard {
 
 func (c *Card227) OnGetDamage(dmg int) int {
 
+	if c.GetCardInCardsPos() != define.InCardsTypeBattle {
+		return dmg
+	}
+
 	h := c.GetOwner()
 
 	for _, v := range h.GetEnemy().GetBattleCards() {
@@ -583,7 +587,7 @@ func (c *Card230) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	if rs != nil {
 		h.GetEnemy().DeleteSecret(rs, false)
-		push.PushAutoLog(h, push.GetCardLogString(c)+"消灭了"+c.GetConfig().Name+"(奥秘)")
+		push.PushAutoLog(h, push.GetCardLogString(c)+"消灭了"+rs.GetConfig().Name+"(奥秘)")
 	}
 }
 
@@ -620,7 +624,7 @@ func (c *Card231) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 		v.AddSubCards(buff)
 
-		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得亡语：召唤一个2/2的树人")
+		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(v)+"获得亡语：召唤一个2/2的树人")
 	}
 }
 
@@ -736,7 +740,12 @@ func (c *Card235) OnOutBattle() {
 }
 
 func (c *Card235) OnNROtherChangeTreatToCost(who iface.ICard) bool {
-	return who.GetOwner().GetId() == c.GetOwner().GetId()
+
+	change := who.GetOwner().GetId() == c.GetOwner().GetId()
+	if change {
+		push.PushAutoLog(who.GetOwner(), push.GetCardLogString(c)+"将治疗转成了伤害")
+	}
+	return change
 }
 
 // 控心术
@@ -953,9 +962,6 @@ func (c *Card243) NewPoint() iface.ICard {
 func (c *Card243) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
-	if rc == nil {
-		return
-	}
 
 	nc := iface.GetCardFact().GetCard(244)
 	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
@@ -1271,4 +1277,1196 @@ func (c *Card256) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	push.PushAutoLog(h, push.GetCardLogString(c)+"获得了"+strconv.Itoa(addHp)+"生命值")
 
+}
+
+// 野蛮咆哮
+type Card257 struct {
+	bcard.Card
+}
+
+func (c *Card257) NewPoint() iface.ICard {
+	return &Card257{}
+}
+
+func (c *Card257) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	bcs := h.GetBattleCards()
+	bcs = append(bcs, h.GetHead())
+
+	for _, v := range bcs {
+
+		buff := iface.GetCardFact().GetCard(define.BuffCardId_MyRoundEndClear)
+		buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+		buff.AddDamage(2)
+
+		v.AddSubCards(buff)
+
+		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(v)+"获得2点攻击")
+	}
+}
+
+// 治疗之触
+type Card258 struct {
+	bcard.Card
+}
+
+func (c *Card258) NewPoint() iface.ICard {
+	return &Card258{}
+}
+
+func (c *Card258) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	if rc == nil {
+		return
+	}
+
+	rc.TreatmentHp(c, 8)
+}
+
+// 野性成长
+type Card259 struct {
+	bcard.Card
+}
+
+func (c *Card259) NewPoint() iface.ICard {
+	return &Card259{}
+}
+
+func (c *Card259) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	if h.GetMonaMax() >= h.GetConfig().MonaMax {
+		nc := iface.GetCardFact().GetCard(308)
+		nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+		h.MoveToHand(nc)
+
+		push.PushAutoLog(h, "获得了"+push.GetCardLogString(nc))
+
+		return
+	}
+
+	h.AddMonaMax(1)
+	push.PushAutoLog(h, "获得一个空的法力水晶")
+}
+
+// 霍弗
+type Card260 struct {
+	bcard.Card
+}
+
+func (c *Card260) NewPoint() iface.ICard {
+	return &Card260{}
+}
+
+// 雷欧克
+type Card261 struct {
+	bcard.Card
+}
+
+func (c *Card261) NewPoint() iface.ICard {
+	return &Card261{}
+}
+
+func (c *Card261) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherGetDamage")
+}
+
+func (c *Card261) OnOutBattle() {
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherGetDamage")
+}
+
+func (c *Card261) OnNROtherGetDamage(oc iface.ICard) int {
+
+	h := c.GetOwner()
+	if oc.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		oc.GetType() != define.CardTypeEntourage ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return 0
+	}
+
+	return 1
+}
+
+// 米莎
+type Card262 struct {
+	bcard.Card
+}
+
+func (c *Card262) NewPoint() iface.ICard {
+	return &Card262{}
+}
+
+// 杀戮命令
+type Card263 struct {
+	bcard.Card
+}
+
+func (c *Card263) NewPoint() iface.ICard {
+	return &Card263{}
+}
+
+func (c *Card263) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	if rc == nil {
+		return
+	}
+
+	dmg := c.GetConfig().Damage
+	dmg += h.GetApDamage()
+
+	for _, v := range h.GetBattleCards() {
+		if v.IsRace(define.CardRaceBeast) {
+			dmg += 2
+			break
+		}
+	}
+
+	rc.CostHp(c, dmg)
+}
+
+// 动物伙伴
+type Card264 struct {
+	bcard.Card
+}
+
+func (c *Card264) NewPoint() iface.ICard {
+	return &Card264{}
+}
+
+func (c *Card264) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	if len(h.GetBattleCards()) >= define.MaxBattleNum {
+		return
+	}
+
+	randIdx := h.GetBattle().GetRand().Intn(len(define.AnimalCompanionIds))
+
+	nc := iface.GetCardFact().GetCard(define.AnimalCompanionIds[randIdx])
+	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+
+	h.MoveToBattle(nc, -1)
+
+	push.PushAutoLog(h, push.GetCardLogString(c)+"召唤了"+push.GetCardLogString(nc))
+}
+
+// 奥术智慧
+type Card265 struct {
+	bcard.Card
+}
+
+func (c *Card265) NewPoint() iface.ICard {
+	return &Card265{}
+}
+
+func (c *Card265) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	h.DrawByTimes(2)
+}
+
+// 冰霜新星
+type Card266 struct {
+	bcard.Card
+}
+
+func (c *Card266) NewPoint() iface.ICard {
+	return &Card266{}
+}
+
+func (c *Card266) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	for _, v := range h.GetEnemy().GetBattleCards() {
+
+		v.AddTraits(define.CardTraitsFrozen)
+		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(v)+"获得了冻结")
+	}
+}
+
+// 刀扇
+type Card267 struct {
+	bcard.Card
+}
+
+func (c *Card267) NewPoint() iface.ICard {
+	return &Card267{}
+}
+
+func (c *Card267) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	dmg := c.GetConfig().Damage
+	dmg += h.GetApDamage()
+
+	for _, v := range h.GetEnemy().GetBattleCards() {
+		v.CostHp(c, dmg)
+	}
+	h.DrawByTimes(1)
+}
+
+// 暗影箭
+type Card268 struct {
+	bcard.Card
+}
+
+func (c *Card268) NewPoint() iface.ICard {
+	return &Card268{}
+}
+
+func (c *Card268) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	dmg := c.GetConfig().Damage
+	dmg += h.GetApDamage()
+
+	rc.CostHp(c, dmg)
+}
+
+// 吸取生命
+type Card269 struct {
+	bcard.Card
+}
+
+func (c *Card269) NewPoint() iface.ICard {
+	return &Card269{}
+}
+
+func (c *Card269) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	dmg := c.GetConfig().Damage
+	dmg += h.GetApDamage()
+
+	rc.CostHp(c, dmg)
+	h.GetHead().TreatmentHp(c, 2)
+}
+
+// 战歌指挥官
+type Card270 struct {
+	bcard.Card
+}
+
+func (c *Card270) NewPoint() iface.ICard {
+	return &Card270{}
+}
+
+func (c *Card270) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRPutToBattle")
+}
+
+func (c *Card270) OnOutBattle() {
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRPutToBattle")
+}
+
+func (c *Card270) OnNRPutToBattle(oc iface.ICard) {
+	h := c.GetOwner()
+	if c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return
+	}
+
+	buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
+	buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+	buff.AddTraits(define.CardTraitsSuddenStrike)
+
+	oc.AddSubCards(buff)
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(oc)+"获得了突袭")
+}
+
+// 冲锋
+type Card271 struct {
+	bcard.Card
+}
+
+func (c *Card271) NewPoint() iface.ICard {
+	return &Card271{}
+}
+
+func (c *Card271) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
+	buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+	buff.AddDamage(2)
+	buff.AddTraits(define.CardTraitsAssault)
+
+	rc.AddSubCards(buff)
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"+2攻击并获得了冲锋")
+}
+
+// 盾牌格挡
+type Card272 struct {
+	bcard.Card
+}
+
+func (c *Card272) NewPoint() iface.ICard {
+	return &Card272{}
+}
+
+func (c *Card272) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	h.DrawByTimes(1)
+	h.GetHead().SetShield(h.GetHead().GetShield() + 5)
+	push.PushAutoLog(h, push.GetHeroLogString(h)+"5点护盾")
+}
+
+// 战争储备箱
+type Card273 struct {
+	bcard.Card
+}
+
+func (c *Card273) NewPoint() iface.ICard {
+	return &Card273{}
+}
+
+func (c *Card273) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	rd := []define.CardType{define.CardTypeEntourage, define.CardTypeSorcery, define.CardTypeWeapon}
+
+	for _, v := range rd {
+
+		ncCache := iface.GetCardFact().RandByAllCards(h.GetBattle().GetRand(), iface.NewScreenCardParam(
+			iface.SCPWithCardVocations([]define.Vocation{define.VocationWarrior}), iface.SCPWithCardTypes([]define.CardType{v}),
+		))
+
+		if ncCache == nil {
+			continue
+		}
+
+		nc := iface.GetCardFact().GetCard(ncCache.GetConfig().Id)
+		nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+		h.MoveToHand(nc)
+
+		push.PushLog(h, "获得了"+push.GetCardLogString(nc))
+	}
+}
+
+// 炽炎战斧
+type Card274 struct {
+	bcard.Card
+}
+
+func (c *Card274) NewPoint() iface.ICard {
+	return &Card274{}
+}
+
+// 自然印记
+type Card275 struct {
+	bcard.Card
+}
+
+func (c *Card275) NewPoint() iface.ICard {
+	return &Card275{}
+}
+
+func (c *Card275) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
+	buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+
+	if choiceId == 0 {
+		push.PushAutoLog(c.GetOwner(), "[抉择1]+4攻击")
+		buff.AddDamage(4)
+	} else {
+		push.PushAutoLog(c.GetOwner(), "[抉择2]+4生命值和嘲讽")
+		buff.AddHpMaxAndHp(4)
+		buff.AddTraits(define.CardTraitsTaunt)
+	}
+
+	rc.AddSubCards(buff)
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得buff")
+}
+
+// 致命射击
+type Card276 struct {
+	bcard.Card
+}
+
+func (c *Card276) NewPoint() iface.ICard {
+	return &Card276{}
+}
+
+func (c *Card276) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	he := h.GetEnemy()
+	if len(he.GetBattleCards()) <= 0 {
+		return
+	}
+
+	randC := he.RandCard(he.GetBattleCards())
+	he.DieCard(randC, false)
+
+	push.PushAutoLog(h, push.GetCardLogString(c)+"消灭了"+push.GetCardLogString(randC))
+}
+
+// 关门放狗
+type Card277 struct {
+	bcard.Card
+}
+
+func (c *Card277) NewPoint() iface.ICard {
+	return &Card277{}
+}
+
+func (c *Card277) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	for i := 1; i <= len(h.GetEnemy().GetBattleCards()); i++ {
+		if len(h.GetBattleCards()) >= define.MaxBattleNum {
+			return
+		}
+
+		nc := iface.GetCardFact().GetCard(278)
+		nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+
+		h.MoveToBattle(nc, -1)
+		push.PushAutoLog(h, push.GetCardLogString(c)+"召唤了"+push.GetCardLogString(nc))
+	}
+}
+
+// 猎犬
+type Card278 struct {
+	bcard.Card
+}
+
+func (c *Card278) NewPoint() iface.ICard {
+	return &Card278{}
+}
+
+// 鹰角弓
+type Card279 struct {
+	bcard.Card
+}
+
+func (c *Card279) NewPoint() iface.ICard {
+	return &Card279{}
+}
+
+func (c *Card279) OnWear() {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherSecretTigger")
+}
+
+func (c *Card279) OnNROtherSecretTigger(oc iface.ICard) {
+
+	h := c.GetOwner()
+
+	if c.GetCardInCardsPos() != define.InCardsTypeBody {
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherSecretTigger")
+		return
+	}
+
+	if oc.GetOwner().GetId() != c.GetOwner().GetId() {
+		return
+	}
+
+	c.AddHpMaxAndHp(1)
+
+	push.PushAutoLog(h, push.GetCardLogString(c)+"获得了一点耐久")
+}
+
+// 肯瑞托法师
+type Card280 struct {
+	bcard.Card
+}
+
+func (c *Card280) NewPoint() iface.ICard {
+	return &Card280{}
+}
+
+func (c *Card280) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	h.GetBattle().AddCardToEvent(c, "OnNROtherGetMona")
+	h.GetBattle().AddCardToEvent(c, "OnNROtherAfterRelease")
+}
+
+func (c *Card280) deleteEvent() {
+	h := c.GetOwner()
+	h.GetBattle().RemoveCardFromEvent(c, "OnNROtherGetMona")
+	h.GetBattle().RemoveCardFromEvent(c, "OnNROtherAfterRelease")
+}
+
+func (c *Card280) OnNROtherAfterRelease(oc iface.ICard) {
+	h := c.GetOwner()
+
+	if c.GetReleaseRound() != h.GetBattle().GetIncrRoundId() {
+		c.deleteEvent()
+		return
+	}
+
+	if oc.GetType() != define.CardTypeSorcery || !oc.IsHaveTraits(define.CardTraitsSecret) || oc.GetOwner().GetId() != h.GetId() {
+		return
+	}
+
+	c.deleteEvent()
+}
+
+func (c *Card280) OnNROtherGetMona(oc iface.ICard) int {
+
+	h := c.GetOwner()
+
+	if c.GetReleaseRound() != h.GetBattle().GetIncrRoundId() {
+		c.deleteEvent()
+		return 0
+	}
+
+	if oc.GetCardInCardsPos() != define.InCardsTypeHand ||
+		oc.GetType() != define.CardTypeSorcery ||
+		!oc.IsHaveTraits(define.CardTraitsSecret) ||
+		h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() {
+		return 0
+	}
+
+	return -999
+}
+
+// 法术反制
+type Card281 struct {
+	bcard.Card
+}
+
+func (c *Card281) NewPoint() iface.ICard {
+	return &Card281{}
+}
+
+func (c *Card281) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if h.OnlyReleaseSecret(c) {
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherBeforeRelease")
+		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
+	}
+}
+
+func (c *Card281) OnNROtherBeforeRelease(oc, rc iface.ICard) (iface.ICard, bool) {
+	h := c.GetOwner()
+	if oc.GetOwner().GetId() == h.GetEnemy().GetId() &&
+		oc.GetType() == define.CardTypeSorcery && !h.IsRoundHero() {
+
+		h.DeleteSecret(c, true)
+
+		push.PushAutoLog(h, c.GetConfig().Name+"(奥秘)让"+oc.GetConfig().Name+"变得无效")
+
+		return nil, false
+	}
+
+	return rc, true
+}
+
+// 寒冰屏障
+type Card282 struct {
+	bcard.Card
+}
+
+func (c *Card282) NewPoint() iface.ICard {
+	return &Card282{}
+}
+
+func (c *Card282) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if h.OnlyReleaseSecret(c) {
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherBeforeCostHpDie")
+		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
+	}
+}
+
+func (c *Card282) OnNROtherBeforeCostHpDie(oc iface.ICard) {
+
+	h := c.GetOwner()
+	if !h.IsRoundHero() && oc.GetId() == c.GetOwner().GetId() {
+
+		h.DeleteSecret(c, true)
+
+		buff := iface.GetCardFact().GetCard(define.BuffCardId_MyRoundBeginClear)
+		buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+		buff.AddTraits(define.CardTraitsImmune)
+		oc.AddSubCards(buff)
+
+		push.PushAutoLog(h, push.GetCardLogString(oc)+"获得免疫")
+	}
+}
+
+// 镜像实体
+type Card283 struct {
+	bcard.Card
+}
+
+func (c *Card283) NewPoint() iface.ICard {
+	return &Card283{}
+}
+
+func (c *Card283) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if h.OnlyReleaseSecret(c) {
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherAfterRelease")
+		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
+	}
+}
+
+func (c *Card283) OnNROtherAfterRelease(oc iface.ICard) {
+	h := c.GetOwner()
+	if oc.GetOwner().GetId() == h.GetEnemy().GetId() &&
+		oc.GetType() == define.CardTypeEntourage && !h.IsRoundHero() {
+
+		nc, err := oc.Copy()
+		if err != nil {
+			return
+		}
+
+		if len(h.GetBattleCards()) >= define.MaxBattleNum {
+			return
+		}
+
+		nc.SetOwner(c.GetOwner())
+		h.MoveToBattle(nc, -1)
+
+		h.DeleteSecret(c, true)
+
+		push.PushAutoLog(h, c.GetConfig().Name+"(奥秘)召唤了"+push.GetCardLogString(nc))
+	}
+}
+
+// 蒸发
+type Card284 struct {
+	bcard.Card
+}
+
+func (c *Card284) NewPoint() iface.ICard {
+	return &Card284{}
+}
+
+func (c *Card284) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if h.OnlyReleaseSecret(c) {
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherBeforeAttack")
+		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
+	}
+}
+
+func (c *Card284) OnNROtherBeforeAttack(oc, rc iface.ICard) iface.ICard {
+
+	h := c.GetOwner()
+	if oc.GetOwner().GetId() == h.GetEnemy().GetId() &&
+		oc.GetType() == define.CardTypeEntourage && !h.IsRoundHero() {
+
+		rc = nil
+
+		h.DeleteSecret(c, true)
+		oc.GetOwner().DieCard(oc, false)
+
+		push.PushAutoLog(h, push.GetCardLogString(c)+"消灭了"+push.GetCardLogString(oc))
+	}
+
+	return rc
+}
+
+// 游学者周卓
+type Card285 struct {
+	bcard.Card
+}
+
+func (c *Card285) NewPoint() iface.ICard {
+	return &Card285{}
+}
+
+func (c *Card285) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if h.OnlyReleaseSecret(c) {
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherBeforeRelease")
+		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
+	}
+}
+
+func (c *Card285) OnNROtherBeforeRelease(oc, rc iface.ICard) (iface.ICard, bool) {
+
+	h := c.GetOwner()
+	if oc.GetOwner().GetId() == h.GetEnemy().GetId() &&
+		oc.GetType() == define.CardTypeSorcery && !h.IsRoundHero() && rc != nil {
+
+		if len(h.GetBattleCards()) >= define.MaxBattleNum {
+			return rc, true
+		}
+
+		h.DeleteSecret(c, true)
+
+		nc := iface.GetCardFact().GetCard(286)
+		nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+		h.MoveToBattle(nc, -1)
+
+		push.PushAutoLog(h, "召唤了"+push.GetCardLogString(nc))
+		push.PushAutoLog(h, push.GetCardLogString(oc)+"目标变成了"+push.GetCardLogString(nc))
+
+		rc = nc
+	}
+
+	return rc, true
+}
+
+// 扰咒师
+type Card286 struct {
+	bcard.Card
+}
+
+func (c *Card286) NewPoint() iface.ICard {
+	return &Card286{}
+}
+
+// 寒冰护体
+type Card287 struct {
+	bcard.Card
+}
+
+func (c *Card287) NewPoint() iface.ICard {
+	return &Card287{}
+}
+
+func (c *Card287) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if h.OnlyReleaseSecret(c) {
+		c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherBeforeAttack")
+		push.PushLog(h, "释放了"+c.GetConfig().Name+"(奥秘)")
+	}
+}
+
+func (c *Card287) OnNROtherBeforeAttack(oc, rc iface.ICard) iface.ICard {
+
+	h := c.GetOwner()
+	if oc.GetOwner().GetId() == h.GetEnemy().GetId() && !h.IsRoundHero() {
+
+		h.DeleteSecret(c, true)
+
+		h.GetHead().SetShield(h.GetHead().GetShield() + 8)
+
+		push.PushAutoLog(h, "获得了8点护甲值")
+	}
+
+	return rc
+}
+
+// 冰锥术
+type Card288 struct {
+	bcard.Card
+}
+
+func (c *Card288) NewPoint() iface.ICard {
+	return &Card288{}
+}
+
+func (c *Card288) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	rh := rc.GetOwner()
+	bcs := rh.GetBattleCards()
+
+	rcIdx := rh.GetIdxByCards(rc, bcs)
+
+	var cLeft iface.ICard
+	var cRight iface.ICard
+
+	if (rcIdx - 1) >= 0 {
+		cLeft = bcs[rcIdx-1]
+	}
+	if (rcIdx + 1) < len(bcs) {
+		cRight = bcs[rcIdx+1]
+	}
+
+	dmg := c.GetConfig().Damage
+	dmg += h.GetApDamage()
+
+	rc.CostHp(c, dmg)
+	rc.AddTraits(define.CardTraitsFrozen)
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"获得了冻结")
+
+	if cLeft != nil {
+		cLeft.CostHp(c, dmg)
+		cLeft.AddTraits(define.CardTraitsFrozen)
+		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(cLeft)+"获得了冻结")
+	}
+
+	if cRight != nil {
+		cRight.CostHp(c, dmg)
+		cRight.AddTraits(define.CardTraitsFrozen)
+		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(cRight)+"获得了冻结")
+	}
+}
+
+// 奥尔多卫士
+type Card289 struct {
+	bcard.Card
+}
+
+func (c *Card289) NewPoint() iface.ICard {
+	return &Card289{}
+}
+
+func (c *Card289) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	rc.SetDamage(1)
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(rc)+"攻击力变为1")
+}
+
+// 神恩术
+type Card290 struct {
+	bcard.Card
+}
+
+func (c *Card290) NewPoint() iface.ICard {
+	return &Card290{}
+}
+
+func (c *Card290) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	times := len(h.GetEnemy().GetHandCards()) - len(h.GetHandCards())
+
+	if times <= 0 {
+		return
+	}
+
+	h.DrawByTimes(times)
+}
+
+// 公正之剑
+type Card291 struct {
+	bcard.Card
+}
+
+func (c *Card291) NewPoint() iface.ICard {
+	return &Card291{}
+}
+
+func (c *Card291) OnWear() {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRPutToBattle")
+}
+
+func (c *Card291) OnNRPutToBattle(oc iface.ICard) {
+	h := c.GetOwner()
+
+	if c.GetCardInCardsPos() != define.InCardsTypeBody {
+		c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRPutToBattle")
+		return
+	}
+
+	if h.GetId() != oc.GetOwner().GetId() ||
+		c.GetId() == oc.GetId() ||
+		oc.GetType() != define.CardTypeEntourage {
+		return
+	}
+
+	buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
+	buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+	buff.AddDamage(1)
+	buff.AddHpMaxAndHp(1)
+
+	oc.AddSubCards(buff)
+	c.CostHp(c, 1)
+	push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(oc)+"获得+1/+1")
+}
+
+// 光耀之子
+type Card292 struct {
+	bcard.Card
+}
+
+func (c *Card292) NewPoint() iface.ICard {
+	return &Card292{}
+}
+
+func (c *Card292) OnGetDamage(d int) int {
+	return c.GetHaveEffectHp()
+}
+
+// 暗影狂乱
+type Card293 struct {
+	bcard.Card
+}
+
+func (c *Card293) NewPoint() iface.ICard {
+	return &Card293{}
+}
+
+func (c *Card293) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	if rc.GetOwner().GetId() == h.GetId() || rc.GetHaveEffectDamage() > 3 || len(h.GetBattleCards()) >= define.MaxBattleNum {
+		return
+	}
+	eh := rc.GetOwner()
+
+	buff := iface.GetCardFact().GetCard(define.BuffCardId_MyRoundEndClear)
+	buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+	buff.AddOnEventClear(func(i iface.ICard, s string) {
+		if i.GetId() == buff.GetId() &&
+			s == "OnNRRoundEnd" &&
+			rc.GetCardInCardsPos() == define.InCardsTypeBattle &&
+			rc.GetOwner().GetId() == h.GetId() {
+
+			if len(eh.GetBattleCards()) >= define.MaxBattleNum {
+
+				push.PushAutoLog(h, "还给对方时,战场已满"+push.GetCardLogString(i)+"死亡")
+				h.DieCard(i, false)
+				return
+			}
+
+			push.PushAutoLog(h, "还给了对方"+push.GetCardLogString(rc))
+
+			h.MoveOutBattleOnlyBattleCards(rc)
+			rc.SetOwner(eh)
+
+			eh.MoveToBattle(rc, -1)
+		}
+	})
+	rc.AddSubCards(buff)
+
+	rc.GetOwner().MoveOutBattleOnlyBattleCards(rc)
+	rc.SetOwner(h)
+	rc.SetAttackTimes(0)
+	h.MoveToBattle(rc, -1)
+}
+
+// 艾德温·范克里夫
+type Card294 struct {
+	bcard.Card
+}
+
+func (c *Card294) NewPoint() iface.ICard {
+	return &Card294{}
+}
+
+func (c *Card294) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	times := (h.GetReleaseCardTimes() - 1)
+
+	if times <= 1 {
+		return
+	}
+
+	add := (times - 1) * 2
+
+	buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
+	buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+	buff.AddDamage(add)
+	buff.AddHpMaxAndHp(add)
+
+	c.AddSubCards(buff)
+
+	push.PushAutoLog(h, push.GetCardLogString(c)+"获得+"+strconv.Itoa(add)+"/+"+strconv.Itoa(add))
+}
+
+// 军情七处特工
+type Card295 struct {
+	bcard.Card
+}
+
+func (c *Card295) NewPoint() iface.ICard {
+	return &Card295{}
+}
+
+func (c *Card295) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+	if rc == nil {
+		return
+	}
+
+	if h.GetReleaseCardTimes() <= 1 {
+		return
+	}
+
+	rc.CostHp(c, 2)
+}
+
+// 裂颅之击
+type Card296 struct {
+	bcard.Card
+}
+
+func (c *Card296) NewPoint() iface.ICard {
+	return &Card296{}
+}
+
+func (c *Card296) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	dmg := c.GetConfig().Damage
+	dmg += h.GetApDamage()
+
+	h.GetEnemy().GetHead().CostHp(c, 2)
+
+	if h.GetReleaseCardTimes() <= 1 {
+		return
+	}
+
+	push.PushAutoLog(h, push.GetCardLogString(c)+"触发连击")
+	h.GetBattle().AddCardToEvent(c, "OnNRRoundEnd")
+}
+
+func (c *Card296) OnNRRoundEnd() {
+
+	if c.GetCardInCardsPos() != define.InCardsTypeGrave {
+		return
+	}
+
+	h := c.GetOwner()
+	h.GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
+
+	nc := iface.GetCardFact().GetCard(296)
+	nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+	h.MoveToHand(nc)
+
+	push.PushAutoLog(h, push.GetCardLogString(c)+"移动回手牌")
+}
+
+// 法力之潮图腾
+type Card297 struct {
+	bcard.Card
+}
+
+func (c *Card297) NewPoint() iface.ICard {
+	return &Card297{}
+}
+
+func (c *Card297) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNRRoundEnd")
+}
+
+func (c *Card297) OnOutBattle() {
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNRRoundEnd")
+}
+
+func (c *Card297) OnNRRoundEnd() {
+
+	// 在我的回合结束时
+	if c.GetCardInCardsPos() != define.InCardsTypeBattle ||
+		!c.GetOwner().IsRoundHero() {
+		return
+	}
+
+	h := c.GetOwner()
+	h.DrawByTimes(1)
+}
+
+// 无羁元素
+type Card298 struct {
+	bcard.Card
+}
+
+func (c *Card298) NewPoint() iface.ICard {
+	return &Card298{}
+}
+
+func (c *Card298) OnPutToBattle(bidx int) {
+	c.GetOwner().GetBattle().AddCardToEvent(c, "OnNROtherAfterRelease")
+}
+
+func (c *Card298) OnOutBattle() {
+	c.GetOwner().GetBattle().RemoveCardFromEvent(c, "OnNROtherAfterRelease")
+}
+
+func (c *Card298) OnNROtherAfterRelease(oc iface.ICard) {
+
+	h := c.GetOwner()
+	if oc.GetOwner().GetId() != h.GetId() || oc.GetId() == c.GetId() || !oc.IsHaveTraits(define.CardTraitsLockMona) {
+		return
+	}
+
+	buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
+	buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
+	buff.AddDamage(1)
+	buff.AddHpMaxAndHp(1)
+	c.AddSubCards(buff)
+
+	push.PushAutoLog(h, push.GetCardLogString(c)+"获得+1/+1")
+}
+
+// 野性狼魂
+type Card299 struct {
+	bcard.Card
+}
+
+func (c *Card299) NewPoint() iface.ICard {
+	return &Card299{}
+}
+
+func (c *Card299) OnRelease(choiceId, bidx int, rc iface.ICard) {
+
+	h := c.GetOwner()
+
+	for i := 1; i <= 2; i++ {
+		if len(h.GetBattleCards()) >= define.MaxBattleNum {
+			return
+		}
+		nc := iface.GetCardFact().GetCard(300)
+		nc.Init(nc, define.InCardsTypeNone, h, h.GetBattle())
+		h.MoveToBattle(nc, -1)
+
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"召唤了"+push.GetCardLogString(nc))
+	}
+}
+
+// 幽灵狼
+type Card300 struct {
+	bcard.Card
+}
+
+func (c *Card300) NewPoint() iface.ICard {
+	return &Card300{}
 }

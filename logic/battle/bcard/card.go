@@ -3,6 +3,7 @@ package bcard
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"hs/logic/config"
 	"hs/logic/define"
 	"hs/logic/help"
@@ -37,7 +38,8 @@ type Card struct {
 	FatherCard   iface.ICard         // 父卡牌
 	SubCards     []iface.ICard       // 子卡牌
 
-	OnDieEvents []iface.AddOnDie // 子事件，死亡
+	onDieEvents        []iface.AddOnDie        // 子事件，死亡
+	onEventClearEvents []iface.AddOnEventClear // 子事件，事件被删除时
 }
 
 // 返回新指针
@@ -249,6 +251,23 @@ func (c *Card) SetHpMaxAndHp(set int) {
 	c.SetHp(set)
 }
 
+func (c *Card) checkCostHpTraits(num int) int {
+
+	// 是否拥有圣盾
+	if num > 0 && c.IsHaveTraits(define.CardTraitsHolyShield) {
+		num = 0
+		c.RemoveTraits(define.CardTraitsHolyShield)
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"圣盾消失")
+	}
+
+	if num > 0 && c.IsHaveTraits(define.CardTraitsImmune) {
+		num = 0
+		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"具有免疫，伤害无效")
+	}
+
+	return num
+}
+
 // 扣除血量
 func (c *Card) CostHp(who iface.ICard, num int) int {
 
@@ -263,22 +282,18 @@ func (c *Card) CostHp(who iface.ICard, num int) int {
 	}
 
 	ic := c.GetRealization()
-
-	// 是否拥有圣盾
-	if num > 0 && c.IsHaveTraits(define.CardTraitsHolyShield) {
-		num = 0
-		c.RemoveTraits(define.CardTraitsHolyShield)
-		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"圣盾消失")
-	}
-
-	if num > 0 && c.IsHaveTraits(define.CardTraitsImmune) {
-		num = 0
-		push.PushAutoLog(c.GetOwner(), push.GetCardLogString(c)+"具有免疫，伤害无效")
-	}
+	num = c.checkCostHpTraits(num)
 
 	if num > 0 && !c.IsSilent() {
 		num = ic.OnBeforeCostHp(num)
 	}
+
+	if num > 0 && (c.GetHaveEffectHp()+c.Shield) <= num {
+		for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherBeforeCostHpDie") {
+			v.OnNROtherBeforeCostHpDie(c.GetRealization())
+		}
+	}
+	num = c.checkCostHpTraits(num)
 
 	if c.Shield >= num {
 		c.Shield -= num
@@ -289,6 +304,7 @@ func (c *Card) CostHp(who iface.ICard, num int) int {
 	}
 
 	tcNum := num
+
 	// 扣一下光环加成的血
 	if num > 0 {
 		c.GetHaveEffectHp()
@@ -312,11 +328,20 @@ func (c *Card) CostHp(who iface.ICard, num int) int {
 		ic.OnAfterHpChange()
 	}
 
+	if tcNum > 0 && !who.IsSilent() {
+		who.OnAfterCostOtherHp(c)
+	}
+
+	if tcNum > 0 && who.IsHaveTraits(define.CardTraitsHighlyToxic) && c.GetType() != define.CardTypeHero {
+		push.PushAutoLog(who.GetOwner(), push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(c)+"直接死亡")
+		c.GetOwner().DieCard(c, false)
+	}
+
 	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherAfterCostHp") {
 		v.OnNROtherAfterCostHp(who, c.GetRealization(), tcNum)
 	}
 
-	if c.Hp <= 0 {
+	if c.Hp <= 0 && c.GetCardInCardsPos() != define.InCardsTypeGrave {
 
 		h := c.GetOwner()
 		var tc iface.ICard
@@ -448,16 +473,16 @@ func (c *Card) GetHaveEffectDamage() int {
 		}
 	}
 
-	if !ic.IsSilent() {
-		d = ic.OnGetDamage(d)
-	}
-
 	for _, v := range ic.GetOwner().GetBattle().GetEventCards("OnNROtherGetDamage") {
 		d += v.OnNROtherGetDamage(ic)
 	}
 
 	for _, v := range ic.GetSubCards() {
 		d += v.GetDamage()
+	}
+
+	if !ic.IsSilent() {
+		d = ic.OnGetDamage(d)
 	}
 
 	if d < 0 {
@@ -618,13 +643,13 @@ func (c *Card) GetMaxAttackTimes() int {
 
 		// 需要获得到武器属性
 		w := c.GetOwner().GetWeapon()
-		if w != nil && help.InArray(define.CardTraitsWindfury, w.GetTraits()) {
+		if w != nil && help.InArray(define.CardTraitsWindfury, w.GetHaveEffectTraits()) {
 			return 2
 		}
 		return 1
 	}
 
-	if help.InArray(define.CardTraitsWindfury, c.GetTraits()) {
+	if help.InArray(define.CardTraitsWindfury, c.GetHaveEffectTraits()) {
 		return 2
 	}
 	return 1
@@ -645,10 +670,12 @@ func (c *Card) Copy() (iface.ICard, error) {
 	// deep copy
 	buf := bytes.Buffer{}
 	if err := gob.NewEncoder(&buf).Encode(ic); err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
 	if err := gob.NewDecoder(&buf).Decode(nc); err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
@@ -676,7 +703,8 @@ func (c *Card) Reset() {
 	c.DbIdx = 0                       // 死亡后的bidx
 	c.SetSubCards(make([]iface.ICard, 0))
 
-	c.OnDieEvents = make([]iface.AddOnDie, 0)
+	c.onDieEvents = make([]iface.AddOnDie, 0)
+	c.onEventClearEvents = make([]iface.AddOnEventClear, 0)
 }
 
 // 沉默此卡
@@ -699,7 +727,8 @@ func (c *Card) Silent() {
 	c.SetSubCards(make([]iface.ICard, 0))
 	c.GetOwner().GetBattle().RemoveCardFromAllEvent(c)
 
-	c.OnDieEvents = make([]iface.AddOnDie, 0)
+	c.onDieEvents = make([]iface.AddOnDie, 0)
+	c.onEventClearEvents = make([]iface.AddOnEventClear, 0)
 
 	// 血量修正
 	c.HpMax = c.Config.Hp

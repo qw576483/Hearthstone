@@ -63,6 +63,7 @@ type IHero interface {
 	DrawForPreBegin(int)                        // 预备开始时的抽卡
 	ChangePreCrards([]int)                      // 修改预备抽卡
 	DrawByTimes(int) []ICard                    // 抽卡
+	DrawByCard(ICard)                           // 抽卡根据卡牌
 	SetFatigue(int)                             // 设置疲劳伤害
 	GetFatigue() int                            // 获得当前疲劳伤害
 	Release(ICard, int, int, ICard, bool) error // 出牌

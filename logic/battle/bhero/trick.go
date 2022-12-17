@@ -3,7 +3,6 @@ package bhero
 import (
 	"hs/logic/define"
 	"hs/logic/iface"
-	"hs/logic/push"
 )
 
 // 触发战斗开始
@@ -94,14 +93,6 @@ func (h *Hero) TrickAfterAttackEvent(c, ec iface.ICard, trueCostHp int) {
 		c.GetOwner().GetWeapon().OnAfterAttack(ec)
 	} else if c.GetType() == define.CardTypeEntourage && !c.IsSilent() {
 		c.OnAfterAttack(ec)
-	}
-
-	// 攻击者事件
-	if trueCostHp > 0 {
-		if ec.GetHaveEffectHp() > 0 && c.IsHaveTraits(define.CardTraitsHighlyToxic) && ec.GetType() != define.CardTypeHero {
-			push.PushAutoLog(h, push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(ec)+"直接死亡")
-			ec.GetOwner().DieCard(ec, false)
-		}
 	}
 
 }

@@ -16,6 +16,7 @@ func (c *Card) OnNROtherBeforeAttack(oc, ec iface.ICard) iface.ICard {
 	return ec
 }
 func (c *Card) OnNRPutToBattle(oc iface.ICard)                  {}
+func (c *Card) OnNROtherBeforeCostHpDie(oc iface.ICard)         {}
 func (c *Card) OnNROtherDie(oc iface.ICard)                     {}
 func (c *Card) OnNROtherGetMona(oc iface.ICard) int             { return 0 }
 func (c *Card) OnNROtherGetFinalMona(oc iface.ICard, m int) int { return m }
@@ -32,3 +33,4 @@ func (c *Card) OnNROtherBeforeTreatmentHp(who, target iface.ICard, num int) int 
 }
 func (c *Card) OnNROtherAfterTreatmentHp(who, target iface.ICard, num int) {}
 func (c *Card) OnNROtherChangeTreatToCost(who iface.ICard) bool            { return false }
+func (c *Card) OnNROtherSecretTigger(s iface.ICard)                        {}

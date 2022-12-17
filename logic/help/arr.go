@@ -1,6 +1,7 @@
 package help
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 )
@@ -23,20 +24,28 @@ func InArray(val interface{}, array interface{}) (exists bool) {
 	return
 }
 
-func Implode(separator string, array interface{}) (str string) {
-	str = ""
-
-	switch reflect.TypeOf(array).Kind() {
-	case reflect.Slice:
-		s := reflect.ValueOf(array)
-
-		for i := 0; i < s.Len(); i++ {
-			str += s.Index(i).String() + separator
+func Implode(seq string, list interface{}) string {
+	listValue := reflect.Indirect(reflect.ValueOf(list))
+	if listValue.Kind() != reflect.Slice {
+		return ""
+	}
+	count := listValue.Len()
+	listStr := make([]string, 0, count)
+	for i := 0; i < count; i++ {
+		v := listValue.Index(i)
+		if str, err := getValue(v); err == nil {
+			listStr = append(listStr, str)
 		}
+	}
+	return strings.Join(listStr, seq)
+}
 
-		str = strings.Trim(str, separator)
-
-		return
+func getValue(value reflect.Value) (res string, err error) {
+	switch value.Kind() {
+	case reflect.Ptr:
+		res, err = getValue(value.Elem())
+	default:
+		res = fmt.Sprint(value.Interface())
 	}
 	return
 }

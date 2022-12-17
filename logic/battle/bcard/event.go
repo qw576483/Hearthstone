@@ -13,9 +13,11 @@ func (c *Card) OnBeforeAttack(ec iface.ICard) iface.ICard     { return ec }
 func (c *Card) OnAfterAttack(ec iface.ICard)                  {}
 func (c *Card) OnRelease(choiceId, bidx int, rc iface.ICard)  {}
 func (c *Card) OnRelease2(choiceId, bidx int, rc iface.ICard) {}
+func (c *Card) OnWear()                                       {}
 func (c *Card) OnBeforeCostHp(d int) int                      { return d }
 func (c *Card) OnAfterCostHp()                                {}
 func (c *Card) OnAfterHpChange()                              {}
+func (c *Card) OnAfterCostOtherHp(target iface.ICard)         {} // 造成其他人伤害时
 func (c *Card) OnDie()                                        {}
 func (c *Card) OnAfterDisCard()                               {}
 func (c *Card) OnGetMona(m int) int                           { return m }

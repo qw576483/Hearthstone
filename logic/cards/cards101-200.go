@@ -1636,6 +1636,7 @@ func (c *Card177) NewPoint() iface.ICard {
 
 func (c *Card177) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
+	h := c.GetOwner()
 	if rc == nil {
 		return
 	}
@@ -1655,13 +1656,13 @@ func (c *Card177) OnRelease(choiceId, bidx int, rc iface.ICard) {
 		cRight = bcs[rcIdx+1]
 	}
 
-	rc.CostHp(c, 5)
+	rc.CostHp(c, 5+h.GetApDamage())
 	if cLeft != nil {
-		cLeft.CostHp(c, 2)
+		cLeft.CostHp(c, 2+h.GetApDamage())
 	}
 
 	if cRight != nil {
-		cRight.CostHp(c, 2)
+		cRight.CostHp(c, 2+h.GetApDamage())
 	}
 }
 
@@ -2203,29 +2204,32 @@ func (c *Card200) deleteEvent() {
 
 func (c *Card200) OnNROtherAfterRelease(oc iface.ICard) {
 	h := c.GetOwner()
-	if oc.GetType() != define.CardTypeSorcery || oc.GetOwner().GetId() != h.GetId() {
-		return
-	}
 
 	if c.GetReleaseRound() != h.GetBattle().GetIncrRoundId() {
 		c.deleteEvent()
 		return
 	}
+
+	if oc.GetType() != define.CardTypeSorcery || oc.GetOwner().GetId() != h.GetId() {
+		return
+	}
+
 	c.deleteEvent()
 }
 
 func (c *Card200) OnNROtherGetMona(oc iface.ICard) int {
 
 	h := c.GetOwner()
+
+	if c.GetReleaseRound() != h.GetBattle().GetIncrRoundId() {
+		c.deleteEvent()
+		return 0
+	}
+
 	if oc.GetCardInCardsPos() != define.InCardsTypeHand ||
 		oc.GetType() != define.CardTypeSorcery ||
 		h.GetId() != oc.GetOwner().GetId() ||
 		c.GetId() == oc.GetId() {
-		return 0
-	}
-
-	if c.GetReleaseRound() != h.GetBattle().GetIncrRoundId() {
-		c.deleteEvent()
 		return 0
 	}
 
