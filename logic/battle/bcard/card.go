@@ -334,7 +334,7 @@ func (c *Card) CostHp(who iface.ICard, num int) int {
 
 	if tcNum > 0 && who.IsHaveTraits(define.CardTraitsHighlyToxic) && c.GetType() != define.CardTypeHero {
 		push.PushAutoLog(who.GetOwner(), push.GetCardLogString(c)+" 触发剧毒，"+push.GetCardLogString(c)+"直接死亡")
-		c.GetOwner().DieCard(c, false)
+		c.GetOwner().DieCard(c.GetRealization(), false)
 	}
 
 	for _, v := range c.GetOwner().GetBattle().GetEventCards("OnNROtherAfterCostHp") {
