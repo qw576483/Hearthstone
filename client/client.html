@@ -128,6 +128,8 @@
             <br />
             <input type="submit" onclick="sendCmd()">
         </form>
+        
+        <div id="backToRoomList" style="display: none;"> <button onclick="backToRoomList()"> <b>回到房间界面</b></button> </div>
 
         <h2>日志</h2>
 
@@ -166,18 +168,25 @@
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
 
-    var ws = new WebSocket('ws://127.0.0.1:3653')
+    var ws = new WebSocket('ws://127.0.0.1:9000')
     ws.onopen = function(){
         console.log("open ws");
 
         ws.send(encodeMsg("GetCardsConfig" , {}))
 
         $("#wsMsg").html("连接服务器成功")
+
+        setInterval(function() {
+            ws.send(encodeMsg("Hello" , {Name:""}))
+        }, 5000)
     }
 
     ws.onmessage = function(e){
         msg = decodeMsg(e.data)
-        console.log(msg)
+
+        if (msg.Hello === undefined){
+            console.log(msg)
+        }
 
         if(msg.CardsConfigMsg !== undefined){
             buildCardsConfig(msg.CardsConfigMsg.Configs)
@@ -344,6 +353,10 @@
             $("#waitEnemy").hide()
             $("#tField").html("");
         }
+
+        if(msg.Line == 2){
+            $("#backToRoomList").show()
+        }
     }
 
     function initGame(msg){
@@ -448,6 +461,14 @@
         html += "[" + dateFormat() + "]" + msg + "<br/>"
         $("#logField").html(html)
         $('#logField').scrollTop(99999999999999);
+    }
+
+    function backToRoomList(){
+        $("#logField").html("")
+        $("#JoinRoomDiv").show()
+        $("#waitEnemy").hide()
+        $("#battleField").hide()
+        $("#backToRoomList").hide()
     }
 
     var dateFormat = function() {

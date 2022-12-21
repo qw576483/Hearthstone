@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/name5566/leaf/gate"
-	"github.com/name5566/leaf/log"
 )
 
 func init() {
@@ -34,12 +33,12 @@ func handler(m interface{}, h interface{}) {
 
 func handleHello(args []interface{}) {
 	// 收到的 Hello 消息
-	m := args[0].(*msg.Hello)
+	// m := args[0].(*msg.Hello)
 	// 消息的发送者
 	a := args[1].(gate.Agent)
 
 	// 输出收到的消息的内容
-	log.Debug("hello %v", m.Name)
+	// log.Debug("hello %v", m.Name)
 
 	// 给发送者回应一个 Hello 消息
 	a.WriteMsg(&msg.Hello{
@@ -75,6 +74,14 @@ func handleJoinRoom(args []interface{}) {
 	m := args[0].(*msg.JoinRoom)
 	a := args[1].(gate.Agent)
 
+	hc := config.GetHeroConfig(m.HeroId)
+	if hc == nil || !hc.CanCarry {
+		a.WriteMsg(&push.ErrorMsg{
+			Error: "英雄不存在:" + strconv.Itoa(m.HeroId),
+		})
+		return
+	}
+
 	// 玩家填写的cardIds
 	var cardIds []int = make([]int, 0)
 	cardIdsString := strings.Split(m.CardIds, ",")
@@ -93,18 +100,14 @@ func handleJoinRoom(args []interface{}) {
 			// 	return
 			// }
 
+			// if len(cc.Vocation) > 0 && !help.InArray(hc.Vocation, cc.Vocation) {
+			// 	a.WriteMsg(&push.ErrorMsg{
+			// 		Error: "存在本职业不能携带的卡牌:" + strconv.Itoa(id),
+			// 	})
+			// 	return
+			// }
 		}
 	}
-
-	hc := config.GetHeroConfig(m.HeroId)
-	if hc == nil || !hc.CanCarry {
-		a.WriteMsg(&push.ErrorMsg{
-			Error: "英雄不存在:" + strconv.Itoa(m.HeroId),
-		})
-		return
-	}
-
-	// =========
 
 	p := player.GetPlayerList().GetPlayer(a)
 	p.SetHc(m.HeroId, cardIds)

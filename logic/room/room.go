@@ -5,6 +5,7 @@ import (
 	"hs/logic/battle"
 	"hs/logic/battle/bhero"
 	"hs/logic/config"
+	"hs/logic/define"
 	"hs/logic/iface"
 	"hs/logic/push"
 )
@@ -67,6 +68,16 @@ func (r *Room) Begin() {
 	cards2 := iface.GetCardFact().GetCards(p2.GetCardIds())
 
 	r.battle = battle.NewBattle(h1, h2, cards1, cards2)
+
+	go func() {
+		sc := r.battle.GetStatusChan()
+		for {
+			if define.BattleStatusEnd == <-sc {
+				GetRoomList().DeleteByRoomId(r.id)
+				break
+			}
+		}
+	}()
 }
 
 // 获得成员数量
@@ -77,4 +88,8 @@ func (r *Room) GetMembersNum() int {
 // 获得战斗句柄
 func (r *Room) GetBattle() iface.IBattle {
 	return r.battle
+}
+
+func (r *Room) GetPlayers() []iface.IPlayer {
+	return r.players
 }

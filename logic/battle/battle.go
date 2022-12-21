@@ -11,15 +11,16 @@ import (
 )
 
 type Battle struct {
-	incrCardId    int                 // 自增id
-	incrRoundId   int                 // 自增回合id
-	incrReleaseId int                 // 自增释放id
-	doneSign      map[string]string   // 完成标记
-	status        define.BattleStatus // 状态
-	hero          iface.IHero         // 当前回合的英雄
-	heros         []iface.IHero       // 保存一下
-	randSeed      int64               // 随机数种子
-	rand          *rand.Rand          // 随机数句柄
+	incrCardId    int                      // 自增id
+	incrRoundId   int                      // 自增回合id
+	incrReleaseId int                      // 自增释放id
+	doneSign      map[string]string        // 完成标记
+	status        define.BattleStatus      // 状态
+	statusChan    chan define.BattleStatus // 状态
+	hero          iface.IHero              // 当前回合的英雄
+	heros         []iface.IHero            // 保存一下
+	randSeed      int64                    // 随机数种子
+	rand          *rand.Rand               // 随机数句柄
 
 	events         map[string][]iface.ICard // 事件
 	recordCardsDie map[int]iface.ICard      // 亡语收集器
@@ -35,6 +36,7 @@ func NewBattle(h1, h2 iface.IHero, cs1, cs2 []iface.ICard) iface.IBattle {
 		doneSign:       make(map[string]string, 0),
 		events:         make(map[string][]iface.ICard, 0),
 		recordCardsDie: make(map[int]iface.ICard, 0),
+		statusChan:     make(chan define.BattleStatus, 20),
 	}
 
 	b.randSeed = time.Now().UnixNano()
@@ -89,7 +91,12 @@ func (b *Battle) GetBattleStatus() define.BattleStatus {
 // 设置战斗状态
 func (b *Battle) SetBattleStatus(bs define.BattleStatus) {
 	b.status = bs
+	b.statusChan <- bs
 	push.PushLine(b)
+}
+
+func (b *Battle) GetStatusChan() chan define.BattleStatus {
+	return b.statusChan
 }
 
 // 获得当前回合的英雄

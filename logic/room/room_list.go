@@ -29,3 +29,16 @@ func (rm *RoomList) GetRoom(rid int) iface.IRoom {
 
 	return rl.list[rid]
 }
+
+// 删除房间
+func (rm *RoomList) DeleteByRoomId(rid int) {
+
+	if rm, ok := rl.list[rid]; ok {
+		ps := rm.GetPlayers()
+		for _, v := range ps {
+			v.SetRoomId(0)
+		}
+	}
+
+	delete(rl.list, rid)
+}

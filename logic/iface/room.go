@@ -5,4 +5,5 @@ type IRoom interface {
 	GetBattle() IBattle
 	Begin() // 房间战斗开始
 	GetMembersNum() int
+	GetPlayers() []IPlayer
 }

@@ -34,3 +34,8 @@ func (pl *PlayerList) GetPlayer(a gate.Agent) iface.IPlayer {
 
 	return pl.list[a]
 }
+
+// 删除玩家
+func (pl *PlayerList) DeletePlayer(a gate.Agent) {
+	delete(pl.list, a)
+}

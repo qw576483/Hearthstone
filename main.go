@@ -32,4 +32,8 @@ func main() {
 		game.Module,
 		gate.Module,
 	)
+
+	// go env -w CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+	// go env -w CGO_ENABLED=0 GOOS=windows GOARCH=amd64
+	// nohup ./hs > hs.log 2>&1 &
 }
