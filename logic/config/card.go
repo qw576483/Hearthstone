@@ -1728,6 +1728,7 @@ var defineCardConfig []*CardConfig = []*CardConfig{
 	137: &CardConfig{
 		Id:       137,
 		Name:     "凯恩·血蹄",
+		Desc:     "亡语：召唤一个5/5的贝恩·血蹄。",
 		Mona:     6,
 		Damage:   5,
 		Hp:       5,

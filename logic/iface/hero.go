@@ -38,6 +38,7 @@ type IHero interface {
 	GetAllCards() []ICard                       // 获得全部卡牌
 	GetBothAllCards() []ICard                   // 获得全部卡牌
 	GetRoundDieCards() []ICard                  // 获得回合死亡卡牌
+	CardsToNewInstance([]ICard) []ICard         // 切片换成新的内存，card还是引用旧的
 	GetApDamage() int                           // 获得法术伤害
 	AddMona(int)                                // 添加法力值
 	CostMona(int) bool                          // 消耗法力值

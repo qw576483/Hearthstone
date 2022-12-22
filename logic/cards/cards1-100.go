@@ -643,7 +643,7 @@ func (c *Card29) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	d := h.GetApDamage()
 	d += 2
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 		v.CostHp(c, d)
 	}
 
@@ -1317,18 +1317,14 @@ func (c *Card61) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 
-	for _, v := range h.GetBattleCards() {
-		h.DieCard(v, false)
+	cs := h.GetEnemy().GetBattleCards()
+	cs = append(cs, h.GetBattleCards()...)
+	for _, v := range cs {
+		v.GetOwner().DieCard(v, false)
 		push.PushLog(h, push.GetCardLogString(c)+"消灭了"+push.GetCardLogString(v))
 	}
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
-		h.GetEnemy().DieCard(v, false)
-		push.PushLog(h, push.GetCardLogString(c)+"消灭了"+push.GetCardLogString(v))
-	}
-
-	hcs := h.GetHandCards()
-	for _, v := range hcs {
+	for _, v := range h.CardsToNewInstance(h.GetHandCards()) {
 		if v.GetId() != c.GetId() {
 			h.DiscardCard(v)
 			push.PushLog(h, push.GetCardLogString(c)+"丢弃了"+push.GetCardLogString(v))
@@ -1752,14 +1748,9 @@ func (c *Card80) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	d := h.GetApDamage()
 	d += 5
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
-		if v.GetConfig().Id == define.YseraId {
-			continue
-		}
-		v.CostHp(c, d)
-	}
-
-	for _, v := range h.GetBattleCards() {
+	cs := h.GetEnemy().GetBattleCards()
+	cs = append(cs, h.GetBattleCards()...)
+	for _, v := range cs {
 		if v.GetConfig().Id == define.YseraId {
 			continue
 		}
@@ -1806,7 +1797,7 @@ func (c *Card84) NewPoint() iface.ICard {
 func (c *Card84) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
-	for _, v := range h.GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 
 		buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
 		buff.Init(buff, define.InCardsTypeNone, c.GetOwner(), c.GetOwner().GetBattle())
@@ -1929,7 +1920,7 @@ func (c *Card88) OnRelease2(choiceId, bidx int, rc iface.ICard) {
 	h := c.GetOwner()
 	if choiceId == 0 {
 
-		for _, v := range h.GetBattleCards() {
+		for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 			if v.GetId() == c.GetId() {
 				continue
 			}
@@ -2055,13 +2046,10 @@ func (c *Card95) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 
-	for _, v := range h.GetBattleCards() {
-		h.DieCard(v, false)
-		push.PushLog(h, push.GetCardLogString(c)+"消灭了"+push.GetCardLogString(v))
-	}
-
-	for _, v := range h.GetEnemy().GetBattleCards() {
-		h.GetEnemy().DieCard(v, false)
+	cs := h.GetEnemy().GetBattleCards()
+	cs = append(cs, h.GetBattleCards()...)
+	for _, v := range cs {
+		v.GetOwner().DieCard(v, false)
 		push.PushLog(h, push.GetCardLogString(c)+"消灭了"+push.GetCardLogString(v))
 	}
 }
@@ -2156,7 +2144,7 @@ func (c *Card99) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	d := h.GetApDamage()
 	d += 5
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 		v.CostHp(c, d)
 	}
 }

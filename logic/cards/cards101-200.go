@@ -1166,7 +1166,7 @@ func (c *Card152) NewPoint() iface.ICard {
 func (c *Card152) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
-	for _, v := range h.GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 
 		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(v)+"获得圣盾")
 		v.AddTraits(define.CardTraitsHolyShield)
@@ -1201,7 +1201,7 @@ func (c *Card154) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 
-	for _, v := range h.GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 
 		buff := iface.GetCardFact().GetCard(define.BuffCardId_MyRoundEndClear)
 		buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
@@ -1277,7 +1277,7 @@ func (c *Card158) NewPoint() iface.ICard {
 func (c *Card158) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
-	for _, v := range h.GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 		v.TreatmentHp(c, 2)
 	}
 
@@ -1569,7 +1569,7 @@ func (c *Card174) OnRelease(choiceId, bidx int, rc iface.ICard) {
 		}
 		push.PushAutoLog(c.GetOwner(), "[抉择2]")
 
-		for _, v := range h.GetEnemy().GetBattleCards() {
+		for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 			v.CostHp(c, dmg)
 		}
 	}
@@ -1981,11 +1981,10 @@ func (c *Card191) NewPoint() iface.ICard {
 func (c *Card191) OnDie() {
 
 	h := c.GetOwner()
-	for _, v := range h.GetBattleCards() {
-		v.CostHp(c, 2)
-	}
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	cs := h.GetEnemy().GetBattleCards()
+	cs = append(cs, h.GetBattleCards()...)
+	for _, v := range cs {
 		v.CostHp(c, 2)
 	}
 
@@ -2166,7 +2165,7 @@ func (c *Card199) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	h := c.GetOwner()
 	bs := make([]iface.ICard, 0)
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 		if v.GetHaveEffectDamage() <= 2 {
 			bs = append(bs, v)
 		}

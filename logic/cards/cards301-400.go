@@ -24,7 +24,7 @@ func (c *Card301) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	dmg := c.GetConfig().Damage
 	dmg += h.GetApDamage()
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 		v.CostHp(c, dmg)
 	}
 
@@ -461,7 +461,7 @@ func (c *Card322) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 
-	for _, v := range h.GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 		if !v.IsRace(define.CardRaceFish) {
 			continue
 		}

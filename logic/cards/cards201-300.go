@@ -32,7 +32,7 @@ func (c *Card201) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	dmg2 += h.GetApDamage()
 
 	rc.CostHp(c, dmg)
-	for _, v := range rc.GetOwner().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(rc.GetOwner().GetBattleCards()) {
 		if v.GetId() == rc.GetId() {
 			continue
 		}
@@ -230,11 +230,11 @@ func (c *Card210) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	dmg := c.GetConfig().Damage
 	dmg += h.GetApDamage()
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 		v.CostHp(c, dmg)
 	}
 
-	for _, v := range h.GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 		v.TreatmentHp(c, 2)
 	}
 	h.GetHead().TreatmentHp(c, 2)
@@ -425,12 +425,12 @@ func (c *Card219) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	dmg := c.GetConfig().Damage
 	dmg += h.GetApDamage()
 
-	for _, v := range h.GetBattleCards() {
+	cs := h.GetEnemy().GetBattleCards()
+	cs = append(cs, h.GetBattleCards()...)
+	for _, v := range cs {
 		v.CostHp(c, dmg)
 	}
-	for _, v := range h.GetEnemy().GetBattleCards() {
-		v.CostHp(c, dmg)
-	}
+
 	h.GetHead().CostHp(c, dmg)
 	h.GetEnemy().GetHead().CostHp(c, dmg)
 }
@@ -536,13 +536,9 @@ func (c *Card227) OnGetDamage(dmg int) int {
 
 	h := c.GetOwner()
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
-		if v.IsRace(define.CardRaceFish) {
-			dmg += 1
-		}
-	}
-
-	for _, v := range h.GetBattleCards() {
+	cs := h.GetEnemy().GetBattleCards()
+	cs = append(cs, h.GetBattleCards()...)
+	for _, v := range cs {
 		if v.IsRace(define.CardRaceFish) && v.GetId() != c.GetId() {
 			dmg += 1
 		}
@@ -603,7 +599,7 @@ func (c *Card231) NewPoint() iface.ICard {
 func (c *Card231) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
-	for _, v := range h.GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 
 		buff := iface.GetCardFact().GetCard(define.BuffCardId_Forever)
 		buff.Init(buff, define.InCardsTypeNone, h, h.GetBattle())
@@ -801,7 +797,7 @@ func (c *Card237) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 		v.Silent()
 		push.PushAutoLog(h, push.GetCardLogString(c)+"沉默了"+push.GetCardLogString(v))
 	}
@@ -945,7 +941,7 @@ func (c *Card242) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h.DieCard(rc, false)
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 		v.CostHp(c, dmg)
 	}
 }
@@ -1421,7 +1417,7 @@ func (c *Card263) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	dmg := c.GetConfig().Damage
 	dmg += h.GetApDamage()
 
-	for _, v := range h.GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetBattleCards()) {
 		if v.IsRace(define.CardRaceBeast) {
 			dmg += 2
 			break
@@ -1485,7 +1481,7 @@ func (c *Card266) NewPoint() iface.ICard {
 func (c *Card266) OnRelease(choiceId, bidx int, rc iface.ICard) {
 
 	h := c.GetOwner()
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 
 		v.AddTraits(define.CardTraitsFrozen)
 		push.PushAutoLog(h, push.GetCardLogString(c)+"让"+push.GetCardLogString(v)+"获得了冻结")
@@ -1508,7 +1504,7 @@ func (c *Card267) OnRelease(choiceId, bidx int, rc iface.ICard) {
 	dmg := c.GetConfig().Damage
 	dmg += h.GetApDamage()
 
-	for _, v := range h.GetEnemy().GetBattleCards() {
+	for _, v := range h.CardsToNewInstance(h.GetEnemy().GetBattleCards()) {
 		v.CostHp(c, dmg)
 	}
 	h.DrawByTimes(1)

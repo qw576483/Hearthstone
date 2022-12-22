@@ -233,6 +233,14 @@ func (h *Hero) GetRoundDieCards() []iface.ICard {
 	return h.roundDieCards
 }
 
+// 卡牌复制出来新的一份内存地址
+func (h *Hero) CardsToNewInstance(cs []iface.ICard) []iface.ICard {
+	cs2 := make([]iface.ICard, 0)
+
+	return append(cs2, cs...)
+}
+
+// 获得可选择的卡牌，根据id
 func (h *Hero) GetCanSelectCardId(id int) iface.ICard {
 
 	if h.head != nil && h.head.GetId() == id {
