@@ -1,0 +1,4 @@
+repository "client_u@organization-4160250@cloud.cn"
+  path "/"
+    br "/main"
+    co "/main"
