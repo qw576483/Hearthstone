@@ -97,7 +97,8 @@ const (
 type CardReleaseFilter int
 
 const (
-	CardReleaseFilterAll         CardReleaseFilter = iota // 全体角色
+	CardReleaseFilterNone        CardReleaseFilter = iota // 无需目标
+	CardReleaseFilterAll                                  // 全体角色
 	CardReleaseFilterBothHero                             // 全体英雄
 	CardReleaseFilterMyAll                                // 我方全体
 	CardReleaseFilterEnemyAll                             // 敌方全体

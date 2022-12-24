@@ -11,6 +11,7 @@ type JoinRoom struct {
 	RoomId  int
 	HeroId  int
 	CardIds string
+	Pve     int
 }
 
 // 修改预留卡牌

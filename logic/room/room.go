@@ -7,6 +7,7 @@ import (
 	"hs/logic/config"
 	"hs/logic/define"
 	"hs/logic/iface"
+	"hs/logic/player"
 	"hs/logic/push"
 )
 
@@ -25,7 +26,7 @@ func NewRoom(id int) iface.IRoom {
 }
 
 // 添加到房间
-func (r *Room) AddToRoom(p iface.IPlayer) error {
+func (r *Room) AddToRoom(p iface.IPlayer, pve int) error {
 
 	if p.GetRoomId() != 0 {
 		return errors.New("已有房间")
@@ -38,9 +39,20 @@ func (r *Room) AddToRoom(p iface.IPlayer) error {
 		Line: 999,
 	})
 
+	if pve != 0 && len(r.players) == 1 {
+		r.AddPveRobotToRoom(pve)
+	}
+
 	r.Begin()
 
 	return nil
+}
+
+func (r *Room) AddPveRobotToRoom(pve int) {
+	p := player.GetPlayerList().GetPlayer(nil)
+	p.SetHc(6, []int{204, 204, 253, 253, 18, 18, 44, 62, 99, 135, 135, 161, 161, 223, 222, 312, 312, 334, 334, 109, 109, 77, 43, 30, 16, 30, 16})
+
+	r.players = append(r.players, p)
 }
 
 // 房间战斗开始

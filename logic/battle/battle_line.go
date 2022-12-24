@@ -29,6 +29,10 @@ func (b *Battle) PreBegin() {
 
 	b.SetBattleStatus(define.BattleStatusPre)
 
+	for _, v := range b.heros {
+		v.RobotMove()
+	}
+
 	push.PushInit(b)
 }
 
@@ -50,6 +54,9 @@ func (b *Battle) Begin() {
 
 	// 补卡
 	b.RoundBegin()
+
+	// 机器人移动
+	b.hero.RobotMove()
 }
 
 // 回合开始
@@ -62,6 +69,8 @@ func (b *Battle) RoundBegin() {
 	b.hero.RoundBegin()
 
 	push.PushInfoMsg(b)
+
+	b.hero.RobotMove()
 }
 
 // 回合结束

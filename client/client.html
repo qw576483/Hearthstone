@@ -16,8 +16,11 @@
             <br />
             英雄：<input type="text" id="JoinRoom_HeroId" value="0"> 0贼,1术,2猎,3萨,4骑,5德,6法,7牧,8战 (目前英雄可带全职业卡牌，方便测试)
             <br />
-            牌组：<textarea id="JoinRoom_CardIds" cols="100" rows="1">1,1,2,2,3,3,4,4,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15</textarea>
+            牌组：<textarea id="JoinRoom_CardIds" cols="100" rows="1">1,2,3,4,6,7,8,9,10,11,12,13,14,15,250,66,316,330,324,335,334,264,265,266,199,188,170,166,166,170</textarea>
             <!-- 2,2,23,23 -->
+            <br />
+            pve：<input type="radio" name="JoinRoom_Pve" checked value="0">不开启
+            <input type="radio" name="JoinRoom_Pve" value="1">与法师pk
             <br />
             <input type="submit" onclick="addRooom()">
         </form>
@@ -168,7 +171,7 @@
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
 
-    var ws = new WebSocket('ws://127.0.0.1:9000')
+    var ws = new WebSocket('ws://124.221.112.214:9000')
     ws.onopen = function(){
         console.log("open ws");
 
@@ -330,10 +333,13 @@
         JoinRoom_RoomId = $("#JoinRoom_RoomId").val()
         JoinRoom_HeroId = $("#JoinRoom_HeroId").val()
         JoinRoom_CardIds =  $("#JoinRoom_CardIds").val()
+        JoinRoom_Pve = $('input[name="JoinRoom_Pve"]:checked').val()
+        
         ws.send(encodeMsg("JoinRoom" , {
             RoomId:parseInt(JoinRoom_RoomId),
             HeroId:parseInt(JoinRoom_HeroId),
-            CardIds:JoinRoom_CardIds
+            CardIds:JoinRoom_CardIds,
+            Pve :parseInt(JoinRoom_Pve),
         }))
     
     }

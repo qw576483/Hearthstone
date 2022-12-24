@@ -47,6 +47,10 @@ func (b *Battle) PlayerChangePreCards(hid int, putidxs []int /** 这个值是第
 // 释放卡牌 - release
 func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid int) error {
 
+	if b.GetBattleStatus() != define.BattleStatusRun {
+		return errors.New("战斗状态不对")
+	}
+
 	h := b.GetHeroByIncrId(hid)
 	c := h.GetHandCardByIncrId(cid)
 
@@ -93,6 +97,10 @@ func (b *Battle) PlayerReleaseCard(hid, cid, choiceId, putidx, rcid int) error {
 // 使用英雄技能 - release
 func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid int) error {
 
+	if b.GetBattleStatus() != define.BattleStatusRun {
+		return errors.New("战斗状态不对")
+	}
+
 	h := b.GetHeroByIncrId(hid)
 	c := h.GetHeroSkill()
 
@@ -136,6 +144,10 @@ func (b *Battle) PlayerUseHeroSkill(hid, choiceId, rcid int) error {
 
 // 操作卡牌攻击 -  attack
 func (b *Battle) PlayerConCardAttack(hid, cid, ecid int) error {
+
+	if b.GetBattleStatus() != define.BattleStatusRun {
+		return errors.New("战斗状态不对")
+	}
 
 	if ecid == 0 {
 		return errors.New("请输入敌人")
@@ -199,6 +211,11 @@ func (b *Battle) PlayerConCardAttack(hid, cid, ecid int) error {
 
 // 结束回合
 func (b *Battle) PlayerRoundEnd(hid int) error {
+
+	if b.GetBattleStatus() != define.BattleStatusRun {
+		return errors.New("战斗状态不对")
+	}
+
 	b.RoundEnd()
 	return nil
 }

@@ -87,9 +87,16 @@ func handleJoinRoom(args []interface{}) {
 	cardIdsString := strings.Split(m.CardIds, ",")
 
 	// 检查携带是否有效
+	ac := config.GetAllCardConfig()
 	for _, v := range cardIdsString {
 		id, err := strconv.Atoi(v)
 		if err == nil {
+			if id >= len(ac) || id <= 0 {
+				a.WriteMsg(&push.ErrorMsg{
+					Error: "存在不能携带的卡牌:" + strconv.Itoa(id),
+				})
+				return
+			}
 			cardIds = append(cardIds, id)
 
 			// cc := config.GetCardConfig(id)
@@ -128,7 +135,7 @@ func handleJoinRoom(args []interface{}) {
 		return
 	}
 
-	r.AddToRoom(p)
+	r.AddToRoom(p, m.Pve)
 }
 
 func handleBChangePre(args []interface{}) {

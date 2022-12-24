@@ -87,6 +87,7 @@ type IHero interface {
 	NewCountDown(int)                           // 一个新的倒计时
 	CloseCountDown()                            // 关闭我的倒计时
 	Henshin(ICard)                              // 变身
+	RobotMove()
 
 	PreBegin()    // 预备阶段
 	RoundBegin()  // 回合开始

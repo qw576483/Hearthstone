@@ -26,6 +26,10 @@ func GetPlayerList() iface.IPlayerList {
 // 获得房间
 func (pl *PlayerList) GetPlayer(a gate.Agent) iface.IPlayer {
 
+	if a == nil {
+		return NewPlayer(nil)
+	}
+
 	if p, ok := pl.list[a]; ok {
 		return p
 	}
