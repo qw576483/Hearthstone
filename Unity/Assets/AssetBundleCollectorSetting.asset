@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 185f6993d5150494d98da50e26cb1c25, type: 3}
+  m_Name: AssetBundleCollectorSetting
+  m_EditorClassIdentifier: 
+  ShowPackageView: 0
+  EnableAddressable: 1
+  UniqueBundleName: 1
+  ShowEditorAlias: 1
+  Packages:
+  - PackageName: CommonFramework
+    PackageDesc: "\u81EA\u5DF1\u7528\u7684"
+    Groups:
+    - GroupName: Code
+      GroupDesc: "\u70ED\u66F4\u4EE3\u7801dll"
+      AssetTags: code
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HURes/Code
+        CollectorGUID: 3926e37e5aa8af649b670ec6cab6d653
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackRawFile
+        FilterRuleName: CollectAll
+        AssetTags: code
+    - GroupName: Config
+      GroupDesc: "\u914D\u7F6E\u8868"
+      AssetTags: config
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HURes/Config
+        CollectorGUID: ed00a98005ebfb046a48be6c52bb74a0
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackRawFile
+        FilterRuleName: CollectAll
+        AssetTags: config
+    - GroupName: Scene
+      GroupDesc: "\u6240\u6709\u573A\u666F"
+      AssetTags: scene
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HURes/Scenes
+        CollectorGUID: befbd90630e7acf45a28f966459cc75d
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 

@@ -13,3 +13,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+/Unity/Sandbox
+/BuildRecord/StandaloneWindows64
+/Server/HotUpdate/StandaloneWindows64
+/Unity/Tools/Luban/.cache.meta

@@ -1,0 +1,8 @@
+{
+  "default_package_name": "CommonFramework",
+  // "111": true,
+  //打包版本。重出包的时候记得修改
+  "game_version": "1.0",
+  //热更版本。每次出版本的时候一定记得修改
+  "hot_update_version": "0"
+}
