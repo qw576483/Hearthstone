@@ -34,7 +34,7 @@ namespace UnityGeneralFramework.HotUpdateLogic {
             // TODO:
             HomologousImageMode mode = HomologousImageMode.SuperSet;
             foreach (var aotDllName in HUConfig.AOTMetaAssemblyNames) {
-                byte[] dllBytes = YooAssets.LoadRawFileSync(aotDllName).GetRawFileData();
+                byte[] dllBytes = YooAssets.LoadRawFileSync($"Assets/HURes/Code/{aotDllName}").GetRawFileData();
                 // 加载assembly对应的dll，会自动为它hook。
                 // 一旦aot泛型函数的native函数不存在，用解释器版本代码
                 LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, mode);
@@ -48,11 +48,11 @@ namespace UnityGeneralFramework.HotUpdateLogic {
         private void LoadHotUpdateAssemblies() {
             Debug.Log("开始加载热更代码");
 #if !UNITY_EDITOR
-        System.Reflection.Assembly.Load( YooAssets.LoadRawFileSync("HU.Code.dll").GetRawFileData() );
+        //System.Reflection.Assembly.Load( YooAssets.LoadRawFileSync("Assets/HURes/Code/HU.Code.dll").GetRawFileData() );
 #endif
             //AssetBundle prefabAb = AssetBundle.LoadFromMemory(GetAssetData("prefabs"));
             //GameObject testPrefab = Instantiate(prefabAb.LoadAsset<GameObject>("HotUpdatePrefab.prefab"));
-            System.Reflection.Assembly.Load(YooAssets.LoadRawFileSync("HU.Code.dll").GetRawFileData());
+            System.Reflection.Assembly.Load(YooAssets.LoadRawFileSync("Assets/HURes/Code/HU.Code.dll").GetRawFileData());
             Debug.Log("加载完成");
         }
         #endregion

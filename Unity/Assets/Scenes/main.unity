@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -398,7 +398,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 20, y: -146}
+  m_AnchoredPosition: {x: 20, y: 157}
   m_SizeDelta: {x: 778.7814, y: 108.2796}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &594375870
@@ -596,7 +596,6 @@ GameObject:
   m_Component:
   - component: {fileID: 725309965}
   - component: {fileID: 725309966}
-  - component: {fileID: 725309968}
   m_Layer: 0
   m_Name: YooAsset
   m_TagString: Untagged
@@ -629,18 +628,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5350ddc1a86e04c4e97b05a189e18c07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &725309968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 725309964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f86cc6f5d305dd4d94890b1a5f4906a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PlayMode: 2
@@ -697,7 +684,7 @@ MonoBehaviour:
   URL1: 
   URL2: 
   port: 8000
-  gameVersion: v1.0
+  gameVersion: 1.0
   defPackageName: CommonFramework
 --- !u!1 &963194225
 GameObject:

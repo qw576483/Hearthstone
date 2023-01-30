@@ -44,6 +44,9 @@ namespace UnityGeneralFramework.HotUpdateLogic {
         
         URL1 = iosUrl1;
         URL2 = iosUrl2;
+#else
+        URL1 = windowsUrl1;
+        URL2 = windowsUrl2;
 #endif
         }
 

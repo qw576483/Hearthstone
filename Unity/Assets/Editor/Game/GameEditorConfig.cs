@@ -23,7 +23,6 @@ namespace UnityGeneralFramework.Editor {
 
         //YooAsset打包资源拷贝位置
         public static string HUResCopyPath = Path.Combine(Application.dataPath, "../Bundles/");
-        //"Assets/StreamingAssets/BuildinFiles";
 
         // 版本记录
         public static string HURecordPath = Path.Combine(Application.dataPath, "../../BuildRecord/");
