@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AssetBundleCollectorSetting
   m_EditorClassIdentifier: 
   ShowPackageView: 0
-  EnableAddressable: 1
+  EnableAddressable: 0
   UniqueBundleName: 1
   ShowEditorAlias: 1
   Packages:
@@ -54,5 +54,107 @@ MonoBehaviour:
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackDirectory
+        FilterRuleName: CollectScene
+        AssetTags: 
+    - GroupName: Model
+      GroupDesc: "\u6A21\u578B"
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HURes/Model/dz
+        CollectorGUID: ed504d5b8c7f711488bf8bd51b371fd9
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
         FilterRuleName: CollectAll
+        AssetTags: battle
+      - CollectPath: Assets/HURes/Model/login
+        CollectorGUID: 7a7cf76191c604c40afcf518461ba8af
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: login
+      - CollectPath: Assets/HURes/Model/menu
+        CollectorGUID: 270c88fc80af76f449a2732248819ea6
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/HURes/Model/msgbox
+        CollectorGUID: 7896e982b4bf5524a8ed00341636068e
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/HURes/Model/Materials
+        CollectorGUID: c8d482ea4f5d9104eb003b9e555f44e0
+        CollectorType: 1
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+    - GroupName: Font
+      GroupDesc: "\u5B57\u4F53\u6587\u4EF6"
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HURes/Font
+        CollectorGUID: 5f2940308d515ab4eb20936556e1afc0
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+    - GroupName: Prefab
+      GroupDesc: "\u9884\u5236\u4F53"
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HURes/Prefabs
+        CollectorGUID: 7764b393eb9b0ba4b87b00fc70eb9754
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectPrefab
+        AssetTags: 
+    - GroupName: Textures
+      GroupDesc: "\u56FE\u7247\u7EB9\u7406"
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HURes/Textures/cur
+        CollectorGUID: 7e52da2a32012104fa12d7efb5fa626e
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/HURes/Textures/Materials
+        CollectorGUID: 811ec7b6ee3040440b093d03ea44077f
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/HURes/Textures/UI
+        CollectorGUID: d1d5d9cf90c455d4ba6cd7e192b0e071
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: UI
+    - GroupName: ShaderVariant
+      GroupDesc: "shader\u53D8\u79CD"
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HURes/ShaderVariant
+        CollectorGUID: efffc8b59fe20a5419eb885be6847b09
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectShaderVariants
         AssetTags: 

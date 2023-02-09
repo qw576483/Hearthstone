@@ -1,4 +1,5 @@
 using UnityEngine;
+using YooAsset;
 
 namespace UnityGeneralFramework.HotUpdateLogic {
     /// <summary>
@@ -16,6 +17,7 @@ namespace UnityGeneralFramework.HotUpdateLogic {
 
         public void OnDownLoadDone() {
             HUHybridCLR.StartGame();
+            YooAssets.LoadSceneAsync("login");
         }
     }
 
