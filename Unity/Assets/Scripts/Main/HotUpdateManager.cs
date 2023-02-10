@@ -17,7 +17,7 @@ namespace UnityGeneralFramework.HotUpdateLogic {
 
         public void OnDownLoadDone() {
             HUHybridCLR.StartGame();
-            YooAssets.LoadSceneAsync("login");
+            YooAssets.LoadSceneAsync("Assets/HURes/Scenes/login");
         }
     }
 
