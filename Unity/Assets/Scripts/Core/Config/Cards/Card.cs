@@ -19,32 +19,40 @@ public sealed partial class Card :  Bright.Config.BeanBase
     public Card(JSONNode _json) 
     {
         { if(!_json["id"].IsNumber) { throw new SerializationException(); }  Id = _json["id"]; }
+        { if(!_json["image"].IsString) { throw new SerializationException(); }  Image = _json["image"]; }
+        { if(!_json["set"].IsNumber) { throw new SerializationException(); }  Set = _json["set"]; }
+        { if(!_json["quality"].IsNumber) { throw new SerializationException(); }  Quality = _json["quality"]; }
+        { if(!_json["type"].IsNumber) { throw new SerializationException(); }  Type = (Cards.ECardType)_json["type"].AsInt; }
+        { if(!_json["cost"].IsNumber) { throw new SerializationException(); }  Cost = _json["cost"]; }
+        { if(!_json["attack"].IsNumber) { throw new SerializationException(); }  Attack = _json["attack"]; }
+        { if(!_json["health"].IsNumber) { throw new SerializationException(); }  Health = _json["health"]; }
         { if(!_json["name"].IsString) { throw new SerializationException(); }  Name = _json["name"]; }
-        { if(!_json["desc"].IsString) { throw new SerializationException(); }  Desc = _json["desc"]; }
-        { if(!_json["price"].IsNumber) { throw new SerializationException(); }  Price = _json["price"]; }
-        { if(!_json["upgrade_to_item_id"].IsNumber) { throw new SerializationException(); }  UpgradeToItemId = _json["upgrade_to_item_id"]; }
-        { var _j = _json["expire_time"]; if (_j.Tag != JSONNodeType.None && _j.Tag != JSONNodeType.NullValue) { { if(!_j.IsNumber) { throw new SerializationException(); }  ExpireTime = _j; } } else { ExpireTime = null; } }
-        { if(!_json["batch_useable"].IsBoolean) { throw new SerializationException(); }  BatchUseable = _json["batch_useable"]; }
-        { if(!_json["quality"].IsNumber) { throw new SerializationException(); }  Quality = (item.EQuality)_json["quality"].AsInt; }
-        { if(!_json["exchange_stream"].IsObject) { throw new SerializationException(); }  ExchangeStream = item.ItemExchange.DeserializeItemExchange(_json["exchange_stream"]);  }
-        { var __json0 = _json["exchange_list"]; if(!__json0.IsArray) { throw new SerializationException(); } ExchangeList = new System.Collections.Generic.List<item.ItemExchange>(__json0.Count); foreach(JSONNode __e0 in __json0.Children) { item.ItemExchange __v0;  { if(!__e0.IsObject) { throw new SerializationException(); }  __v0 = item.ItemExchange.DeserializeItemExchange(__e0);  }  ExchangeList.Add(__v0); }   }
-        { if(!_json["exchange_column"].IsObject) { throw new SerializationException(); }  ExchangeColumn = item.ItemExchange.DeserializeItemExchange(_json["exchange_column"]);  }
+        { if(!_json["cnname"].IsString) { throw new SerializationException(); }  Cnname = _json["cnname"]; }
+        { if(!_json["cndescription"].IsString) { throw new SerializationException(); }  Cndescription = _json["cndescription"]; }
+        { if(!_json["description"].IsString) { throw new SerializationException(); }  Description = _json["description"]; }
+        { if(!_json["classs"].IsNumber) { throw new SerializationException(); }  Classs = _json["classs"]; }
+        { if(!_json["race"].IsNumber) { throw new SerializationException(); }  Race = _json["race"]; }
+        { if(!_json["durability"].IsNumber) { throw new SerializationException(); }  Durability = _json["durability"]; }
         PostInit();
     }
 
-    public Card(int id, string name, string desc, int price, int upgrade_to_item_id, int? expire_time, bool batch_useable, item.EQuality quality, item.ItemExchange exchange_stream, System.Collections.Generic.List<item.ItemExchange> exchange_list, item.ItemExchange exchange_column ) 
+    public Card(int id, string image, int set, int quality, Cards.ECardType type, int cost, int attack, int health, string name, string cnname, string cndescription, string description, int classs, int race, int durability ) 
     {
         this.Id = id;
-        this.Name = name;
-        this.Desc = desc;
-        this.Price = price;
-        this.UpgradeToItemId = upgrade_to_item_id;
-        this.ExpireTime = expire_time;
-        this.BatchUseable = batch_useable;
+        this.Image = image;
+        this.Set = set;
         this.Quality = quality;
-        this.ExchangeStream = exchange_stream;
-        this.ExchangeList = exchange_list;
-        this.ExchangeColumn = exchange_column;
+        this.Type = type;
+        this.Cost = cost;
+        this.Attack = attack;
+        this.Health = health;
+        this.Name = name;
+        this.Cnname = cnname;
+        this.Cndescription = cndescription;
+        this.Description = description;
+        this.Classs = classs;
+        this.Race = race;
+        this.Durability = durability;
         PostInit();
     }
 
@@ -58,77 +66,83 @@ public sealed partial class Card :  Bright.Config.BeanBase
     /// </summary>
     public int Id { get; private set; }
     /// <summary>
+    /// Texture name
+    /// </summary>
+    public string Image { get; private set; }
+    /// <summary>
     /// 名字
     /// </summary>
-    public string Name { get; private set; }
-    /// <summary>
-    /// 描述
-    /// </summary>
-    public string Desc { get; private set; }
-    /// <summary>
-    /// 价格
-    /// </summary>
-    public int Price { get; private set; }
-    /// <summary>
-    /// 引用当前表
-    /// </summary>
-    public int UpgradeToItemId { get; private set; }
-    public item.Item UpgradeToItemId_Ref { get; private set; }
-    /// <summary>
-    /// 过期时间
-    /// </summary>
-    public int? ExpireTime { get; private set; }
-    /// <summary>
-    /// 能否批量使用
-    /// </summary>
-    public bool BatchUseable { get; private set; }
+    public int Set { get; private set; }
     /// <summary>
     /// 品质
     /// </summary>
-    public item.EQuality Quality { get; private set; }
+    public int Quality { get; private set; }
     /// <summary>
-    /// 道具兑换配置
+    /// 类型
     /// </summary>
-    public item.ItemExchange ExchangeStream { get; private set; }
-    public System.Collections.Generic.List<item.ItemExchange> ExchangeList { get; private set; }
+    public Cards.ECardType Type { get; private set; }
     /// <summary>
-    /// 道具兑换配置
+    /// 费用
     /// </summary>
-    public item.ItemExchange ExchangeColumn { get; private set; }
+    public int Cost { get; private set; }
+    /// <summary>
+    /// 攻击力
+    /// </summary>
+    public int Attack { get; private set; }
+    /// <summary>
+    /// 血量
+    /// </summary>
+    public int Health { get; private set; }
+    /// <summary>
+    /// 名称
+    /// </summary>
+    public string Name { get; private set; }
+    /// <summary>
+    /// 名称
+    /// </summary>
+    public string Cnname { get; private set; }
+    /// <summary>
+    /// 描述
+    /// </summary>
+    public string Cndescription { get; private set; }
+    /// <summary>
+    /// 描述
+    /// </summary>
+    public string Description { get; private set; }
+    public int Classs { get; private set; }
+    public int Race { get; private set; }
+    public int Durability { get; private set; }
 
     public const int __ID__ = -801029381;
     public override int GetTypeId() => __ID__;
 
     public  void Resolve(Dictionary<string, object> _tables)
     {
-        this.UpgradeToItemId_Ref = (_tables["item.TbItem"] as item.TbItem).GetOrDefault(UpgradeToItemId);
-        ExchangeStream?.Resolve(_tables);
-        foreach(var _e in ExchangeList) { _e?.Resolve(_tables); }
-        ExchangeColumn?.Resolve(_tables);
         PostResolve();
     }
 
     public  void TranslateText(System.Func<string, string, string> translator)
     {
-        ExchangeStream?.TranslateText(translator);
-        foreach(var _e in ExchangeList) { _e?.TranslateText(translator); }
-        ExchangeColumn?.TranslateText(translator);
     }
 
     public override string ToString()
     {
         return "{ "
         + "Id:" + Id + ","
-        + "Name:" + Name + ","
-        + "Desc:" + Desc + ","
-        + "Price:" + Price + ","
-        + "UpgradeToItemId:" + UpgradeToItemId + ","
-        + "ExpireTime:" + ExpireTime + ","
-        + "BatchUseable:" + BatchUseable + ","
+        + "Image:" + Image + ","
+        + "Set:" + Set + ","
         + "Quality:" + Quality + ","
-        + "ExchangeStream:" + ExchangeStream + ","
-        + "ExchangeList:" + Bright.Common.StringUtil.CollectionToString(ExchangeList) + ","
-        + "ExchangeColumn:" + ExchangeColumn + ","
+        + "Type:" + Type + ","
+        + "Cost:" + Cost + ","
+        + "Attack:" + Attack + ","
+        + "Health:" + Health + ","
+        + "Name:" + Name + ","
+        + "Cnname:" + Cnname + ","
+        + "Cndescription:" + Cndescription + ","
+        + "Description:" + Description + ","
+        + "Classs:" + Classs + ","
+        + "Race:" + Race + ","
+        + "Durability:" + Durability + ","
         + "}";
     }
     
