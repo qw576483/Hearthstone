@@ -37,8 +37,8 @@ MonoBehaviour:
       AssetTags: config
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/HURes/Config
-        CollectorGUID: ed00a98005ebfb046a48be6c52bb74a0
+      - CollectPath: Assets/HURes/Cfg
+        CollectorGUID: 340c0eb3f2801044191c8ec128bce2e7
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackRawFile

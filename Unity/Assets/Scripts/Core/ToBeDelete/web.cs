@@ -187,7 +187,7 @@ public class web : MonoBehaviour
       if (Application.isEditor)//如果是编辑器里!
       {
           login("ningxiaoxiao", "1q2w3e");
-          loadxml();
+          //loadxml();
       }
     }
 
@@ -217,7 +217,7 @@ public class web : MonoBehaviour
     /// </summary>
     public static string getNotice()
     {
-        loadxml();
+        //loadxml();
         return webget("gg.php");
     }
     

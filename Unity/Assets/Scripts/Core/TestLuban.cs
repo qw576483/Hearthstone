@@ -5,16 +5,16 @@ using System.IO;
 using UnityEngine;
 using System;
 
-using cfg.item;
+using Cfg.item;
 
 public class TestLuban : MonoBehaviour
 {
     private void Awake() {
-        var tables = new cfg.Tables(file =>
-                JSON.Parse(File.ReadAllText("Assets/HFRes/Config/json" + "/" + file + ".json")
-        ));
+        // var tables = new Cfg.Tables(file =>
+        //         JSON.Parse(File.ReadAllText("Assets/HFRes/Config/json" + "/" + file + ".json")
+        // ));
 
-        cfg.item.Item itemInfo = tables.TbItem.Get(10000);
+        //Cfg.item.Item itemInfo = tables.TbItem.Get(10000);
         //Debug.Log(" 1111 " + itemInfo.ToString() );
     }
 

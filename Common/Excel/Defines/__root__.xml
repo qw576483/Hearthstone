@@ -1,6 +1,6 @@
 <root>
 
-	<topmodule name="cfg"/>
+	<topmodule name="Cfg"/>
 
 	<patch name="cn"/>
 	<patch name="en"/>
