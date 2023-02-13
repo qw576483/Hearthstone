@@ -9,7 +9,7 @@ using UnityGeneralFramework.Common;
 using UnityGeneralFramework.HotUpdateLogic;
 using System;
 
-namespace ThisGame {
+namespace HeartStone {
     public class GameManager : MonoSingleton<GameManager> {
         [SerializeField]
 		private Card.Card _card;

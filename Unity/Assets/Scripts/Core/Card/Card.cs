@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using ThisGame.Config;
-using ThisGame.Data;
+using HeartStone.Config;
+using HeartStone.Data;
 using UnityEngine;
 using UnityGeneralFramework.HotUpdateLogic;
 using YooAsset;
 
-namespace ThisGame.Card {
+namespace HeartStone.Card {
     public class Card : MonoBehaviour {
         //Åä±íÊý¾Ý
         public Cfg.Cards.Card cfgCards;

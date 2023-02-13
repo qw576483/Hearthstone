@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ThisGame.Common {
+namespace HeartStone.Common {
     public class FactoryManager : MonoBehaviour {
         public GameObject CardObject;
         void Awake() {

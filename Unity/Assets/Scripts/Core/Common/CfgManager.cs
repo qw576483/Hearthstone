@@ -6,11 +6,11 @@ using UnityEngine;
 
 using YooAsset;
 
-using ThisGame.Config;
+using HeartStone.Config;
 using UnityGeneralFramework.Common;
 using UnityGeneralFramework.HotUpdateLogic;
 
-namespace ThisGame { 
+namespace HeartStone { 
     public class CfgManager : MonoSingleton<CfgManager> {
         // ---------------------------------------------------------------
         public static Cfg.Tables GetTables() {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using YooAsset;
 
-namespace ThisGame.UI.Window {
+namespace HeartStone.UI.Window {
     /// <summary>
     /// µÇÂ¼½çÃæ
     /// </summary>

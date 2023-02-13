@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ThisGame {
+namespace HeartStone {
     /// <summary>
     /// 房间管理
     /// </summary>

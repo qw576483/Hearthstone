@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ThisGame.Config {
+namespace HeartStone.Config {
     public static class GameEnum {
         public static string CfgPath = "Assets/HURes/Cfg";
     }
