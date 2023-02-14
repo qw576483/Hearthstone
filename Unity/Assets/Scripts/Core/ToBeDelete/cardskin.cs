@@ -21,6 +21,7 @@ public class cardskin : MonoBehaviour
 
         skininfo = i;
         name = skininfo.cardid;
+
         transform.Find("pic").GetComponent<Renderer>().material = skininfo.image;
         if (skininfo.cnname=="")
         {

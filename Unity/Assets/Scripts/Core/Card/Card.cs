@@ -28,10 +28,7 @@ namespace HeartStone.Card {
         //ID
         public int ID;
 
-        public MeshRenderer iconRender;
-
         void Awake() {
-            iconRender = transform.Find("ImgIcon").GetComponent<MeshRenderer>();
         }
 
         /// <summary>
@@ -43,13 +40,6 @@ namespace HeartStone.Card {
 
             cfgCards = CfgManager.GetTables().TbCard.Get(id);
             cfgCardAttrs = CfgManager.GetTables().TbCardAttrs.Get(id);
-
-            Material material = new Material(Shader.Find("Diffuse"));
-            material.mainTexture = YooAssetProxy.LoadAssetSync<Texture>(GamePathConfig.CardTexture + cfgCards.ImageName);
-            material.SetTextureScale("_MainTex", new Vector2(0.6f, 0.4f));
-            material.SetTextureOffset("_MainTex", new Vector2(0.2f, 0.43f));
-
-            iconRender.material = material;
         }
     }
 }

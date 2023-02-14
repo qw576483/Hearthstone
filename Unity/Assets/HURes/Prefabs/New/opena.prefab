@@ -1150,6 +1150,7 @@ GameObject:
   - component: {fileID: 11100000}
   - component: {fileID: 11400008}
   - component: {fileID: 11400010}
+  - component: {fileID: 3157005302314780334}
   m_Layer: 0
   m_Name: opena
   m_TagString: Untagged
@@ -1221,7 +1222,7 @@ MonoBehaviour:
   alwaysOnScreen: 0
   anchorOffset: 0
   renderQueue: 0
-  startingRenderQueue: 3000
+  startingRenderQueue: 3010
   mAlpha: 1
   mClipping: 2
   mClipRange: {x: 0, y: 0, z: 0, w: 0}
@@ -1251,7 +1252,7 @@ Animation:
   m_GameObject: {fileID: 100030}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 0}
+  m_Animation: {fileID: 7400000, guid: 9ebfc48273b8eaa40bf271d8601219f8, type: 2}
   m_Animations:
   - {fileID: 7400000, guid: 9ebfc48273b8eaa40bf271d8601219f8, type: 2}
   m_WrapMode: 0
@@ -1306,6 +1307,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23d00ef827de2484196010d003a0262c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &3157005302314780334
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100030}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &100038
 GameObject:
   m_ObjectHideFlags: 0
