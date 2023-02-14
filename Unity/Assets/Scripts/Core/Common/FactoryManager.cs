@@ -4,23 +4,35 @@ using UnityEngine;
 
 namespace HeartStone.Common {
     public class FactoryManager : MonoBehaviour {
-        public GameObject CardObject;
-        void Awake() {
-            
+        public GameObject ValetCard;
+        public GameObject MagicCard;
+        public GameObject WeaponCard;
+
+        /// <summary>
+        /// 创建一张侍从卡
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public GameObject CreateValetCard(int id) {
+            return Instantiate(ValetCard);
         }
 
-        // Start is called before the first frame update
-        void Start() {
-
+        /// <summary>
+        /// 创建一张魔法卡
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public GameObject CreateMagicCard(int id) {
+            return Instantiate(MagicCard);
         }
 
-        // Update is called once per frame
-        void Update() {
-
-        }
-
-        public GameObject CreateCard() {
-            return null;
+        /// <summary>
+        /// 创建一张武器卡
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public GameObject CreateWeaponCard(int id) {
+            return Instantiate(WeaponCard);
         }
     }
 }

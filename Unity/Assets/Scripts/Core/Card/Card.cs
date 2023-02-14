@@ -40,6 +40,9 @@ namespace HeartStone.Card {
 
             cfgCards = CfgManager.GetTables().TbCard.Get(id);
             cfgCardAttrs = CfgManager.GetTables().TbCardAttrs.Get(id);
+
+            //根据数据加载皮肤
+            GetComponent<CardSkinLoader>().OnLoadSkin(id);
         }
     }
 }

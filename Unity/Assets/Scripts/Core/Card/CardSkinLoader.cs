@@ -18,14 +18,16 @@ namespace HeartStone.Card {
         //Ï¡ÓÐ¶È
         public Material common, rare, epic, legendary;
 
-        private Renderer front, frontkuan, quality, Icon;
+        private Renderer front, frontkuan, quality, icon;
         private UILabel labName, labCost, labDesc, labAtk, labHP;
 
         void Awake() {
+            //3dModel
+            icon = transform.Find("icon").GetComponent<Renderer>();
             front = transform.Find("front").GetComponent<Renderer>();
             frontkuan = transform.Find("frontkuan").GetComponent<Renderer>();
             quality = transform.Find("quality").GetComponent<Renderer>();
-            Icon = transform.Find("Icon").GetComponent<Renderer>();
+            //lab
             labName = transform.Find("name").GetComponent<UILabel>();
             labDesc = transform.Find("description").Find("description").GetComponent<UILabel>();
             labAtk = transform.Find("attack").GetComponent<UILabel>();
@@ -41,7 +43,7 @@ namespace HeartStone.Card {
             material.SetTextureScale("_MainTex", new Vector2(0.6f, 0.4f));
             material.SetTextureOffset("_MainTex", new Vector2(0.2f, 0.43f));
 
-            Icon.material = material;
+            icon.material = material;
 
             if(cfgCards.Cnname == "") {
                 labName.text = cfgCards.Name;

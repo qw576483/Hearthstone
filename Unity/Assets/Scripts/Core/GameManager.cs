@@ -1,3 +1,4 @@
+using System;
 using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,37 +8,33 @@ using YooAsset;
 
 using UnityGeneralFramework.Common;
 using UnityGeneralFramework.HotUpdateLogic;
-using System;
+using HeartStone.Net;
 
 namespace HeartStone {
     public class GameManager : MonoSingleton<GameManager> {
-        [SerializeField]
-		private Card.Card _card;
+        public CfgManager cfgManager;
+        public NetManager netManager;
 
-        public override void OnInit() {
-            base.OnInit();
+        public override void AwakeSingleton() {
+            base.AwakeSingleton();
             DontDestroyOnLoad(gameObject);
+        }
+
+        void Start() {
 #if UNITY_EDITOR
-            StartCoroutine( YooAssetProxy.InitPackage( () => {
-                CfgManager.Instance.OnInit();
-                _card.OnResetCard(1);
+            StartCoroutine(YooAssetProxy.InitPackage(() => {
+                StartCoroutine( OnLoadModule() );
                 return true;
-            } ) );
+            }));
+#else
+            StartCoroutine( OnLoadModule() );
 #endif
         }
 
-        private bool onLoadDown() {
-            throw new NotImplementedException();
-        }
+        public IEnumerator OnLoadModule() {
+            yield return new WaitForSeconds(1.0f);
 
-        // Start is called before the first frame update
-        void Start() {
-
-        }
-
-        // Update is called once per frame
-        void Update() {
-
+            CfgManager.Instance.OnInit();
         }
     }
 }

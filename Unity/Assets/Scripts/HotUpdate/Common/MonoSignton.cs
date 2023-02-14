@@ -18,7 +18,7 @@ namespace UnityGeneralFramework.Common {
                         //创建脚本对象
                         instance = new GameObject("Singleton of " + typeof(T)).AddComponent<T>();
                     } else {
-                        instance.OnInit();
+                        instance.AwakeSingleton();
                     }
                 }
                 return instance;
@@ -28,13 +28,20 @@ namespace UnityGeneralFramework.Common {
         protected void Awake() {
             if (instance == null) {
                 instance = this as T;
-                OnInit();
+                AwakeSingleton();
             }
         }
 
-        public virtual void OnInit() {
-            
-        }
+        /// <summary>
+        /// 单例的Awake
+        /// </summary>
+        public virtual void AwakeSingleton() {}
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public virtual void OnInit() { }
+       
 
         /*
             * 备注：

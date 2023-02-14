@@ -34,7 +34,7 @@ namespace UnityGeneralFramework.HotUpdateLogic {
         public string gameVersion = "v1.0";
         public string defPackageName = "";
 
-        public override void OnInit() {
+        public override void AwakeSingleton() {
             TextAsset txt = Resources.Load<TextAsset>("HUConfig");
             HUConfigJson config = JsonConvert.DeserializeObject<HUConfigJson>(txt.text);
 

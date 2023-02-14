@@ -15,7 +15,7 @@ namespace UnityGeneralFramework.HotUpdateLogic {
 
         private readonly EventGroup _eventGroup = new EventGroup();
 
-        public override void OnInit() {
+        public override void AwakeSingleton() {
             HUYooAsset = transform.Find("YooAsset").GetComponent<YooAssetProxy>();
             HUHybridCLR = transform.Find("HybirdCLR").GetComponent<HybridCLRProxy>();
 
