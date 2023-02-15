@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace HeartStone.Net {
     /// <summary>WebSocket链接</summary>
@@ -14,8 +16,6 @@ namespace HeartStone.Net {
 
         [SerializeField]
         private WebSocketState ShowInEditor = WebSocketState.None;
-        //心跳Json
-        public string HeartBeat = "{""Hello"": [{""Name"": ""}]}";
 
         public WebSocketState CurrState {
             get {
@@ -78,6 +78,11 @@ namespace HeartStone.Net {
         protected virtual void ParseResult() {
             ShowInEditor = m_client.State;
             Debug.Log("数据结果:" + m_result);
+            
+            JObject result = JObject.Parse(m_result);
+            Debug.Log("JObject result " + result.ToString() );
+
+            m_result = "";
         }
 
         /// <summary>网络报错</summary>
@@ -93,6 +98,7 @@ namespace HeartStone.Net {
                 await m_client.ConnectAsync(m_uri, m_cToken);//连接
 
                 ShowInEditor = m_client.State;
+                StartCoroutine( SendHeartBeatMsg() );
 
                 while(Loop) {//遍历接受信息
                     m_websocketReceiveResult = await ReceiveMessage();
@@ -113,6 +119,7 @@ namespace HeartStone.Net {
         /// <param name="text">请求信息内容</param>
         public async Task Send(string text) {
             if(m_client.State == WebSocketState.None) { Debug.Log("未建立链接！"); return; }
+
             await m_client.SendAsync(GetBuffer(text), WebSocketMessageType.Text, true, m_cToken);//发送数据
         }
 
@@ -133,7 +140,15 @@ namespace HeartStone.Net {
         /// </summary>
         /// <returns></returns>
         public IEnumerator SendHeartBeatMsg() {
-            yield return new WaitForSeconds(5.0f);
+            if (m_client.State == WebSocketState.Closed 
+             || m_client.State == WebSocketState.Aborted) {
+                Debug.Log("Websocket close,stop heart beat");
+            } else {
+                Debug.Log(NetDataPre.sHeartBeat);
+                Send(NetDataPre.sHeartBeat);
+                yield return new WaitForSeconds(5.0f);
+                StartCoroutine(SendHeartBeatMsg());
+            }
         }
      }
 }
