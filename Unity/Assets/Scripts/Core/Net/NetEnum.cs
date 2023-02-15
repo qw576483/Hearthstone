@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace HeartStone.Net {
     /// <summary>
@@ -8,8 +9,18 @@ namespace HeartStone.Net {
     /// </summary>
     public static class NetEnum {
         //websocket
-        public static string WebSocketUrl = "127.0.0.1";
-        public static string WebSocketPort = "8080";
+        public static string WebSocketUrl = "ws://124.221.112.214";
+        public static string WebSocketPort = "9000";
+
+    
     }
 
+    /// <summary>
+    /// Õ¯¬Á–≠“È√˚≥∆
+    /// </summary>
+    public static class NetProtocol {
+        public static string Heart = "Heart";
+
+        
+    }
 }

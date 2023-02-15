@@ -24,6 +24,7 @@ namespace HeartStone {
 #if UNITY_EDITOR
             StartCoroutine(YooAssetProxy.InitPackage(() => {
                 StartCoroutine( OnLoadModule() );
+                NetManager.Instance.Connect2Server();
                 return true;
             }));
 #else
